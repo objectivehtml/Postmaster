@@ -1,0 +1,798 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+  <title>Software License &#8211; Postmaster</title>
+
+  <style type="text/css" media="screen,print">
+  	address, blockquote, body, caption, center, dd, dir, div, dl, dt, form, h1, h2, h3, h4, h5, h6, menu, ol, p, td, th, ul {
+		font:  13px/17px Arial, Verdana, Geneva, Sans-serif;
+		} 
+	
+	code, pre, samp {
+		font-size: 13px;
+		font-family: Arial, Verdana, Geneva, Sans-serif;
+		}
+	
+	abbr, acronym, .help {
+		border-bottom: 1px dotted #555;
+		cursor: help;
+		}
+	
+	body {
+		background-color: #fff;
+		border: 0;
+		color: #333;
+		font-size: 13px;
+		padding: 0;
+		margin: 0;
+		voice-family: "\"}\"";
+		voice-family: inherit;
+		font-size: 13px;    /* the correct value */
+		}
+	html>body {
+		font-size: 13px;    /* reapply for Opera 5 */
+		}
+	
+	img {
+		border: none;
+	}
+	
+	:link, :visited {
+		background-color: transparent;
+		text-decoration: underline;
+		}
+	
+	:link {
+		color: #036EBF;
+		}
+	
+	:visited {
+		color: #036EBF;
+		}
+	
+	:link:hover, :visited:hover {
+		text-decoration: none;
+		color:#025696;
+		}
+	
+	:link:active, :visited:active {
+		text-decoration: underline;
+		color: #036EBF;
+		outline: none; /* For Firefox family */
+		}
+	
+	
+	
+	/* --------------- header --------------- */
+	
+	#header {
+	    background-color: #27343C;
+		border-bottom: 1px solid #000;
+		color: #fff;
+		margin: 0;
+		}
+	
+	.docheading {
+		background-color: transparent;
+		color: #fff;
+		width: 300px;
+		padding: 8px 0 3px 20px;
+	}
+			
+	.searchbox {
+		background-color: transparent;
+		font-size: 10px;
+		font-weight: normal;
+		padding: 0 15px 0 0;
+		margin:0;
+		text-align: right;
+	}
+	
+	.searchbox div {
+		font-size: 10px;
+	}
+	
+	.section {
+		margin: 0;
+		padding: 0;
+	}
+	
+	#navlinks {
+		background-color: #ddd;
+		margin: 0px 0px 0px 0px;
+		padding: 3px 0 4px 26px;
+		font-size: 10px;
+		}
+	#navlinks a:link { 
+		font-weight:       bold;
+		text-decoration:   underline;
+		white-space:       nowrap;
+	}
+	#navlinks  a:visited { 
+		text-decoration:   underline;
+		font-weight:       bold;
+	}
+	#navlinks a:hover { 
+		text-decoration:   none;
+		color:             #333;
+	}
+	
+	
+	.leftpad {
+	 padding-left: 20px;
+	}
+	
+	.imgwrapper {
+	 margin: 0 auto 0 auto;
+	 padding: 8px 0 5px 0;
+	 text-align: center;
+	}
+	
+	.imgborder {
+	 	border:1px solid #666;
+		display: block;
+		margin: auto;
+		padding: 0;
+	}
+	
+	.highlight {
+		font-size: 13px;
+		font-family: Arial, Verdana, Geneva, Sans-serif;
+		background-color: transparent;
+		color: #393;
+		font-weight: normal;
+	}
+	
+	
+	/* --------------- content --------------- */
+	
+	#content {
+		margin: 18px 26px;
+		font-size: 13px;
+		}
+	
+	#content img {
+		margin: auto;
+		padding: 0;
+		}
+	
+	/*  Some images do need a border to separate them from the rest of the page. */
+	
+	.screencap {
+	
+		border: 20px solid #ccc;
+		color: #000;
+		margin: 10px 0 5px 24px;
+		padding: 10px;
+	
+	}
+	/*
+		 Display title as image caption
+	*/
+	#content img[title]:after {
+		background-color: transparent;
+		color: #000;
+		content: attr(title);
+		display: block;
+		margin: 0;
+		padding: 0.3em 0 0 0;
+		font-size: 13px;
+		font-weight: bold;
+		text-align: center; 
+		}
+	
+	
+	#content h1 {
+		background-color: #FFFABC;
+		border: 2px solid #E9E5AC; 
+		color: #333;
+		font-size: 16px;
+		margin: 13px 0 15px 0;
+		padding: 13px;
+		text-align: left;
+		font: normal 18px/22px palantino, georgia, 'times new roman', serif;
+		}
+	
+	#content h1.page_next {float: right; border: 0; padding: 12px; margin-right: 10px;}
+	
+	#content h2 {
+		background-color: transparent;
+		border-bottom: 2px solid #666;
+		color: #333;
+		font-size: 15px;
+		font-weight: bold;
+		margin: 18px 0 10px 4px;
+		padding: 20px 0 3px 0px;
+		}
+	
+	#content h3 {
+		font-size: 14px;
+		font-weight: bold;
+		color:	#333;
+		background-color: transparent;
+		border-bottom: 1px solid #999;
+		margin: 30px 0 0 15px;
+		padding: 5px 0 3px 0px;
+		}
+	
+	#content h3 small {
+		float: right;
+	}
+	
+	#content h4 {
+		background-color: transparent;
+		color: #363;
+		font-size: 13px;
+		font-weight: bold;
+		margin: 10px 0 0 21px;
+		padding-left: 3px;
+		}
+	
+	#content h5 {
+		color: #333;
+		font-size: 13px;
+		margin: 16px 0 -5px 0;
+		padding: 0;
+		}
+		
+	#content .subhead {
+		font-size: 13px; 
+		font-weight: normal;
+		margin: 3px 0 0 0;
+		color: #666;
+	}
+	
+	#content .title {
+		margin: 13px 30px -8px 24px;
+		font-size: 13px; 
+	}
+	
+	#content p {
+		margin: 10px 30px 3px 24px;
+		font-size: 13px;
+		}
+		
+	#content b {
+		font-weight: bold;
+		}
+	
+	#content strong {
+		font-weight: bold;
+		}
+		
+	#content code {
+	 font-family: Monaco, Verdana, Sans-serif;
+	 font-size: 12px;
+	 background-color: #f9f9f9;
+	 border: 1px solid #D0D0D0;
+	 color: #002166;
+	 display: block;
+	 margin: 10px 0 5px 24px;
+	 padding: 12px 10px 12px 10px;
+	 white-space: pre;
+	}
+	
+	#content pre { 
+		font-family: Monaco, sans-serif;
+		background-color: #F6F8FB;
+		border: 1px solid #91A2B4;
+		color: #003CB5; 
+		font-size: 11px;
+		display: block;
+		margin: 10px 0 5px 24px;
+		padding: 10px;
+	}
+	
+	
+	#content .path {
+		background-color: #EBF3EC;
+		border: 1px solid #99BC99;
+		color: #005702;
+		font-size: 13px;
+		text-align: center;
+		margin: 0 0 14px 0;
+		padding: 5px 10px 5px 8px;
+		}
+	
+	
+	#content var {
+		background-color: transparent;
+		color: #393;
+		font-weight: bold;
+		}
+	
+	#content kbd {
+		font-family: Arial, Verdana, Geneva, Sans-serif;
+		background-color: transparent;
+		color: #c33;
+		font-size: 13px;
+		font-weight: bold;
+	 	}
+	
+	#content dfn {
+		font-family: Arial, Verdana, Geneva, Sans-serif;
+		font-size: 13px;
+		color: #336600;
+		font-weight: bold;
+		}
+	
+	#content samp {
+		font-size: 13px;
+		font-family: Arial, Verdana, Geneva, Sans-serif;
+		background-color: transparent;
+		color: #933;
+		font-weight: bold;
+		}
+	
+	#content address {
+		font-size: 10px;
+		font-style: italic;
+		margin-right: 20px;
+		text-align: right;
+		}
+	
+	#content li {
+		font-size: 13px;
+		margin-top: 6px;
+		margin-left: 5px;
+		font-size: 13px;
+		}
+	
+	#content li p {
+		font-size: 13px;
+		margin-left: 0;
+		margin-right: 0;
+		}
+	
+	#content dl {
+		font-size: 13px;
+		margin: 10px 0 5px 24px;
+		padding: 10px;
+		}
+	
+	#content dt {
+		font-weight: bold;
+		display: block;
+		float: none;
+		background-color: #666;
+		padding: 8px 6px;
+		color: #fff;
+		}
+	
+	#content dd {
+		display: block;
+		margin: 0 0 15px 0;
+		padding: 10px 6px 10px 25px;
+		background-color: #eee;
+		}
+	
+	#content table {
+		margin: 10px 0px 3px 24px;
+		font-size: 13px;
+		border: 1px solid #91A2B4;
+		border-collapse: collapse;
+	}
+	
+	#content table .caption {
+		padding: 2px 0;
+		font-weight: bold;
+		background-color: #91A2B4;
+		color: #fff;
+		margin: 0;
+	}
+	
+	#content table .group_heading {
+		padding: 6px 8px;
+		font-weight: bold;
+		font-size: 14px;
+		background-color: #91A2B4;
+		color: #fff;
+		margin: 5px 0;
+		text-align: left;
+	}
+	
+	#content table th {
+		padding: 2px 8px;
+		background-color: #F6F8FB;
+		border: 1px solid #91A2B4;
+		color: #003CB5;
+	}
+	
+	#content table td {
+		padding: 2px 8px;
+		border: 1px solid #91A2B4;
+	}
+	
+	#content .toc {
+		font-weight: bold;
+		font-size: 13px;
+		voice-family: "\"}\"";
+		voice-family: inherit;
+		font-size: 13px;   /* the correct value */
+		}
+	html>body #content .toc {
+		font-size: 13px;   /* reapply for Opera 5 */
+		}
+	
+	#content .toc b {
+		color: #333;
+		font-size: 13px;
+		}
+	
+	#content .minitoc {
+		font-weight: bold;
+		font-size: 13px;
+		voice-family: "\"}\"";
+		voice-family: inherit;
+		font-size: 13px;   /* the correct value */
+		}
+	html>body #content .minitoc {
+		font-size: 13px;   /* reapply for Opera 5 */
+		}
+	
+	
+	
+	/*
+		Apply style to IE browsers
+			http://centricle.com/ref/css/filters/tests/star_html/
+	*/
+	* html #content #toc ul {
+		padding-left: 5px;
+		}
+	
+	/*
+		Apply style to Moz browsers
+			http://centricle.com/ref/css/filters/tests/owen/
+	*/
+	head:first-child+body #content #toc ul {
+		margin-left: 5px;
+		}
+	
+	
+	#content .important {
+		background: #FBE6F2;
+		border: 1px solid #D893A1;
+		color: #000;
+		margin: 10px 0 5px 24px;
+		padding: 10px;
+		}
+	
+	#content .important p {
+		margin: 6px 0 8px 0;
+		padding: 0;
+		}
+		
+	#content .important .leftpad {
+		margin: 6px 0 8px 0;
+	 	padding-left: 20px;
+	}
+		
+		
+	#content .critical {
+		background: #FBE6F2;
+		border: 1px solid #E68F8F;
+		color: #000;
+		margin: 10px 0 5px 0;
+		padding: 10px;
+		}
+		
+	#content .critical p {
+		margin: 5px 0 6px 0;
+		padding: 0;
+		}
+		
+	#content .tip {
+		background: #dfdfff;
+		border: 1px solid #3366CC;
+		color: #000;
+		margin: 10px 0 5px 24px;
+		padding: 10px;
+		}
+	
+	#content .tip p {
+		margin: 6px 0 8px 0;
+		padding: 0;
+		}
+	
+	#content .tip .leftpad {
+		margin: 6px 0 8px 0;
+	 	padding-left: 20px;
+		}
+	
+	#content .searchbox {
+		background-color: #eee;
+		border: 1px solid #222;
+		padding: 7px 0 7px 8px;
+		text-align: center;
+		}
+	
+	#content ul.guidelineList {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	
+	#content .guidelineDetails {
+		margin-left: 60px;
+	}
+	
+	#content .required {
+		color: red;
+	}
+	/* --------------- footer --------------- */
+	
+	#footer {
+		background-color: #eee;
+		border-top: 1px solid #ccc;
+		font-size: 10px;
+		padding: 16px 0 26px 0;
+		margin: 40px 0 0 0;
+		text-align: center;
+		}
+	
+	#footer address {
+		font-style: normal;
+		font-variant: normal;
+		font-weight: normal;
+		}
+	
+	#footer .validation {
+		font-size: xx-small;
+		voice-family: "\"}\"";
+		voice-family: inherit;
+		font-size: x-small;   /* the correct value */
+		}
+	html>body #footer .validation {
+		font-size: x-small;   /* reapply for Opera 5 */
+		}
+	
+	.center {
+	 text-align: center;
+	}
+	
+	form {
+	 margin:            0;
+	 padding:           0;
+	 border:            0;
+	}
+	.hidden {
+	 margin:            0;
+	 padding:           0;
+	 border:            0;
+	}
+	.input {
+	 border-top:        2px solid #555;
+	 border-left:       2px solid #555;
+	 border-bottom:     1px solid #999;
+	 border-right:      1px solid #999;
+	 color:             #333;
+	 font-family:       Lucida Grande, Verdana, Geneva, Sans-serif;
+	 font-size:         13px;
+	 height:            1.5em;
+	 padding:           0;
+	 margin:        	0;
+	} 
+	.submit {
+	
+	 font-family:       arial, Lucida Grande, Verdana, Geneva, Sans-serif;
+	 font-size:         10px;
+	 font-weight:       bold;
+	 border-top:		1px solid #fff;
+	 border-left:		1px solid #fff;
+	 border-right:		1px solid #333;
+	 border-bottom:		1px solid #333;
+	 margin:        	0;
+	 padding:			2px 4px 2px 4px;
+	 background-color:  #ccc;
+	 color:             #333;
+	 cursor: pointer;
+	 cursor: hand;
+	}  
+	
+	/* -------------------------------------
+	/*  Comments
+	/* -------------------------------------*/
+	
+	#comments {
+		margin: 			18px 40px;
+	}
+	
+	#comments h3 {
+		background-color: #FFFABC;
+		border: 2px solid #E9E5AC; 
+		color: #333;
+		font-size: 16px;
+		margin: 13px 0 13px 0;
+		padding: 13px;
+		text-align: left;
+		font: normal 18px/22px palantino, georgia, 'times new roman', serif;
+	}
+	
+	#commentForm {
+		float: right;
+		width: 50%;
+		margin-left: 12px;
+	}
+	
+	#commentForm textarea {
+		width: 100%;
+	}
+	
+	#commentFormInstructions {
+		margin: 12px 25px 12px 0;
+		padding: 10px 0;
+	}
+	
+	#commentFormInstructions strong {
+		color: #a42b00;
+	}
+	
+	#comments table {
+		font-size: 11px;
+		font-family: arial, sans-serif;
+		color: #333;
+		margin: 10px 0;
+		border-top: 1px solid #ccc9a4;
+	}
+	
+	#comments td, #comments th {
+		border-bottom: 1px solid #ccc9a4;
+		border-right: 1px solid #ccc9a4;
+		padding: 8px 10px 10px 10px;
+		vertical-align: center;
+	}
+	
+	#comments th.column1, #comments td.column1 {
+		border-left: 1px solid #ccc9a4;
+	}
+	
+	#comments th.tableHeading {
+		background-color: #FFFABC;
+		border-left: 1px solid #ccc9a4;
+		color: #333;
+		padding: 4px;
+		font-size: 14px;
+		font-family: palantino, georgia, 'times new roman', serif;
+	}
+	
+	#comments td.avatar {
+		border-right: 1px solid #ccc9a4;
+	}
+	
+	#comments td.stretch {
+		border-left: 1px solid #ccc9a4;
+		border-right: 1px solid #ccc9a4;
+	}
+	
+	#comments td.even {
+		background: #fcfce3;
+	}
+	
+	#comments td.odd {background:#fff;}
+	
+	#comments td.preview {border-left: 1px solid #ccc9a4;}
+	
+	#comments td p, #comments td code, #comments td pre, #comments td div {
+		font-size: 11px;
+	}
+	
+	#comments td.staffeven {
+		border-color: #27343c;
+		background-color: #27343c;
+		color: #fff;
+	}
+	
+	#comments td.staffeven a:link, #comments td.staffeven a:visited {
+		color: #57b3da;
+	}
+	
+	#comments td.staffodd {
+		border-color: #9ba4a9;
+	}
+	
+	#comments blockquote {
+		border:					1px solid #e1e1b5;
+		border-left:			3px solid #e1e1b5;
+		background-color:		#fdfdeb;
+		padding:				5px 8px;
+	}
+	
+	#comments td code {
+		font-family:			"Lucida Console", Monaco, monospace;
+		font-size:				11px;
+	}
+	
+	#comments .codeblock {
+		background-color:		#fbfbfd;
+		border:					1px solid #dae0e4;
+		margin:					10px 4px;
+		padding:				8px;
+	}
+	
+	#comments .post {
+		font-size: 11px;
+		line-height: 13px;
+	}
+	
+	#feedLink {
+		text-align: center;
+	}
+	
+	#feedLink a {
+		text-decoration: none;
+	}
+	
+	#feedLink img {
+		margin-bottom: -3px;
+		border: 0;
+	}
+  </style>
+</head>
+
+<body>
+<div><a name="top"></a></div>
+
+<div id="content">
+
+	<h1>Postmaster License Agreement</h1>
+
+  <p><b>This license is a legal agreement between you and Objective HTML / SaucePan Creative for the use of Postmaster Software (the "Software"). By downloading any version of Postmaster you agree to be bound by the terms and conditions of this license. Objective HTML / SaucePan Creative reserves the right to alter this agreement at any time, for any reason, without notice.</b></p>
+
+  	<p>Revised on: 26 Mar, 2012</p>
+
+  	<h3>Permitted Use</h3>
+	 
+	 <p>Users may use the Software for any personal, commercial, and non-commercial purposes. One license grants the right to perform <strong>one</strong> installation of the Software. Each additional installation of the Software requires an additional purchased license.</p>
+	 	
+	<h3>Restrictions</h3>
+
+	<p>Users must be running ExpressionEngine v2.2 or higher.</p>
+
+	<h3>Display of Copyright Notices</h3>
+
+	<p>All copyright and proprietary notices and comments cannot be changed in anyway.</p>
+	  
+	<h3>Making Copies</h3>
+	
+	<p>You may make copies of the Software for back-up purposes, provided that you reproduce the Software in its original form and with all proprietary notices on the back-up copy.</p>
+
+	<h3>Software Modification</h3>
+
+	<p>You may alter, modify, or extend the Software for your own use, or commission a third-party to perform modifications for you, but you may <strong>not</strong> resell, redistribute or transfer the modified or derivative version without prior written consent from Objective HTML / SaucePan Creative. Components from the Software may not be extracted and used in other programs without prior written consent from Objective HTML / SaucePan Creative.</p>
+
+	<h3>Technical Support</h3>
+
+	<p>Technical support is provided as described in the <a href="http://www.objectivehtml.com/support">Support Policy</a>. No representations or guarantees are made regarding the response time in which support questions are answered.</p>
+
+	<h3>Refund Policy</h3>
+
+	<p>We offer a 30 day, money back <a href="http://www.objectivehtml.com/refund">Refund Policy</a>. If for any reason Postmaster doesn’t work out for your project, simply <a href="mailto:sales@objectivehtml.com">email sales</a> within 30 days of purchase for a full refund.</p>
+	
+	<h3>Indemnity</h3>
+
+	<p>You agree to indemnify and hold harmless Objective HTML / SaucePan Creative for any third-party claims, actions or suits, as well as any related expenses, liabilities, damages, settlements or fees arising from your use or misuse of the Software, or a violation of any terms of this license.</p>
+
+	<p>Objective HTML / SaucePan Creative will not be liable for any patent defense should a challenge be levied against your website.</p>
+	
+	<h3>Disclaimer Of Warranty</h3>
+
+	<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, WARRANTIES OF QUALITY, PERFORMANCE, NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.&nbsp; FURTHER, OBJECTIVE HTML / SAUCEPAN CREATIVE DOES NOT WARRANT THAT THE SOFTWARE OR ANY RELATED SERVICE WILL ALWAYS BE AVAILABLE.</p>
+
+	<h3>Limitations Of Liability</h3>
+
+	<p>YOU ASSUME ALL RISK ASSOCIATED WITH THE INSTALLATION AND USE OF THE SOFTWARE. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS OF THE SOFTWARE BE LIABLE FOR CLAIMS, DAMAGES OR OTHER LIABILITY ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE. LICENSE HOLDERS ARE SOLELY RESPONSIBLE FOR DETERMINING THE APPROPRIATENESS OF USE AND ASSUME ALL RISKS ASSOCIATED WITH ITS USE, INCLUDING BUT NOT LIMITED TO THE RISKS OF PROGRAM ERRORS, DAMAGE TO EQUIPMENT, LOSS OF DATA OR SOFTWARE PROGRAMS, OR UNAVAILABILITY OR INTERRUPTION OF OPERATIONS.</p>
+	
+</div>
+
+
+<p class="center"><a href="#top">Top of Page</a></p>
+
+<div id="footer">
+  <address><a href="http://objectivehtml.com/">Objective HTML</a> &#8211; Copyright &#169; 2012</address>
+</div>
+
+</body>
+</html>

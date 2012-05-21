@@ -1,0 +1,51 @@
+/**
+ * Postmaster
+ * 
+ * @package		Postmaster
+ * @author		Justin Kimbrell
+ * @copyright	Copyright (c) 2012, Objective HTML
+ * @link 		http://www.objectivehtml.com/postmaster
+ * @version		1.0.97
+ * @build		20120415
+ */
+
+
+Version 1.0.971 - 04/14/2012
+----------------------------
+- (Bug Fix) Fixed an issue when parsing member data.
+
+Version 1.0.97 - 04/14/2012
+---------------------------
+- (Feature) Added CampaignMonitor integration 
+- (Feature) Added the ability to parse most fieldypes without channel entries loop
+- (Bug Fix) Fixed a required library bug
+- (Bug Fix) Fixed a number of markup issues in the template view itself.
+
+Version 1.0.96 - 04/12/2012
+---------------------------
+- (Bug Fix) Fixed an issue with the parse order throwing an error for advanced conditionals.
+- (Bug Fix) Removed an unnecessary require script to load the EE_Template class.
+- (Bug Fix) Fixed a couple minor CSS issues breaking the CP sidebar.
+
+Version 1.0.9 - 04/08/2012
+------------------------
+- (Feature) Re-wrote core architecture to support third party API's.
+- (Feature) Included MailChimp, Postmark, PostageApp, and SendGrid API's
+- (Feature) Added robust email queue and reocurring emails
+- (Feature) Added unsubscribe and blacklisting
+- (Feature) Added member data to the default template parsing variables
+
+Version 1.0.1 - 03/26/2012
+------------------------
+- Fixed a bug that prevented users using the admin.php files from working properly
+- Removed the PHP short echo tags to try to eliminate bugs with some users
+
+Version 1.0.0 - 03/24/2012
+------------------------
+- First round of UX tweaks 
+- Added tooltips to UI
+- Change input fields to textareas for more flexibility and longer max char length
+
+Version 1.0.0 - 03/15/2012
+------------------------
+Initial beta release

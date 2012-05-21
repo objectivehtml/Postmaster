@@ -1,0 +1,94 @@
+.hidden { display: none; }
+
+/*-------------------------------------------    
+	Headers
+-------------------------------------------*/
+
+h2 a, h3 a, h4 a, h5 a, h6 a {
+	text-decoration: none;
+	}
+	
+h2 a:hover, h3 a:hover, h4 a:hover, h5 a:hover, h6 a:hover {
+	text-decoration: underline;
+	}
+
+
+/*-------------------------------------------    
+	Typeography	
+-------------------------------------------*/
+
+.huge { font-size: 72px; }
+.bigger { font-size: 60px; }
+.big { font-size: 48px; }
+.large { font-size: 32px; }
+.medium { font-size: 28px; }
+.normal { font-size: 1em; }
+.small { font-size: 13px; }
+.smaller { font-size: 10px; }
+.tiny { font-size: 8px; }
+
+/*-------------------------------------------    
+	Positioning	
+-------------------------------------------*/
+
+.float-right { float: right; }
+.float-left { float: left; }
+.clear { clear: both; }
+
+/*-------------------------------------------    
+	Paddings
+-------------------------------------------*/
+
+.pad-left { padding-left: 1em; }
+.pad-right { padding-right: 1em;}
+.pad-top { padding-top: 1em; }
+.pad-bottom { padding-bottom: 1em; }
+.inner-pad { padding: 1em; }
+
+
+/*-------------------------------------------    
+	Margins
+-------------------------------------------*/
+
+.margin-left { margin-left: 1em; }
+.margin-right { margin-right: 1em; }
+.margin-top { margin-top: 1em; }
+.margin-bottom { margin-bottom: 1em; }
+
+/*-------------------------------------------    
+	Lists	
+-------------------------------------------*/
+	
+.bullets {
+	list-style: disc;
+	}
+
+.numbers {
+	list-style: decimal;
+	}
+	
+.plain {
+	list-style: none;
+	margin-left: 0;
+	padding-left: 0;
+	}
+
+.inline li {
+	float: left;
+	margin-bottom: 0;
+}
+
+.inline li,
+.inline li a {
+	display: inline-block;
+}
+	
+/*-------------------------------------------    
+	Round Corners
+-------------------------------------------*/
+
+.ui-round-corners {
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	}
