@@ -78,13 +78,18 @@ class Postmaster_mcp {
 		$this->EE->theme_loader->javascript('qtip');
 		$this->EE->theme_loader->css('qtip');
 
+		require_once('delegates/Base_Delegate.php');
+		
+		$delegate = new Base_Delegate();
+		
 		$vars = array(
 			'theme_url' => $this->EE->theme_loader->theme_url(),
 			'themes'  	=> $this->themes,
 			'parcels' 	=> $this->EE->postmaster_lib->get_parcels(),
+			'delegates'	=> $delegate->get_delegates(FALSE, PATH_THIRD.'postmaster/delegates'),
 			'ping_url'	=> $this->current_url('ACT', $this->EE->channel_data->get_action_id(__CLASS__, 'send_email'))
 		);
-
+		
 		$this->EE->cp->set_variable('cp_page_title', 'Postmaster');
 		
 		$this->EE->cp->set_right_nav(array(
