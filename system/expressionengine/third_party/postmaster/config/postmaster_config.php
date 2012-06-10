@@ -4,4 +4,4 @@
  *	Version
 /* -------------------------------------- */
 
-$config['postmaster_version'] = '1.0.97';
+$config['postmaster_version'] = '1.0.98';

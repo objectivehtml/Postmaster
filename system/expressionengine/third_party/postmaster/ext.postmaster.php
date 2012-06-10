@@ -7,8 +7,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
- * @version		1.0.97
- * @build		20120415
+ * @version		1.0.98
+ * @build		20120609
  */
 
 require 'config/postmaster_config.php';
