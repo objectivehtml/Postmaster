@@ -6,7 +6,7 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/
- * @version		0.1.0
+ * @version		0.1.1
  * @build		20120609
  */
 
@@ -35,6 +35,11 @@ class Base_Delegate {
 			$delegate = $this->load($name);
 			$method   = $this->EE->TMPL->tagparts[2];
 			$params   = $this->EE->TMPL->tagparams;
+			
+			if(!method_exists($delegate, $method))
+			{
+				$this->show_error('\''.$method.'\' is not a valid method in the \''.ucfirst($name).'\' delegate.');
+			}
 			
 			return $delegate->$method($params);
 		}
