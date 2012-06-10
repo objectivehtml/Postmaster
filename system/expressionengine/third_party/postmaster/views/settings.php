@@ -93,6 +93,34 @@
 	</tbody>
 </table>
 
+<h2><a href="#delegates" class="help">Delegates <span>(?)</span></a></h2>
+
+<table class="mainTable" cellpadding="0" cellspacing="0">
+	<thead>
+		<tr>
+			<th style="width:40%">Name</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<? if(count($delegates) == 0): ?>
+		<tr>
+			<td colspan="7">
+				<p class="empty">You have not installed any delegates yet.</p>
+			</td>
+		</tr>
+		<? endif; ?>
+		
+		<? foreach($delegates as $delegate): ?>
+		<tr>
+			<td><? echo $delegate->name?></td>
+			<td><? echo $delegate->description?></td>
+		</tr>
+		<? endforeach; ?>
+		
+	</tbody>
+</table>
+					
 <h2><a href="#ping" class="help">Ping URL <span>(?)</span></a></h2>
 
 <div class="box">
