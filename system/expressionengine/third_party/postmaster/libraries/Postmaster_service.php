@@ -1,25 +1,19 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once APPPATH.'third_party/postmaster/libraries/Curl.php';
-require_once APPPATH.'third_party/postmaster/libraries/Uuid.php';
+require_once PATH_THIRD.'postmaster/libraries/Postmaster_core.php';
 
-abstract class Postmaster_service {
+abstract class Postmaster_service extends Postmaster_core {
 
-	public $name, $id, $description, $now;
-
-	public function __construct()
-	{
-		$this->EE =& get_instance();
-
-		$this->curl = new Curl();
-		$this->uid  = new Uuid();
-
-		$this->now  = $this->EE->localize->now;
-	}
-
+	public $id;
+	
 	abstract public function send($parsed_object, $parcel);
 	abstract public function default_settings();
-	abstract public function display_settings($settings, $parcel);
+	abstract public function display_settings($settings, $obj);
+	
+	public function get_settings($settings)
+	{
+		return isset($settings->{$this->name}) ? $settings->{$this->name} : $this->default_settings();
+	}
 
 	public function build_table($settings, $fields)
 	{	
@@ -96,39 +90,6 @@ abstract class Postmaster_service {
 		$html .= '</table>';
 
 		return $html;
-	}
-
-	public function call_url($method, $params = array())
-	{
-		//$base_url = $this->EE->postmaster_lib->cp_url('call');
-		$base_url = $this->EE->postmaster_lib->current_url('ACT', $this->EE->channel_data->get_action_id('postmaster_mcp', 'call'));
-
-		$params = array_merge(
-			array(
-				'service'        => $this->name,
-				'service_method' => $method
-			),
-			$params
-		);
-
-		return $base_url . '&' . http_build_query($params);
-	}
-
-	public function get_settings($settings)
-	{
-		return isset($settings->{$this->name}) ? $settings->{$this->name} : $this->default_settings();
-	}
-
-	public function json($data)
-	{
-		header('Content-header: application/json');
-
-		exit(json_encode($data));
-	}
-
-	public function show_error($error)
-	{
-		$this->EE->output->show_user_error('general', '<b>'.$this->name.'</b> - '.$error);
 	}
 }
 
