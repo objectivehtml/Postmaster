@@ -81,7 +81,7 @@ MailChimp helps you design email newsletters, share them on social networks, int
 			'parcel'     => $parcel
 		));
 	}
-
+	
 	public function display_settings($settings, $parcel)
 	{
 		$html = $this->build_table($settings, $this->fields);
@@ -203,6 +203,51 @@ MailChimp helps you design email newsletters, share them on social networks, int
 		return str_replace('<dc>', substr($api_key, strpos($api_key, '-')+1), $url);
 	}
 
+	public function subscribe($data)
+	{
+		$url = $this->api_url($data['api_key'], 'listSubscribe');
+		
+		$params = array(
+			'apikey'            => $data['api_key'],
+			'id'                => $data['id'],
+			'email_address'     => $data['email'],
+			'email_type'		=> $data['email_type'],
+			'double_optin'      => (bool) $this->param($data['post'], 'double_optin', TRUE),
+			'update_existing'   => (bool) $this->param($data['post'], 'update_existing', FALSE),
+			'replace_interests' => (bool) $this->param($data['post'], 'replace_interests', TRUE),
+			'send_welcome'      => (bool) $this->param($data['post'], 'send_welcome', FALSE),	
+		);
+		
+		$unset = array('double_optin', 'update_existing', 'replace_interests', 'send_welcome');
+		
+		foreach($unset as $var)
+		{
+			unset($data['post'][$var]);
+		}
+		
+		$params['merge_vars'] = $data['post'];
+	
+		$response = $this->post($url, $params);
+		
+		$return = new Newsletter_Subscription_Response(array(
+			'success' => $response === TRUE ? TRUE : FALSE,
+			'data'    => $response,
+			'errors'  => $response === TRUE ? array() : array(array('error' => $response->error, 'code' => $response->code))
+		));
+		
+		return $return;
+	}
+	
+	public function param($data, $name, $default = FALSE)
+	{
+		return isset($data[$name]) ? $data[$name] : $default;
+	}
+	
+	public function unsubscribe()
+	{
+		
+	}
+	
 	public function create_campaign($list_id, $parsed_object, $parcel)
 	{
 		$settings = $parcel->settings->{$this->name};
@@ -263,6 +308,11 @@ MailChimp helps you design email newsletters, share them on social networks, int
 	private function get($url)
 	{
 		return json_decode($this->curl->simple_get($url));
+	}
+	
+	private function post($url, $data)
+	{
+		return json_decode($this->curl->simple_post($url, $data));
 	}
 
 	public function default_settings()
