@@ -10,8 +10,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
- * @version		1.0.0
- * @build		20120412
+ * @version		1.1.0
+ * @build		20120610
  */
 
 require_once APPPATH.'third_party/postmaster/libraries/Postmaster_service.php';
@@ -44,6 +44,29 @@ MailChimp helps you design email newsletters, share them on social networks, int
 	public function __construct()
 	{
 		parent::__construct();
+	}
+	
+	public function subscribers($params = array())
+	{
+		$url = $this->api_url($params['api_key'], 'listMembers', $params);
+		
+		$subscribers = $this->get($url);
+		
+		$return = array();
+		
+		foreach($subscribers->data as $index => $subscriber)
+		{
+			$subscriber->timestamp = strtotime($subscriber->timestamp);
+			
+			$row['index'] = $index;
+			$row['count'] = $index+1;
+			$row['total'] = $subscribers->total;			
+			$row =  $this->EE->channel_data->utility->add_prefix($params['prefix'], array_merge($row, (array) $subscriber));
+			
+			$return[$index] = $row;	
+		}
+		
+		return $return;
 	}
 
 	public function send($parsed_object, $parcel)
@@ -237,15 +260,34 @@ MailChimp helps you design email newsletters, share them on social networks, int
 		
 		return $return;
 	}
-	
+		
 	public function param($data, $name, $default = FALSE)
 	{
 		return isset($data[$name]) ? $data[$name] : $default;
 	}
 	
-	public function unsubscribe()
+	public function unsubscribe($data)
 	{
+		$params = array(
+			'apikey'            => $data['api_key'],
+			'id'                => $data['id'],
+			'email_address'     => $data['email'],
+			'delete_member'		=> $this->param($data['post'], 'delete_member', FALSE),
+			'send_goodbye'		=> $this->param($data['post'], 'send_goodby', TRUE),
+			'send_notify'		=> $this->param($data['post'], 'send_notify', TRUE)
+		);
 		
+		$url = $this->api_url($data['api_key'], 'listUnsubscribe', $params);
+		
+		$response = $this->post($url, $params);
+		
+		$return = new Newsletter_Subscription_Response(array(
+			'success' => $response === TRUE ? TRUE : FALSE,
+			'data'    => $response,
+			'errors'  => $response === TRUE ? array() : array(array('error' => $response->error, 'code' => $response->code))
+		));
+		
+		return $return;
 	}
 	
 	public function create_campaign($list_id, $parsed_object, $parcel)
