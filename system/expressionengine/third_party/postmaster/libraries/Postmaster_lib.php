@@ -34,7 +34,7 @@ class Postmaster_lib {
 
 		$this->EE->load->driver('channel_data');
 	}
-
+	
 	public function add_to_queue($parsed_object, $parcel, $date = FALSE)
 	{
 
@@ -223,7 +223,7 @@ class Postmaster_lib {
 
 		return $themes;
 	}
-
+	
 	public function get_parcel($id)
 	{
 		$this->EE->db->where('id', $id);
@@ -293,17 +293,17 @@ class Postmaster_lib {
 
 		return $settings_array;
 	}
-
+	
 	public function load_service($name)
 	{
-		require_once APPPATH . 'third_party/postmaster/libraries/Postmaster_service.php';
-		require_once APPPATH . 'third_party/postmaster/services/'.ucfirst($name).'.php';
+		require_once PATH_THIRD . 'postmaster/libraries/Postmaster_service.php';
+		require_once PATH_THIRD . 'postmaster/services/'.ucfirst($name).'.php';
 
 		$class = $name.$this->service_suffix;
 
 		return new $class;
 	}
-
+	
 	public function parse($parcel)
 	{
 		if(!isset($this->EE->TMPL))
