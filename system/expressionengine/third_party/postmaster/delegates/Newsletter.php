@@ -54,10 +54,6 @@ class Newsletter_delegate extends Base_Delegate {
 		return $value;
 	}
 	
-<<<<<<< HEAD
-	public function subscribe()
-	{
-=======
 	public function subscribers()
 	{
 		$this->load_service();
@@ -100,7 +96,6 @@ class Newsletter_delegate extends Base_Delegate {
 	
 	private function action($subscribe)
 	{
->>>>>>> refs/heads/dev
 		$service = $this->load_service();
 		
 		$data          = array(
@@ -116,9 +111,6 @@ class Newsletter_delegate extends Base_Delegate {
 			$data['post'][$index] = $this->param($index);
 		}
 		
-<<<<<<< HEAD
-		$response = $service->subscribe($data);
-=======
 		if($subscribe)
 		{
 			$response = $service->subscribe($data);
@@ -127,7 +119,6 @@ class Newsletter_delegate extends Base_Delegate {
 		{
 			$response = $service->unsubscribe($data);
 		}
->>>>>>> refs/heads/dev
 		
 		$vars = array(
 			'success' => $response->success,
@@ -148,11 +139,7 @@ class Newsletter_delegate extends Base_Delegate {
 		return $this->parse(array($vars));
 	}
 	
-<<<<<<< HEAD
-	public function subscribe_form()
-=======
 	private function form($subscribe, $prefix)
->>>>>>> refs/heads/dev
 	{
 		$this->load_service();
 		
@@ -165,17 +152,6 @@ class Newsletter_delegate extends Base_Delegate {
 	
 			$this->EE->base_form->set_rule('email', 'required|email');
 			
-<<<<<<< HEAD
-			if((bool) $this->post('newsletter_subscribe_form'))
-			{						
-				if(count($this->EE->base_form->field_errors) == 0)
-				{
-					$service = $this->EE->input->post('newsletter_subscribe_service');
-					$service = $this->EE->base_form->decode($service);
-					$service = $this->lib->load_service($service);
-					
-					$api_key = $this->post('newsletter_subscribe_id', TRUE);
-=======
 			if((bool) $this->post($prefix.'form'))
 			{						
 				if(count($this->EE->base_form->field_errors) == 0)
@@ -185,17 +161,12 @@ class Newsletter_delegate extends Base_Delegate {
 					$service = $this->lib->load_service($service);
 					
 					$api_key = $this->post($prefix.'id', TRUE);
->>>>>>> refs/heads/dev
 					
 					$data          = array(
 						'return'     => $this->post('return', TRUE),
 						'api_key'    => $api_key,
 						'email'      => $this->post('email', FALSE),
-<<<<<<< HEAD
-						'id'	 	 => $this->post('newsletter_subscribe_list', TRUE),
-=======
 						'id'	 	 => $this->post($prefix.'list', TRUE),
->>>>>>> refs/heads/dev
 						'email_type' => $this->post('email_type', FALSE, 'html')
 					);
 					
@@ -205,19 +176,12 @@ class Newsletter_delegate extends Base_Delegate {
 					
 					foreach($_POST as $index => $value)
 					{
-<<<<<<< HEAD
-						if(!preg_match("/(newsletter_subscribe_)/u", $index) && !in_array($index, $reserved))
-=======
 						if(!preg_match("/('.$prefix.'_)/u", $index) && !in_array($index, $reserved))
->>>>>>> refs/heads/dev
 						{
 							$data['post'][$index] = $this->post($index, FALSE, FALSE, TRUE);
 						}
 					}
 						
-<<<<<<< HEAD
-					$response = $service->subscribe($data);
-=======
 					if($subscribe)
 					{
 						$response = $service->subscribe($data);
@@ -226,7 +190,6 @@ class Newsletter_delegate extends Base_Delegate {
 					{
 						$response = $service->unsubscribe($data);
 					}
->>>>>>> refs/heads/dev
 					
 					if($this->post('ajax_response', TRUE) == 'y')
 					{
@@ -252,17 +215,10 @@ class Newsletter_delegate extends Base_Delegate {
 			}
 			
 			$hidden_fields = array(
-<<<<<<< HEAD
-				'newsletter_subscribe_form'    => TRUE,
-				'newsletter_subscribe_service' => $this->param('service', FALSE, FALSE, TRUE),
-				'newsletter_subscribe_id'	   => $this->param('key', $this->param('api_key', FALSE, FALSE, TRUE)),
-				'newsletter_subscribe_list'	   => $this->param('list', FALSE, FALSE, TRUE)
-=======
 				$prefix.'form'    => TRUE,
 				$prefix.'service' => $this->param('service', FALSE, FALSE, TRUE),
 				$prefix.'id'      => $this->param('key', $this->param('api_key', FALSE, FALSE, TRUE)),
 				$prefix.'list'    => $this->param('list', FALSE, FALSE, TRUE)
->>>>>>> refs/heads/dev
 			);
 			
 			return $this->EE->base_form->open($hidden_fields);			

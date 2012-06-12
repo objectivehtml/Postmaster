@@ -260,21 +260,12 @@ MailChimp helps you design email newsletters, share them on social networks, int
 		
 		return $return;
 	}
-<<<<<<< HEAD
-	
-=======
 		
->>>>>>> refs/heads/dev
 	public function param($data, $name, $default = FALSE)
 	{
 		return isset($data[$name]) ? $data[$name] : $default;
 	}
 	
-<<<<<<< HEAD
-	public function unsubscribe()
-	{
-		
-=======
 	public function unsubscribe($data)
 	{
 		$params = array(
@@ -297,7 +288,6 @@ MailChimp helps you design email newsletters, share them on social networks, int
 		));
 		
 		return $return;
->>>>>>> refs/heads/dev
 	}
 	
 	public function create_campaign($list_id, $parsed_object, $parcel)

@@ -7,20 +7,12 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
-<<<<<<< HEAD
- * @version		1.0.98
- * @build		20120609
-=======
  * @version		1.0.981
  * @build		20120612
->>>>>>> refs/heads/dev
  */
 
 require_once 'delegates/Base_Delegate.php';
 
-<<<<<<< HEAD
-class Postmaster extends Base_Delegate {}
-=======
 class Postmaster extends Base_Delegate {
 	
 	/**
@@ -42,4 +34,3 @@ class Postmaster extends Base_Delegate {
 	}
 	
 }
->>>>>>> refs/heads/dev
