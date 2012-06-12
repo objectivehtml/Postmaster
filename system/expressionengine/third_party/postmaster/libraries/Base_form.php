@@ -9,8 +9,13 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
+<<<<<<< HEAD
  * @version		1.3.0
  * @build		20120608
+=======
+ * @version		1.3.1
+ * @build		20120612
+>>>>>>> refs/heads/dev
  */
 
 if(!class_exists('Base_form'))
@@ -23,7 +28,11 @@ if(!class_exists('Base_form'))
 		public $class             = '';
 		public $groups            = array();
 		public $hidden_fields     = array();
+<<<<<<< HEAD
 		public $error_handling    = FALSE;
+=======
+		public $error_handling    = 'inline';
+>>>>>>> refs/heads/dev
 		public $errors            = array();
 		public $field_errors      = array();
 		public $id                = '';
@@ -262,6 +271,14 @@ if(!class_exists('Base_form'))
 				$this->action = rtrim($this->current_url(FALSE), '/') . '/' . ltrim($this->action, '/');
 			}
 			
+<<<<<<< HEAD
+=======
+			if($this->error_handling != 'inline' && count(array_merge($this->field_errors, $this->errors)) > 0)
+			{
+				$this->EE->output->show_user_error('general', array_merge($this->field_errors, $this->errors));
+			}
+			
+>>>>>>> refs/heads/dev
 			// Return the form
 			return form_open($this->action, $params, $this->encode($hidden_fields)) . $this->tagdata . '</form>';
 		}
