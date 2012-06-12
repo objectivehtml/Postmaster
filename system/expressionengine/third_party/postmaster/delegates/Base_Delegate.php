@@ -35,7 +35,7 @@ class Base_Delegate {
 			$delegate = $this->load($name);
 			$method   = $this->EE->TMPL->tagparts[2];
 			$params   = $this->EE->TMPL->tagparams;
-			
+		
 			if(!method_exists($delegate, $method))
 			{
 				$this->show_error('\''.$method.'\' is not a valid method in the \''.ucfirst($name).'\' delegate.');
@@ -61,10 +61,15 @@ class Base_Delegate {
 	
 	protected function load($name)
 	{
-		require_once ucfirst($name).'.php';
-
+		include_once ucfirst($name).'.php';
+		
 		$class = $name.$this->suffix;
 
+		if(!class_exists($class))
+		{
+			$this->show_error('\''.ucfirst($name).'\' is not a valid delegate');	
+		}	
+		
 		return new $class;
 	}
 	
