@@ -9,8 +9,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
- * @version		1.3.0
- * @build		20120608
+ * @version		1.3.1
+ * @build		20120612
  */
 
 if(!class_exists('Base_form'))
@@ -23,7 +23,7 @@ if(!class_exists('Base_form'))
 		public $class             = '';
 		public $groups            = array();
 		public $hidden_fields     = array();
-		public $error_handling    = FALSE;
+		public $error_handling    = 'inline';
 		public $errors            = array();
 		public $field_errors      = array();
 		public $id                = '';
@@ -260,6 +260,11 @@ if(!class_exists('Base_form'))
 			if(!preg_match("/(http|https|ftp|ftps)\:\/\/?/", $this->action, $mathes))
 			{
 				$this->action = rtrim($this->current_url(FALSE), '/') . '/' . ltrim($this->action, '/');
+			}
+			
+			if($this->error_handling != 'inline' && count(array_merge($this->field_errors, $this->errors)) > 0)
+			{
+				$this->EE->output->show_user_error('general', array_merge($this->field_errors, $this->errors));
 			}
 			
 			// Return the form
