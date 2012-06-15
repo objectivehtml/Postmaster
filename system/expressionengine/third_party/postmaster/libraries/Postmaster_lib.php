@@ -297,11 +297,8 @@ class Postmaster_lib {
 	public function load_service($name)
 	{
 		require_once PATH_THIRD . 'postmaster/libraries/Postmaster_service.php';
-<<<<<<< HEAD
-		require_once PATH_THIRD . 'postmaster/services/'.ucfirst($name).'.php';
-=======
+
 		require_once PATH_THIRD . 'postmaster/services/'.ucfirst(strtolower($name)).'.php';
->>>>>>> 4ec8a93e6be665538b270ee20604029d1aab2498
 
 		$class = $name.$this->service_suffix;
 
