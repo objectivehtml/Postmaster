@@ -226,7 +226,7 @@ class CampaignMonitor_postmaster_service extends Postmaster_service {
 		</script>
 
 		<ul id=\"campaignmonitor-lists\">";
-
+		
 			$html .= $this->list_rows($settings->api_key, $settings->client_id);
 
 		$html .= '

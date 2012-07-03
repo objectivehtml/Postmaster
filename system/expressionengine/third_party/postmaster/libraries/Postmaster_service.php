@@ -12,7 +12,9 @@ abstract class Postmaster_service extends Postmaster_core {
 	
 	public function get_settings($settings)
 	{
-		return isset($settings->{$this->name}) ? $settings->{$this->name} : $this->default_settings();
+		$default_settings = $this->default_settings();
+		
+		return isset($settings->{$this->name}) ? (object) array_merge((array) $default_settings, (array) $settings->{$this->name}) : $default_settings;
 	}
 
 	public function build_table($settings, $fields)
