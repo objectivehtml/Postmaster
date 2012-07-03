@@ -7,8 +7,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
- * @version		1.0.98
- * @build		20120609
+ * @version		1.0.99
+ * @build		20120703
  */
 
 require_once 'libraries/Email_Parcel.php';

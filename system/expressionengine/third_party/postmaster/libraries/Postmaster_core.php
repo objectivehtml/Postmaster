@@ -3,6 +3,17 @@
 require_once APPPATH.'third_party/postmaster/libraries/Curl.php';
 require_once APPPATH.'third_party/postmaster/libraries/Uuid.php';
 
+/**
+ * Postmaster Core
+ * 
+ * @package		Postmaster
+ * @author		Justin Kimbrell
+ * @copyright	Copyright (c) 2012, Objective HTML
+ * @link 		http://www.objectivehtml.com/
+ * @version		1.0.99
+ * @build		20120703
+ */
+ 
 abstract class Postmaster_core {
 
 	public $name, $description, $now, $settings;
