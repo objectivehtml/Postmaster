@@ -75,13 +75,13 @@ $(document).ready(function() {
 			
 			refresh: function() {
 				var entryId = $('#test_entry').val();
-				var message = encodeURIComponent(Postmaster.editor.getValue());
+				var message = Postmaster.editor.getValue();
 				var iframe  = $('.pain').get(0);
 				var url 	= Postmaster.parser+'&entry_id='+entryId;
-
+				
 				$.post(Postmaster.parser, {
 					cookie: message
-				}, function() {
+				}, function(data) {
 					iframe.src = url;
 				});
 

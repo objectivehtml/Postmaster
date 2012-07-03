@@ -107,7 +107,7 @@ class Postmaster_mcp {
 
 		if($cookie = $this->EE->input->post('cookie'))
 		{
-			$this->EE->functions->set_cookie('parcel_message', $cookie, 7);
+			setcookie('postmaster_parcel_message', $cookie, strtotime('+1 week'), '/');
 			exit();
 		}
 
@@ -119,7 +119,7 @@ class Postmaster_mcp {
 			'cc'                 => $this->get('cc'),
 			'bcc'                => $this->get('bcc'),
 			'subject'            => $this->get('subject'),
-			'message'            => urldecode($this->EE->input->cookie('parcel_message')),
+			'message'            => urldecode($_COOKIE['postmaster_parcel_message']),
 			'subject'            => $this->get('subject'),
 			'post_date_specific' => $this->get('post_date_specific'),
 			'post_date_relative' => $this->get('post_date_relative'),

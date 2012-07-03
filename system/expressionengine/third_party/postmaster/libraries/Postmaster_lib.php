@@ -321,6 +321,8 @@ class Postmaster_lib {
 		//var_dump($fields);exit();
 
 		$entry  = (array) $parcel->entry;
+		
+		
 		$member = $this->EE->channel_data->get_member(isset($entry['author_id']) ? $entry['author_id'] : 0)->row_array();
 		$member = $this->EE->channel_data->utility->add_prefix('member', $member);
 		
