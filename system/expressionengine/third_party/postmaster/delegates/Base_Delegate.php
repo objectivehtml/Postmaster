@@ -1,6 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-<<<<<<< HEAD
 /**
  * Base Form Class
  *
@@ -568,7 +567,7 @@ if(!class_exists('Base_form'))
 		 }	
 	}
 }
-=======
+
 /** 
  * Base Delegate
  *  
@@ -860,4 +859,3 @@ class Base_Delegate {
 }
 
 /* End of file Base_Delegate.php */
->>>>>>> 4ec8a93e6be665538b270ee20604029d1aab2498
