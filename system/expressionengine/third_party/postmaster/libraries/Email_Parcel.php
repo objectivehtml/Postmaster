@@ -80,7 +80,7 @@ class Email_Parcel {
 			$this->settings   = $this->default_settings();
 			$this->service    = 'ExpressionEngine';
 		}
-
+		
 		$this->entries 		 = $this->EE->channel_data->get_channel_entries($this->channel_id);
 		$this->categories    = !empty($this->categories)    ? $this->categories    : array();
 		$this->statuses      = !empty($this->statuses)      ? $this->statuses      : array();

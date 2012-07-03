@@ -176,13 +176,8 @@ MailChimp helps you design email newsletters, share them on social networks, int
 	public function list_rows($lists, $settings)
 	{
 		$html = NULL;
-
-		if(!isset($parcel->service))
-		{
-			$parcel->service = 'MailChimp';
-		}
-
-		if($parcel->service == $this->name && $lists->total > 0)
+		
+		if($lists->total > 0)
 		{
 			foreach($lists->data as $list)
 			{
