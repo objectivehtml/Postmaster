@@ -2,6 +2,17 @@
 
 require_once PATH_THIRD.'postmaster/libraries/Postmaster_core.php';
 
+/**
+ * Postmaster Service
+ * 
+ * @package		Postmaster
+ * @author		Justin Kimbrell
+ * @copyright	Copyright (c) 2012, Objective HTML
+ * @link 		http://www.objectivehtml.com/
+ * @version		1.0.99
+ * @build		20120703
+ */
+
 abstract class Postmaster_service extends Postmaster_core {
 
 	public $id;
