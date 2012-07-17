@@ -11,16 +11,16 @@
  * @build		20120609
  */
 
-class Newsletter_delegate extends Base_Delegate {
+class Campaign_delegate extends Base_Delegate {
 	
-	public $name        = 'Newsletter Subcription';
-	public $description = 'Easily manage your newsletter subscribers using MailChimp and/or CampaignMonitor.';	
+	public $name        = 'Email Campaign Manager';
+	public $description = 'Easily manage your email campaign subscribers using MailChimp and/or CampaignMonitor.';	
 	
 	protected $service;
 	
 	public function __construct()
 	{
-		parent::__construct();
+		parent::__construct($this->name);
 		
 		$this->EE->load->library('postmaster_lib');
 		
@@ -59,7 +59,7 @@ class Newsletter_delegate extends Base_Delegate {
 		$this->load_service();
 		
 		$data          = array(
-			'api_key' => $this->param('api_key', FALSE, FALSE, TRUE),
+			'api_key' => $this->param('key', $this->param('api_key', FALSE, FALSE, TRUE)),
 			'id'      => $this->param('list', FALSE, FALSE, TRUE),
 			'status'  => $this->param('subscribed'),
 			'limit'   => $this->param('limit'),
@@ -72,6 +72,11 @@ class Newsletter_delegate extends Base_Delegate {
 		$subscribers = $this->service->subscribers($data);
 		
 		return $this->parse($subscribers);
+	}
+	
+	public function get_subscribers()
+	{
+		return $this->subscribers();	
 	}
 	
 	public function subscribe()
@@ -100,7 +105,7 @@ class Newsletter_delegate extends Base_Delegate {
 		
 		$data          = array(
 			'return'     => $this->param('return', $this->EE->config->site_url()),
-			'api_key'    => $this->param('api_key', FALSE, FALSE, TRUE),
+			'api_key'    => $this->param('key', $this->param('api_key', FALSE, FALSE, TRUE)),
 			'email'      => $this->param('email', FALSE, FALSE, TRUE),
 			'id'	 	 => $this->param('list', FALSE, FALSE, TRUE),
 			'email_type' => $this->param('email_type', 'html')
@@ -215,10 +220,11 @@ class Newsletter_delegate extends Base_Delegate {
 			}
 			
 			$hidden_fields = array(
-				$prefix.'form'    => TRUE,
-				$prefix.'service' => $this->param('service', FALSE, FALSE, TRUE),
-				$prefix.'id'      => $this->param('key', $this->param('api_key', FALSE, FALSE, TRUE)),
-				$prefix.'list'    => $this->param('list', FALSE, FALSE, TRUE)
+				$prefix.'form'       => TRUE,
+				$prefix.'service'    => $this->param('service', FALSE, FALSE, TRUE),
+				$prefix.'id'         => $this->param('key', $this->param('api_key', FALSE, FALSE, TRUE)),
+				$prefix.'list'       => $this->param('list', FALSE, FALSE, TRUE),
+				$prefix.'email_type' => $this->param('email_type', '')
 			);
 			
 			return $this->EE->base_form->open($hidden_fields);			

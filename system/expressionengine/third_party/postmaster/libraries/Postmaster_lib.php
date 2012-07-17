@@ -12,195 +12,25 @@
  * @build		20120703
  */
 
-if(!defined('POSTMASTER_SUCCESS'))
-{
-	define('POSTMASTER_SUCCESS', 'success');
-}
-
-if(!defined('POSTMASTER_FAILED'))
-{
-	define('POSTMASTER_FAILED', 'failed');
-}
-
 require_once APPPATH.'libraries/Template.php';
+require_once PATH_THIRD.'/postmaster/config/postmaster_constants.php';
 
 class Postmaster_lib {
 	
 	public $service_suffix = '_postmaster_service';
-
+	public $model;
+	
 	public function __construct()
 	{
 		$this->EE =& get_instance();
-
+				
+		$this->EE->load->model('postmaster_model');
 		$this->EE->load->driver('channel_data');
+		$this->EE->load->helper('postmaster_helper');
+		
+		$this->model = $this->EE->postmaster_model;
 	}
 	
-	public function add_to_queue($parsed_object, $parcel, $date = FALSE)
-	{
-
-		$this->EE->db->where(array(
-			'parcel_id'     => $parcel->id,
-			'channel_id'    => $parcel->channel_id,
-			'author_id'     => $parcel->entry->author_id,
-			'entry_id'      => $parcel->entry->entry_id,
-		));
-
-		$existing = $this->EE->db->get('postmaster_queue');
-
-		if($existing->num_rows() == 0)
-		{
-			if(!$date)
-			{
-				$date = $this->get_send_date($parsed_object);
-			}
-
-			$data = array(
-				'parcel_id'     => $parcel->id,
-				'channel_id'    => $parcel->channel_id,
-				'author_id'     => $parcel->entry->author_id,
-				'entry_id'      => $parcel->entry->entry_id,
-				'gmt_date'      => $this->EE->localize->now,
-				'gmt_send_date' => $date,
-				'service'       => $parcel->service,
-				'to_name'       => $parsed_object->to_name,
-				'to_email'      => $parsed_object->to_email,
-				'from_name'     => $parsed_object->from_name,
-				'from_email'    => $parsed_object->from_email,
-				'cc'            => $parsed_object->cc,
-				'bcc'           => $parsed_object->bcc,
-				'subject'       => $parsed_object->subject,
-				'message'       => $parsed_object->message,
-				'send_every'    => $parsed_object->send_every
-			);
-
-			$this->EE->db->insert('postmaster_queue', $data);
-		}
-	}
-
-	public function blacklist($email)
-	{
-		$this->unsubscribe($email);
-
-		if(!$this->is_blacklisted($email))
-		{
-			$this->EE->db->insert('postmaster_blacklist', array(
-				'gmt_date'   => $this->EE->localize->now,
-				'ip_address' => $this->EE->input->ip_address(),
-				'email'      => $email
-			));
-		}
-	}
-
-	public function is_blacklisted($email)
-	{
-		$this->db->where('email', $email);
-		$existing = $this->db->get('postmaster_blacklist');
-
-		if($existing->num_rows() == 0)
-		{
-			return FALSE;
-		}
-
-		return TRUE;
-	}
-
-	public function convert_data($data, $index)
-	{
-		$array = array();
-
-		foreach($data->result() as $row)
-		{
-			$array[$row->$index] = $row;
-		}
-		
-		return $array;
-	}
-
-	public function convert_string($string, $pool)
-	{
-		$explode_array = explode('|', $string);
-
-		$array  = array();
-		
-		foreach($explode_array as $index => $row)
-		{
-			if(isset($pool[$row]))
-			{
-				$array[] = $pool[$row];
-			}
-		}
-
-		return $array;
-	}
-
-	public function delete($id)
-	{
-		$this->EE->db->where('id', $id);
-		$this->EE->db->delete('postmaster_parcels');
-	}
-
-	public function duplicate($id)
-	{
-		$entry = $this->EE->channel_data->get('postmaster_parcels', array(
-			'where' => array(
-				'id' => $id
-			)
-		))->row_array();
-
-		unset($entry['id']);
-
-		$this->EE->db->insert('postmaster_parcels', $entry);
-	}
-
-	public function get_email_queue($start = 'now', $end = FALSE)
-	{
-		if($start == 'now')
-		{
-			$start = $this->EE->localize->now;
-		}
-
-		$this->EE->db->where('gmt_send_date <=', $start);
-
-		if($end)
-		{
-			$this->EE->db->where('gmt_send_date >=', $end);
-		}
-
-		return $this->EE->db->get('postmaster_queue');
-	}
-
-	public function get_editor_settings_json()
-	{
-		$settings = $this->get_editor_settings();
-
-		foreach($settings as $index => $setting)
-		{
-			if($setting == 'true' || $setting == 'false')
-			{
-				$settings[$index] = $setting == 'true' ? TRUE : FALSE;
-			}
-
-			if(preg_match("/\d/", $setting))
-			{
-				$settings[$index] = (int) $setting;
-			}
-		}
-
-		return json_encode($settings);
-	}
-
-	public function get_entry($entry_id)
-	{
-		$entry = $this->EE->channel_data->get_channel_entry($entry_id);
-		
-		if($entry->num_rows() == 1)
-		{
-			return $entry->row();
-		}
-
-		return FALSE;
-	}
-
 	public function get_themes()
 	{
 		$this->EE->load->helper('directory');
@@ -224,45 +54,6 @@ class Postmaster_lib {
 		return $themes;
 	}
 	
-	public function get_parcel($id)
-	{
-		$this->EE->db->where('id', $id);
-
-		return $this->EE->db->get('postmaster_parcels')->row();
-	}
-
-	public function get_parcels()
-	{
-		$parcels = $this->EE->db->get('postmaster_parcels')->result();
-
-		$channels      = $this->convert_data($this->EE->channel_data->get_channels(), 'channel_id');
-		$categories    = $this->convert_data($this->EE->channel_data->get_categories(), 'cat_id');
-		$member_groups = $this->convert_data($this->EE->channel_data->get_member_groups(), 'group_id');
-		
-		foreach($parcels as $index => $parcel)
-		{
-			if(isset($channels[$parcel->channel_id]))
-			{
-				$parcels[$index]->channel_name 	 = $channels[$parcel->channel_id]->channel_name;
-			}
-			else
-			{
-				$parcels[$index]->channel_name = '<i>This channel no longer exists.</i>';
-			}
-
-			$parcels[$index]->trigger 		 = explode('|', $parcel->trigger);
-			$parcels[$index]->categories  	 = $this->convert_string($parcel->categories, $categories);
-			$parcels[$index]->member_groups  = $this->convert_string($parcel->member_groups, $member_groups);
-			$parcels[$index]->statuses  	 = $parcel->statuses != NULL ? explode('|', $parcel->statuses) : array();
-			$parcels[$index]->settings 		 = json_decode($parcel->settings);
-			$parcels[$index]->edit_url		 = $this->cp_url('edit_parcel') . '&id='.$parcel->id;
-			$parcels[$index]->duplicate_url	 = $this->cp_url('duplicate_parcel_action') . '&id='.$parcel->id.'&return=index';
-			$parcels[$index]->delete_url	 = $this->cp_url('delete_parcel_action') . '&id='.$parcel->id.'&return=index';
-		}
-
-		return $parcels;
-	}
-
 	public function get_send_date($parsed_object)
 	{
 		$send_date = $parsed_object->post_date_specific;
@@ -276,24 +67,6 @@ class Postmaster_lib {
 		return $this->EE->localize->set_localized_time($send_date);
 	}
 
-	public function get_editor_settings($key = FALSE)
-	{
-		$settings 		 = $this->EE->db->get('postmaster_editor_settings')->result();
-		$settings_array  = array();
-
-		foreach($settings as $setting)
-		{
-			$settings_array[$setting->key] = $setting->value;
-		}
-
-		if($key)
-		{
-			return $settings_array[$key];
-		}
-
-		return $settings_array;
-	}
-	
 	public function load_service($name)
 	{
 		require_once PATH_THIRD . 'postmaster/libraries/Postmaster_service.php';
@@ -492,33 +265,6 @@ class Postmaster_lib {
 		return $parse_object;
 	}
 
-	public function remove_from_queue($id)
-	{
-		$this->EE->db->where('id', $id);
-		$this->EE->db->delete('postmaster_queue');
-	}
-
-	public function save_editor_settings($settings)
-	{
-		foreach($settings as $key => $value)
-		{
-			$this->EE->db->where('key', $key);
-			$this->EE->db->update('postmaster_editor_settings', array(
-				'value' => $value
-			));
-		}
-	}
-
-	public function save_response($response)
-	{
-		if(is_object($response->parcel))
-		{
-			$response->parcel = json_encode($response->parcel);
-		}
-
-		$this->EE->db->insert('postmaster_mailbox', (array) $response);
-	}
-
 	public function send($parsed_object, $parcel, $ignore_date = FALSE)
 	{
 		$service   = $this->load_service($parcel->service);
@@ -529,48 +275,42 @@ class Postmaster_lib {
 			if($ignore_date || $send_date <= $this->EE->localize->now)
 			{
 				$response = $service->send($parsed_object, $parcel);
-				$this->save_response($response);
+				$this->model->save_response($response);
 
 				if(!empty($parsed_object->send_every))
 				{
 					$gmt_date = $this->EE->localize->set_localized_time(strtotime($parsed_object->send_every, $this->EE->localize->now));
-					$this->add_to_queue($parsed_object, $parcel, $gmt_date);
+					$this->model->add_to_queue($parsed_object, $parcel, $gmt_date);
 				}
 			}
 			else
 			{
-				$this->add_to_queue($parsed_object, $parcel);
+				$this->model->add_to_queue($parsed_object, $parcel);
 			}
 		}
 		else
 		{
-			$this->unsubscribe($parsed_object->to_email);
+			$this->model->unsubscribe($parsed_object->to_email);
 		}
 	}
 
 	public function send_from_queue($row)
 	{
-		$parcel           = $this->get_parcel($row->parcel_id);
-		$parcel->entry    = $this->get_entry($row->entry_id);
+		$parcel           = $this->model->get_parcel($row->parcel_id);
+		$parcel->entry    = $this->model->get_entry($row->entry_id);
 		$parcel->settings = json_decode($parcel->settings);
 
 		$parsed_object = $this->parse($parcel);
 
 		$this->send($parsed_object, $parcel, TRUE);
-		$this->remove_from_queue($row->id);
-	}
-
-	public function unsubscribe($email)
-	{
-		$this->EE->db->where('to_email', $email);
-		$this->EE->db->delete('postmaster_queue');
+		$this->model->remove_from_queue($row->id);
 	}
 
 	public function validate_channel_entry($entry_id, $meta, $data)
 	{
 		$this->EE->TMPL = new EE_Template();
 
-		$parcels = $this->get_parcels();
+		$parcels = $this->model->get_parcels();
 
 		foreach($parcels as $index => $parcel)
 		{

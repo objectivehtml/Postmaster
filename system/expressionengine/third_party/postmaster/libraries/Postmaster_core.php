@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once APPPATH.'third_party/postmaster/libraries/Curl.php';
-require_once APPPATH.'third_party/postmaster/libraries/Uuid.php';
+require_once PATH_THIRD.'/postmaster/libraries/Curl.php';
+require_once PATH_THIRD.'/postmaster/libraries/Uuid.php';
 
 /**
  * Postmaster Core
@@ -23,11 +23,13 @@ abstract class Postmaster_core {
 		$this->EE =& get_instance();
 		
 		$this->EE->load->library('postmaster_lib');
+		$this->EE->load->driver('interface_builder');
 		
 		$this->curl = new Curl();
 		$this->uid  = new Uuid();
 		$this->lib  = $this->EE->postmaster_lib;
 		$this->now  = $this->EE->localize->now;
+		$this->IB	= $this->EE->interface_builder;
 	}
 	
 	public function action_url($class, $method)

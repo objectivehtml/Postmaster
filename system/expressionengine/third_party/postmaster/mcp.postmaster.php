@@ -14,10 +14,6 @@
 require_once 'libraries/Email_Parcel.php';
 require_once 'config/postmaster_config.php';
 
-if(!defined('POSTMASTER_VERSION'))
-{	
-	define('POSTMASTER_VERSION', $config['postmaster_version']);
-}
 class Postmaster_mcp {
 	
 	public $themes;
@@ -30,6 +26,7 @@ class Postmaster_mcp {
 		
 		if(REQ == 'CP')
 		{
+			$this->EE->load->library('doctag', array('base_path' => PATH_THIRD.'postmaster/doctags/'));		
 			$this->EE->load->library('theme_loader', array(__CLASS__));
 			$this->EE->theme_loader->css('postmaster');
 
@@ -77,7 +74,7 @@ class Postmaster_mcp {
 		$this->EE->theme_loader->javascript('postmaster');
 		$this->EE->theme_loader->javascript('qtip');
 		$this->EE->theme_loader->css('qtip');
-
+		
 		require_once('delegates/Base_Delegate.php');
 		
 		$delegate = new Base_Delegate();
@@ -85,19 +82,34 @@ class Postmaster_mcp {
 		$vars = array(
 			'theme_url' => $this->EE->theme_loader->theme_url(),
 			'themes'  	=> $this->themes,
-			'parcels' 	=> $this->EE->postmaster_lib->get_parcels(),
+			'parcels' 	=> $this->EE->postmaster_model->get_parcels(),
 			'delegates'	=> $delegate->get_delegates(FALSE, PATH_THIRD.'postmaster/delegates'),
-			'ping_url'	=> $this->current_url('ACT', $this->EE->channel_data->get_action_id(__CLASS__, 'send_email'))
+			'doctag_url' => $this->cp_url('doctag'),
+			'ping_url'	=> $this->current_url('ACT', $this->EE->channel_data->get_action_id(__CLASS__, 'send_email')),
+			'lang'		=> array(
+				'documentation' => lang('postmaster_documentation')
+			)
 		);
 		
 		$this->EE->cp->set_variable('cp_page_title', 'Postmaster');
 		
 		$this->EE->cp->set_right_nav(array(
-			'Create New Template' => $this->cp_url('create_template'),
+			'postmaster_documentation' => $this->cp_url('doctag').'&id=Parcels',
+			'postmaster_create_new_parcel' => $this->cp_url('create_template'),
 			/* 'Text Editor Settings' => $this->cp_url('editor_settings') */
 		));
 
 		return $this->EE->load->view('settings', $vars, TRUE);
+	}
+	
+	public function doctag()
+	{
+		$this->EE->cp->set_variable('cp_page_title', 'Documentation');
+		$this->EE->cp->set_right_nav(array(
+			'&larr; Back to Home' => $this->cp_url('index')
+		));
+		
+		return $this->EE->doctag->page($this->EE->input->get('id'));
 	}
 
 	public function parser()
@@ -119,7 +131,7 @@ class Postmaster_mcp {
 			'cc'                 => $this->get('cc'),
 			'bcc'                => $this->get('bcc'),
 			'subject'            => $this->get('subject'),
-			'message'            => urldecode($_COOKIE['postmaster_parcel_message']),
+			'message'            => isset($_COOKIE['postmaster_parcel_message']) ? urldecode($_COOKIE['postmaster_parcel_message']) : NULL,
 			'subject'            => $this->get('subject'),
 			'post_date_specific' => $this->get('post_date_specific'),
 			'post_date_relative' => $this->get('post_date_relative'),
@@ -157,7 +169,7 @@ class Postmaster_mcp {
 		$id  = $this->get('id');
 		$url = $this->cp_url($this->EE->input->get('return'));
 
-		$this->EE->postmaster_lib->delete($id);
+		$this->EE->postmaster_model->delete_parcel($id);
 
 		$this->EE->functions->redirect($url);
 	}
@@ -167,7 +179,7 @@ class Postmaster_mcp {
 		$id  = $this->get('id');
 		$url = $this->cp_url($this->EE->input->get('return'));
 
-		$this->EE->postmaster_lib->duplicate($id);
+		$this->EE->postmaster_model->duplicate($id);
 
 		$this->EE->functions->redirect($url);
 	}
@@ -175,7 +187,7 @@ class Postmaster_mcp {
 	public function save_editor_settings()
 	{
 		$this->EE->load->library('postmaster_lib');
-		$this->EE->postmaster_lib->save_editor_settings($_POST['setting']);
+		$this->EE->postmaster_model->save_editor_settings($_POST['setting']);
 
 		$this->EE->functions->redirect($_POST['return']);
 	}
@@ -191,7 +203,7 @@ class Postmaster_mcp {
 
 		$vars = array();
 
-		$settings = $this->EE->postmaster_lib->get_editor_settings();
+		$settings = $this->EE->postmaster_model->get_editor_settings();
 
 		$options = array(
 			'true'  => 'True',
@@ -218,7 +230,7 @@ class Postmaster_mcp {
 		$vars['return'] = $this->cp_url('editor_settings');
 		$vars['action'] = $this->current_url('ACT', $this->EE->channel_data->get_action_id('Postmaster_mcp', 'save_editor_settings'));
 
-		$vars['json'] 	= $this->EE->postmaster_lib->get_editor_settings_json();
+		$vars['json'] 	= $this->EE->postmaster_model->get_editor_settings_json();
 
 		return $this->EE->load->view('editor-settings', $vars, TRUE);
 	}
@@ -231,7 +243,9 @@ class Postmaster_mcp {
 		$this->EE->theme_loader->javascript('qtip');
 		$this->EE->theme_loader->css('codemirror');
 		$this->EE->theme_loader->css('qtip');
-        
+
+    	setcookie('postmaster_parcel_message', '', strtotime('+1 week'), '/');
+
 		$channels    = $this->EE->channel_data->get_channels()->result();
 		$field_data  = array();
 		$status_data = array();
@@ -248,6 +262,7 @@ class Postmaster_mcp {
 		}
 
 		$vars = array(
+			'ib_path'	    => $this->EE->theme_loader->theme_url().'/third_party/postmaster/javascript/InterfaceBuilder.js',
 			'channels'		=> json_encode($channels),
 			'fields'		=> json_encode($field_data),
 			'statuses'		=> json_encode($status_data),
@@ -295,6 +310,7 @@ class Postmaster_mcp {
 		}
 
 		$vars = array(
+			'ib_path'	    => $this->EE->theme_loader->theme_url().'/third_party/postmaster/javascript/InterfaceBuilder.js',
 			'channels'		=> json_encode($channels),
 			'fields'		=> json_encode($field_data),
 			'statuses'		=> json_encode($status_data),
@@ -302,7 +318,7 @@ class Postmaster_mcp {
 			'categories'	=> json_encode((array)$categories),
 		);
 		
-		$parcel = $this->EE->postmaster_lib->get_parcel($this->get('id'));
+		$parcel = $this->EE->postmaster_model->get_parcel($this->get('id'));
 
 		$vars['template'] = new Email_Parcel($parcel);
 
@@ -318,13 +334,13 @@ class Postmaster_mcp {
 
 	public function blacklist()
 	{
-		$this->EE->postmaster_lib->blacklist($this->EE->input->get_post('email'));
+		$this->EE->postmaster_model->blacklist($this->EE->input->get_post('email'));
 	}
 
 	
 	public function unsubscribe()
 	{
-		$this->EE->postmaster_lib->unsubscribe($this->EE->input->get_post('email'));
+		$this->EE->postmaster_model->unsubscribe($this->EE->input->get_post('email'));
 	}
 
 	public function create_parcel_action()
@@ -362,6 +378,8 @@ class Postmaster_mcp {
 	{
 		$this->EE->load->library('postmaster_lib');
 
+		//var_dump($_POST['setting']['SendGridConditional']['field_map']);exit();
+		
 		$parcel          = array(
 			'channel_id'         => $this->post('channel_id'),
 			'to_name'            => $this->post('to_name'),
@@ -395,7 +413,7 @@ class Postmaster_mcp {
 
 		$this->EE->TMPL = new EE_Template();
 
-		$queue = $this->EE->postmaster_lib->get_email_queue();
+		$queue = $this->EE->postmaster_model->get_email_queue();
 
 		foreach($queue->result() as $row)
 		{
@@ -442,7 +460,7 @@ class Postmaster_mcp {
 			return;
 		}
 
-		$parcel        = $this->EE->postmaster_lib->get_parcel($parcel_id);
+		$parcel        = $this->EE->postmaster_model->get_parcel($parcel_id);
 		$parcel->entry = $this->EE->channel_data->get_channel_entry($entry_id)->row();	
 
 		$parsed_object = $this->EE->postmaster_lib->parse($parcel);

@@ -1,3 +1,12 @@
+<script type="text/javascript" src="<?=$ib_path?>"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+	
+		var IB = new InterfaceBuilder();
+	
+	});
+</script>
+
 <style type="text/css">
 	.CodeMirror-scroll {
 		min-height: <? echo $template->height?>;
@@ -305,17 +314,21 @@
 			</select>
 
 
-			<? foreach($template->services() as $service): ?>
-			<div class="service-panel" id="<? echo $service->name ?>_panel">
-
-				<h3><? echo $service->name ?> Settings</h3>
-
-				<? echo $service->description ?>
-
-				<? echo $service->display_settings($template->settings, $template) ?>
-
+			<div class="service-panels">
+			
+				<? foreach($template->services() as $service): ?>
+				<div class="service-panel" id="<? echo $service->name ?>_panel">
+	
+					<h3><? echo $service->name ?> Settings</h3>
+	
+					<? echo $service->description ?>
+	
+					<? echo $service->display_settings($template->settings, $template) ?>
+	
+				</div>
+				<? endforeach; ?>
+				
 			</div>
-			<? endforeach; ?>
 
 		</div>
 		

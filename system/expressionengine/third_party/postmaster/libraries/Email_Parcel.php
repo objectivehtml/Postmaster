@@ -51,9 +51,9 @@ class Email_Parcel {
 		
 		$this->trigger 		   = array();
 		$this->channels        = $this->EE->channel_data->get_channels();
-		$this->editor_settings = $this->EE->postmaster_lib->get_editor_settings_json();
-		$this->default_theme   = $this->EE->postmaster_lib->get_editor_settings('theme');
-		$this->height          = $this->EE->postmaster_lib->get_editor_settings('height');
+		$this->editor_settings = $this->EE->postmaster_model->get_editor_settings_json();
+		$this->default_theme   = $this->EE->postmaster_model->get_editor_settings('theme');
+		$this->height          = $this->EE->postmaster_model->get_editor_settings('height');
 		$this->return          = $this->cp_url('index');
 		$this->action          = $this->current_url('ACT', $this->EE->channel_data->get_action_id('Postmaster_mcp', 'create_parcel_action'));
 		$this->button          = 'Save Parcel';

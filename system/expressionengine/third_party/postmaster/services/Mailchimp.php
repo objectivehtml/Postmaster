@@ -58,10 +58,11 @@ MailChimp helps you design email newsletters, share them on social networks, int
 		{
 			$subscriber->timestamp = strtotime($subscriber->timestamp);
 			
-			$row['index'] = $index;
-			$row['count'] = $index+1;
-			$row['total'] = $subscribers->total;			
-			$row =  $this->EE->channel_data->utility->add_prefix($params['prefix'], array_merge($row, (array) $subscriber));
+			$row[$params['prefix'].':index'] = $index;
+			$row[$params['prefix'].':count'] = $index+1;
+			$row[$params['prefix'].':total'] = $subscribers->total;
+			$row[$params['prefix'].':email'] = $subscriber->email;			
+			$row[$params['prefix'].':data']  =  $this->EE->channel_data->utility->add_prefix($params['prefix'], array((array) $subscriber));
 			
 			$return[$index] = $row;	
 		}

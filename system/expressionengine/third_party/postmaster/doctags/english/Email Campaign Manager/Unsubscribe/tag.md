@@ -1,0 +1,1 @@
+{exp:postmaster:delegate:unsubscribe}

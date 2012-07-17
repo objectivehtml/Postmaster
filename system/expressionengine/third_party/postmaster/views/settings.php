@@ -93,13 +93,14 @@
 	</tbody>
 </table>
 
-<h2><a href="#delegates" class="help">Delegates <span>(?)</span></a></h2>
+<h2><a href="#delegates" class="help">Utilities <span>(?)</span></a></h2>
 
 <table class="mainTable" cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
 			<th style="width:40%">Name</th>
 			<th>Description</th>
+			<th></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -115,6 +116,7 @@
 		<tr>
 			<td><? echo $delegate->name?></td>
 			<td><? echo $delegate->description?></td>
+			<td style="text-align:center"><a href="<? echo $doctag_url . '&id='.$delegate->doctag?>"><?=$lang['documentation']?></a></td>
 		</tr>
 		<? endforeach; ?>
 		
@@ -125,6 +127,11 @@
 
 <div class="box">
 	<a href="<? echo $ping_url?>"><? echo $ping_url ?></a>
+</div>
+
+<div id="delegates" class="help-text">
+	<h2>Utilities</h2>
+	<p>Utilites are resources that use the API to provide even more functionality. Utilities can extend far beyond just sending emails by creating new templates tags.</p>
 </div>
 
 <div id="ping" class="help-text">
