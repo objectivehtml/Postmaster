@@ -5,11 +5,15 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
- * @version		1.0.98
- * @build		20120609
+ * @version		1.1.0
+ * @build		20120718
  */
 
-Version 1.0.98 - 06/09/2012
+Version 1.1.0  - 07/18/2012
+---------------------------
+- Public release
+
+Version 1.0.99 - 07/07/2012
 ---------------------------
 - (Feature) Added delegates to the module control panel page.
 - (Feature) Added a subscribe method to the MailChimp email service. CampaignMonitor is coming soon.
