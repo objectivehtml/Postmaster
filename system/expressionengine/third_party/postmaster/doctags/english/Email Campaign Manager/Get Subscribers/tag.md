@@ -1,1 +1,1 @@
-{exp:postmaster:newsletter:subscribers}
+{exp:postmaster:campaign:subscribers}

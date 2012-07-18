@@ -1,1 +1,1 @@
-{exp:postmaster:delegate:unsubscribe}
+{exp:postmaster:campaign:unsubscribe}
