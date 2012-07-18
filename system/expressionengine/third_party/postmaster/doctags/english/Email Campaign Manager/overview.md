@@ -16,3 +16,43 @@ Postmaster provides a suite of utilities that help you and your client manage th
 4. Easy to implement with AJAX
 
 *We are constantly adding features and compatibility with new services. If the email service you use isn't available, let us know. We implement services based on popular demand.*
+
+### Syntax
+
+You'll notice that the campaign tags have 4 segments on EE 2.5+ and 5 segments on older versions. Don't let this confuse you, these are just like any other tag with 2 or 3 segments. Since Postmaster is completely extendible, thus developers can create new classes with custom methods that do whatever the developer wants.
+
+####(*EE 2.5+*)
+
+{exp:postmaster:campaign:subcribe}
+
+Segment 1 - exp
+:	This segment is standard and is required.
+
+Segment 2 - postmaster
+:	This segment is also required and initiates the Postmaster module.
+
+Segment 3 - campaign
+:	This segment load a utility class
+
+Segment 4 - subscribe
+:	This segment executes a specific method from the defined class.
+
+#### (*EE 2.4 and older*)
+
+{exp:postmaster:delegate:campaign:subcribe}
+
+Segment 1 - exp
+:	This segment is standard and is required.
+
+Segment 2 - postmaster
+:	This segment is also required and initiates the Postmaster module.
+
+Segment 3 - delegate
+:	This segment is only required for EE 2.4 and older.
+
+Segment 4 - campaign
+:	This segment load a utility class
+
+Segment 5 - subscribe
+:	This segment executes a specific method from the defined class.
+
