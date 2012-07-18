@@ -8,8 +8,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
- * @version		1.0.99
- * @build		20120703
+ * @version		1.1.0
+ * @build		20120718
  */
 
 require_once APPPATH.'libraries/Template.php';
@@ -248,7 +248,7 @@ class Postmaster_lib {
 
 				$entry  = array_merge($member, $entry);
 				
-				$entry['parcel:author'] = isset($member['member:screen_name']) ? $member['member:screen_name'] : $member['member:username'];
+				$entry['parcel:author'] = isset($member['member:screen_name']) ? $member['member:screen_name'] : isset($member['member:username']) ? $member['member:username'] : '';
 				
 				$this->EE->TMPL->template = $this->EE->TMPL->parse_variables_row($this->EE->TMPL->template, $entry);
 				$this->EE->TMPL->parse($this->EE->TMPL->template);
