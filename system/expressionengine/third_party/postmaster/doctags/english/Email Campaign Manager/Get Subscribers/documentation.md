@@ -5,13 +5,13 @@ Get subscribers is a method that will retrieve a list of subscribers from a spec
 
 ### Parameters
 
-service
+service*
 :	The email subscription service of your choice. Currently MailChimp and CampaignMonitor are supported.
 
-api_key
+api_key*
 :	The API key of the account to add the subscribers.
 
-list
+list*
 :	The unique ID of the list in which to add your subscribers.
 
 status
@@ -25,6 +25,8 @@ limit
 
 prefix
 :	A string that is used to prefix all the variables to avoid naming conflicts.
+
+_*Required parameters_
 
 
 ### Variables

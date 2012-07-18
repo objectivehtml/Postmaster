@@ -28,7 +28,7 @@ secure_action
 secure_return
 :	Force HTTPS for the return URL.
 
-_*Required Parameters_
+_*Required parameters_
 
 
 ### Variables

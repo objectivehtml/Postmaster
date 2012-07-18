@@ -2,22 +2,15 @@
 
 This tag allows you to directly subscribe members to a specific list and service without submitting a form. (Of course you *can* use it in conjunction with a form post, but it's not required.)
 
-
 ### Parameters
 
-success_return
-:	The return URL if the request succeeds.
-
-failed_return
-:	The return URL if the request fails.
-
-service
+service*
 :	The email subscription service of your choice. Currently MailChimp and CampaignMonitor are supported.
 
-api_key
+api_key*
 :	The API key of the account to add the subscribers.
 
-list
+list*
 :	The unique ID of the list in which to add your subscribers.
 
 email
@@ -25,6 +18,14 @@ email
 
 email_type
 :	Preference for the type of email (html, text, or mobile defaults to html)
+
+success_return
+:	The return URL if the request succeeds.
+
+failed_return
+:	The return URL if the request fails.
+
+_*Required parameters_
 
 
 ### Variables

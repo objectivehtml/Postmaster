@@ -2,7 +2,7 @@
 
 ### What is a parcel?
 
-A parcel is a special template that gets parsed when a channel entries is created or edited. Parcels are parsed and then emailed to a specified email or list of emails. Parcels have their own set of templates tags in addition to all the standard template tags and modules provided by ExpressionEngine. A parcel also has the ability to impose a very fine level of control over when these emails are sent and to whom they are sent.
+A parcel is a special template that gets parsed when a channel entry is created or edited. Parcels are parsed and then sent to a specified email or list of emails. Parcels have their own set of templates tags in addition to all the standard template tags and modules provided by ExpressionEngine. A parcel has the ability to impose a very fine level of control over when these emails are sent and to whom they are sent.
 
 
 ### How does it work?
