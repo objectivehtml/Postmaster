@@ -21,6 +21,8 @@ Postmaster provides a suite of utilities that help you and your client manage th
 
 You'll notice that the campaign tags have 4 segments on EE 2.5+ and 5 segments on older versions. Don't let this confuse you, these are just like any other tag with 2 or 3 segments. Since Postmaster is completely extendible, thus developers can create new classes with custom methods that do whatever the developer wants.
 
+*Obviously the examples below are referring to a single tag. Use the same logic and apply it to the tags that apply to you.*
+
 ####(*EE 2.5+*)
 
 {exp:postmaster:campaign:subcribe}
