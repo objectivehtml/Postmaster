@@ -3,7 +3,7 @@
 $lang	= array(
 	
 	'postmaster_module_name'			=> 'Postmaster',
-	'postmaster_module_description'		=> 'Email Notifications for ExpressionEngine',
+	'postmaster_module_description'		=> 'The definitive email solution for ExpressionEngine',
 	
 	'postmaster_create_new_parcel' => 'Create New Parcel',
 	'postmaster_parcels'           => 'Parcels',

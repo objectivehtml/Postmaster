@@ -2,6 +2,11 @@
 
 The purpose of this tutorial is to get you familiar with what a parcel is and how it can help you and your clients. This document will dissect each component of a parcel and describe its purpose.
 
+###What is a Parcel?</h3>
+		
+A Parcel is a series of configurations that allow you to control who sends and receives the email, when to send the email, the template markup and EE tags, an email preview, and the service that send each email. Parcels allow you to create an unlimited number of configurations, so the possibilities are limitless.
+				
+				
 ### Step 1. Overview
 
 The first screen is the overview which outlines the parcels and utilities that are installed. For the sake of this tutorial, do not concern yourself with the *Utilities* section. To get started click the *Create New Parcel* button in the upper right hand corner.
