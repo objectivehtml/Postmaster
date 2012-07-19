@@ -22,7 +22,7 @@ class Postmaster_model extends CI_Model {
 		{
 			if(!$date)
 			{
-				$date = $this->get_send_date($parsed_object);
+				$date = $this->postmaster_lib->get_send_date($parsed_object);
 			}
 
 			$data = array(
