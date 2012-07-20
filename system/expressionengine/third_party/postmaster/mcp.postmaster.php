@@ -52,7 +52,9 @@ class Postmaster_mcp {
 				$fields[$id]          = $template->fields();
 				$categories[$id]      = $template->category_tree();
 				$member_groups[$id]   = $template->member_groups();
-				$entries[$id]   	  = $this->EE->channel_data->get_channel_entries($id)->result_array();
+				$entries[$id]   	  = $this->EE->channel_data->get_channel_entries($id, array(
+					'limit' => 100
+				))->result_array();
 			}
 
 			$this->EE->cp->add_to_head('
