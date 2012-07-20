@@ -90,7 +90,7 @@ class Email_Parcel {
 			$this->service    = 'ExpressionEngine';
 		}
 
-		$this->entries 		 = $this->EE->channel_data->get_channel_entries($this->channel_id);
+		$this->entries 		 = $this->EE->channel_data->get_channel_entries($this->channel_id, array('limit' => 100));
 		$this->categories    = !empty($this->categories)    ? $this->categories    : array();
 		$this->statuses      = !empty($this->statuses)      ? $this->statuses      : array();
 		$this->member_groups = !empty($this->member_groups) ? $this->member_groups : array();
