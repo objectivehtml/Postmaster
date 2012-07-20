@@ -50,7 +50,10 @@ class Email_Parcel {
 		$this->EE =& get_instance();
 		
 		$this->trigger 		   = array();
-		$this->channels        = $this->EE->channel_data->get_channels();
+		$this->channels        = $this->EE->channel_data->get_channels(array('where' => array(
+			'site_id' => $this->EE->config->item('site_id')
+		)));
+		
 		$this->editor_settings = $this->EE->postmaster_model->get_editor_settings_json();
 		$this->default_theme   = $this->EE->postmaster_model->get_editor_settings('theme');
 		$this->height          = $this->EE->postmaster_model->get_editor_settings('height');
@@ -75,7 +78,13 @@ class Email_Parcel {
 		}
 		else
 		{
-			$this->channel    = $this->EE->channel_data->get_channels(array('limit' => 1));
+			$this->channel    = $this->EE->channel_data->get_channels(array(
+				'where' => array(
+					'site_id' => $this->EE->config->item('site_id')
+				),
+				'limit' => 1
+			));
+			
 			$this->channel_id = $this->channel->row('channel_id');
 			$this->settings   = $this->default_settings();
 			$this->service    = 'ExpressionEngine';
