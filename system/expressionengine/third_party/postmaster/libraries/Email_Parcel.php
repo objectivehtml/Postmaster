@@ -121,15 +121,19 @@ class Email_Parcel {
 	{
 		$this->EE->load->helper('directory');
 
-		$path = APPPATH.'third_party/postmaster/services/';
+		$path     = PATH_THIRD.'/postmaster/services/';
+		$files    = directory_map($path);
 		$services = array();
 
-		foreach(directory_map($path) as $index => $filename)
+		if(is_array($files))
 		{
-			require_once $path . $filename;
-
-			$class = str_replace('.php', '', $filename).'_postmaster_service';
-			$services[] = new $class();
+			foreach($files as $index => $filename)
+			{
+				require_once $path . $filename;
+	
+				$class = str_replace('.php', '', $filename).'_postmaster_service';
+				$services[] = new $class();
+			}
 		}
 
 		return $services;
