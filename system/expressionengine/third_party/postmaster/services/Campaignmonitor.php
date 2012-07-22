@@ -61,8 +61,8 @@ class CampaignMonitor_postmaster_service extends Postmaster_service {
 		$date   = !empty($data['since']) ? date('Y-m-d', strtotime($data['since'])) : NULL;
 		$url    = $this->api_url('lists', $data['id'], 'active', array(
 			'date'           => !empty($date) ? $date : date('Y-m-01', $this->EE->localize->now),
-			'page'           => $data['page'],
-			'pagesize'       => $data['page_size'],
+			'page'           => $data['start'],
+			'pagesize'       => $data['limit'],
 			'orderfield'     => $data['order_by'],
 			'orderdirectory' => $data['sort']
 		));
@@ -103,7 +103,7 @@ class CampaignMonitor_postmaster_service extends Postmaster_service {
 	{
 		$post = array(
 			'EmailAddress' => $data['email'],
-			'Name'         => $this->EE->input->post('name', TRUE) ? $this->EE->input->post('name', TRUE) : $data['email'],
+			'Name'         => !isset($data['name']) ? ($this->EE->input->post('name', TRUE) ? $this->EE->input->post('name', TRUE) : $data['email']) : $data['name'],
 			'CustomFields' => array()
 		);
 		

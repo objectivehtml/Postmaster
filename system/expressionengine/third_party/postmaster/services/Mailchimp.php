@@ -54,17 +54,20 @@ MailChimp helps you design email newsletters, share them on social networks, int
 		
 		$return = array();
 		
-		foreach($subscribers->data as $index => $subscriber)
+		if(is_object($subscribers) && is_array($subscribers->data))
 		{
-			$subscriber->timestamp = strtotime($subscriber->timestamp);
-			
-			$row[$params['prefix'].':index'] = $index;
-			$row[$params['prefix'].':count'] = $index+1;
-			$row[$params['prefix'].':total'] = $subscribers->total;
-			$row[$params['prefix'].':email'] = $subscriber->email;			
-			$row[$params['prefix'].':data']  =  $this->EE->channel_data->utility->add_prefix($params['prefix'], array((array) $subscriber));
-			
-			$return[$index] = $row;	
+			foreach($subscribers->data as $index => $subscriber)
+			{
+				$subscriber->timestamp = strtotime($subscriber->timestamp);
+				
+				$row[$params['prefix'].':index'] = $index;
+				$row[$params['prefix'].':count'] = $index+1;
+				$row[$params['prefix'].':total'] = $subscribers->total;
+				$row[$params['prefix'].':email'] = $subscriber->email;			
+				$row[$params['prefix'].':data']  =  $this->EE->channel_data->utility->add_prefix($params['prefix'], array((array) $subscriber));
+				
+				$return[$index] = $row;	
+			}
 		}
 		
 		return $return;
