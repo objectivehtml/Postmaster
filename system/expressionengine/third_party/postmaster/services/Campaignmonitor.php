@@ -10,12 +10,11 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
- * @version		1.0.0
- * @build		20120414
+ * @version		1.0.1
+ * @build		20120921
  */
 
-require_once PATH_THIRD.'postmaster/config/postmaster_config.php';
-require_once PATH_THIRD.'postmaster/libraries/Postmaster_service.php';
+require_once PATH_THIRD . 'postmaster/libraries/Postmaster_service.php';
 
 class CampaignMonitor_postmaster_service extends Postmaster_service {
 
