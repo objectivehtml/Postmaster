@@ -114,7 +114,7 @@ class Base_Delegate {
 	{
 		if(!method_exists($class, $method))
 		{
-			$this->show_error('The '.$method.' does not exist in the '.$class.' class.');
+			$this->show_error('The <em>'.$method.'</em> method  does not exist in the <em>'.get_class($class).'</em> class.');
 		}
 		
 		return TRUE;
