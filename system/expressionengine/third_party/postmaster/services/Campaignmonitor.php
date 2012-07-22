@@ -14,6 +14,7 @@
  * @build		20120414
  */
 
+require_once PATH_THIRD.'postmaster/config/postmaster_config.php';
 require_once APPPATH.'third_party/postmaster/libraries/Postmaster_service.php';
 
 class CampaignMonitor_postmaster_service extends Postmaster_service {
@@ -52,7 +53,138 @@ class CampaignMonitor_postmaster_service extends Postmaster_service {
 	{
 		parent::__construct();
 	}
-
+	
+	public function subscribers($data)
+	{
+	
+		$return = array();
+		$date   = !empty($data['since']) ? date('Y-m-d', strtotime($data['since'])) : NULL;
+		$url    = $this->api_url('lists', $data['id'], 'active', array(
+			'date'           => !empty($date) ? $date : date('Y-m-01', $this->EE->localize->now),
+			'page'           => $data['page'],
+			'pagesize'       => $data['page_size'],
+			'orderfield'     => $data['order_by'],
+			'orderdirectory' => $data['sort']
+		));
+		
+		$subscribers = $this->get($url, $data['api_key']);
+		
+		//var_dump($subscribers);exit();
+		foreach($subscribers->Results as $index => $subscriber)
+		{
+			$result = array(
+				$data['prefix'].':email_address' => $subscriber->EmailAddress,
+				$data['prefix'].':emailaddress' => $subscriber->EmailAddress,
+				$data['prefix'].':EmailAddress' => $subscriber->EmailAddress,
+				$data['prefix'].':name' => $subscriber->Name,
+				$data['prefix'].':Name' => $subscriber->Name,
+				$data['prefix'].':date' => strtotime($subscriber->Date),
+				$data['prefix'].':Date' => strtotime($subscriber->Date),
+				$data['prefix'].':state' => $subscriber->State,
+				$data['prefix'].':State' => $subscriber->State,
+				$data['prefix'].':custom_fields' => $subscriber->CustomFields,
+				$data['prefix'].':customfields' => $subscriber->CustomFields,
+				$data['prefix'].':CustomFields' => $subscriber->CustomFields
+			);
+			
+			$row[$data['prefix'].':index'] = $index;
+			$row[$data['prefix'].':count'] = $index+1;
+			$row[$data['prefix'].':total'] = count($subscribers->Results);
+			$row[$data['prefix'].':email'] = $subscriber->EmailAddress;			
+			$row[$data['prefix'].':data']  =  $this->EE->channel_data->utility->add_prefix($data['prefix'], array($result));
+			
+			$return[$index] = $row;	
+		}
+		
+		return $return;
+	}
+		
+	public function subscribe($data)
+	{
+		$post = array(
+			'EmailAddress' => $data['email'],
+			'Name'         => $this->EE->input->post('name', TRUE) ? $this->EE->input->post('name', TRUE) : $data['email'],
+			'CustomFields' => array()
+		);
+		
+		$url = $this->api_url('subscribers', $data['id']);
+		
+		$response = $this->_send($url, $post, $data['api_key'], FALSE);
+		
+		$success = POSTMASTER_SUCCESS;
+		
+		if(!empty($this->curl->error_string))
+		{
+			$success = POSTMASTER_FAILED;
+		}
+		
+		$return = new Newsletter_Subscription_Response(array(
+			'success' => $success == 'success' ? TRUE : FALSE,
+			'data'    => $post,
+			'errors'  => $success == 'success' ? array() : array(array('error' => lang('postmaster_invalid_email'), 'code' => $this->curl->error_code))
+		));
+		
+		return $return;
+		
+		/*
+		$params = array(
+			'apikey'            => $data['api_key'],
+			'listid'            => $data['id'],
+			'email_address'     => $data['email'],
+			'email_type'		=> $data['email_type'],
+			'double_optin'      => (bool) $this->param($data['post'], 'double_optin', TRUE),
+			'update_existing'   => (bool) $this->param($data['post'], 'update_existing', FALSE),
+			'replace_interests' => (bool) $this->param($data['post'], 'replace_interests', TRUE),
+			'send_welcome'      => (bool) $this->param($data['post'], 'send_welcome', FALSE),	
+		);
+		
+		$unset = array('double_optin', 'update_existing', 'replace_interests', 'send_welcome');
+		
+		foreach($unset as $var)
+		{
+			unset($data['post'][$var]);
+		}
+		
+		$params['merge_vars'] = $data['post'];
+	
+		$response = $this->post($url, $params);
+		*/
+		
+		$return = new Newsletter_Subscription_Response(array(
+			'success' => $response === TRUE ? TRUE : FALSE,
+			'data'    => $response,
+			'errors'  => $response === TRUE ? array() : array(array('error' => $response->error, 'code' => $response->code))
+		));
+		
+		return $return;
+	}
+	
+	public function unsubscribe($data)
+	{
+		$post = array(
+			'EmailAddress' => $data['email']
+		);
+		
+		$url = $this->api_url('subscribers', $data['id'], 'unsubscribe');
+		
+		$response = $this->_send($url, $post, $data['api_key'], FALSE);
+		
+		$success = POSTMASTER_SUCCESS;
+		
+		if(!empty($this->curl->error_string))
+		{
+			$success = POSTMASTER_FAILED;
+		}
+		
+		$return = new Newsletter_Subscription_Response(array(
+			'success' => $success == 'success' ? TRUE : FALSE,
+			'data'    => $post,
+			'errors'  => $success == 'success' ? array() : array(array('error' => lang('postmaster_invalid_email'), 'code' => $this->curl->error_code))
+		));
+		
+		return $return;
+	}
+	
 	public function send($parsed_object, $parcel)
 	{
 		$settings = $this->get_settings($parcel->settings);
@@ -102,18 +234,18 @@ class CampaignMonitor_postmaster_service extends Postmaster_service {
 			'SendDate'			=> date('Y-m-d H:i', $this->now)
  		);
 
-		return $this->_send($this->api_url('campaigns', $campaign_id, 'send'), $post, $settings);
+		return $this->_send($this->api_url('campaigns', $campaign_id, 'send'), $post, $settings->api_key);
 	}
 
 	private function create_campaign($post, $settings)
 	{
-		return $this->_send($this->api_url('campaigns', $settings->client_id), $post, $settings);
+		return $this->_send($this->api_url('campaigns', $settings->client_id), $post, $settings->api_key);
 	}
 
-	private function _send($url, $post, $settings)
+	private function _send($url, $post, $api_key, $show_error = TRUE)
 	{
 		$this->curl->create($url);
-		$this->curl->http_login($settings->api_key, '');
+		$this->curl->http_login($api_key, '');
 		
 		$this->curl->post(json_encode($post), array(
 			CURLOPT_USERAGENT	   => 'Postmaster v'.POSTMASTER_VERSION,
@@ -124,11 +256,14 @@ class CampaignMonitor_postmaster_service extends Postmaster_service {
 		
 		$response = $this->curl->execute();
 
-		if(!$response && !empty($this->curl->error_string))
+		if($show_error)
 		{
-			return $this->show_error($this->curl->error_string);
+			if(!$response && !empty($this->curl->error_string))
+			{
+				return $this->show_error($this->curl->error_string);
+			}
 		}
-
+		
 		return json_decode($response);
 	}
 
@@ -305,9 +440,9 @@ class CampaignMonitor_postmaster_service extends Postmaster_service {
 		exit($html);
 	}
 
-	public function api_url($method, $id = FALSE, $endpoint = FALSE)
+	public function api_url($method, $id = FALSE, $endpoint = FALSE, $params = array())
 	{
-		return $this->url . $method . ( $id ? '/' . $id : NULL) . ($endpoint ? '/' . $endpoint : NULL) . '.json';
+		return $this->url . $method . ( $id ? '/' . $id : NULL) . ($endpoint ? '/' . $endpoint : NULL) . '.json?' . http_build_query($params);
 	}
 
 	public function get($url, $api_key)
