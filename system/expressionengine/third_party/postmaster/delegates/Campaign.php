@@ -59,16 +59,19 @@ class Campaign_delegate extends Base_Delegate {
 		$this->load_service();
 		
 		$data          = array(
-			'api_key' => $this->param('key', $this->param('api_key', FALSE, FALSE, TRUE)),
-			'id'      => $this->param('list', FALSE, FALSE, TRUE),
-			'status'  => $this->param('subscribed'),
-			'limit'   => $this->param('limit'),
-			'since'   => $this->param('since', ''),
-			'start'   => $this->param('start', 0),
-			'limit'   => $this->param('limit', 100),
-			'prefix'  => $this->param('prefix', 'subscriber'),
+			'api_key'   => $this->param('key', $this->param('api_key')),
+			'id'        => $this->param('list', FALSE, FALSE, TRUE),
+			'status'    => $this->param('subscribed'),
+			'limit'     => $this->param('limit', 100),
+			'since'     => $this->param('since', ''),
+			'start'     => $this->param('start', $this->param('offset', 0)),
+			'page'      => $this->param('page', 1),
+			'page_size' => $this->param('page_size', 100),
+			'order_by'  => $this->param('order_by', $this->param('orderby', 'email')),
+			'sort'      => $this->param('sort', 'asc'),
+			'prefix'    => $this->param('prefix', 'subscriber'),
 		);
-		
+				
 		$subscribers = $this->service->subscribers($data);
 		
 		return $this->parse($subscribers);
