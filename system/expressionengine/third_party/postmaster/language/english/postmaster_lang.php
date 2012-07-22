@@ -11,6 +11,7 @@ $lang	= array(
 	'postmaster_ping_url'          => 'Ping URL',
 	'postmaster_back_to_home'	   => '&larr; Back to Home',
 	'postmaster_documentation'	   => 'Documentation',
+	'postmaster_invalid_email'	   => 'The email address is not valid.',
 	
 	//--------------------------------------------
 	'', ''

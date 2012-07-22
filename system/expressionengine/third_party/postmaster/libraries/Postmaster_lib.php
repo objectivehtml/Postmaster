@@ -27,6 +27,7 @@ class Postmaster_lib {
 		$this->EE->load->model('postmaster_model');
 		$this->EE->load->driver('channel_data');
 		$this->EE->load->helper('postmaster_helper');
+		$this->EE->lang->loadfile('postmaster');
 		
 		$this->model = $this->EE->postmaster_model;
 	}
