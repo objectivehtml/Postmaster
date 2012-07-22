@@ -14,8 +14,8 @@
  * @build		20120412
  */
 
-require_once APPPATH.'third_party/postmaster/libraries/Postmaster_service.php';
-require_once APPPATH.'third_party/postmaster/libraries/Mailer.php';
+require_once PATH_THIRD . 'postmaster/libraries/Postmaster_service.php';
+require_once PATH_THIRD . 'postmaster/libraries/Mailer.php';
 
 class ExpressionEngine_postmaster_service extends Postmaster_service {
 
