@@ -13,11 +13,14 @@ api_key*
 list*
 :	The unique ID of the list in which to add your subscribers.
 
-email
+email*
 :	The email used to subscribe to the list;
 
+name
+:	(CampaingMonitor only) The name of the subscriber.;
+
 email_type
-:	Preference for the type of email (html, text, or mobile defaults to html)
+:	(MailChimp only) Preference for the type of email (html, text, or mobile defaults to html)
 
 success_return
 :	The return URL if the request succeeds.

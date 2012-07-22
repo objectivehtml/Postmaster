@@ -23,7 +23,7 @@ You'll notice that the campaign tags have 4 segments on EE 2.5+ and 5 segments o
 
 *Obviously the examples below are referring to a single tag. Use the same logic and apply it to the tags that apply to you.*
 
-####(*EE 2.5+*) - `{exp:postmaster:campaign:subcribe}`
+####(*EE 2.5+*) - `{exp:postmaster:campaign:subscribe}`
 
 Segment 1 - exp
 :	This segment is standard and is required.
@@ -37,7 +37,7 @@ Segment 3 - campaign
 Segment 4 - subscribe
 :	This segment executes a specific method from the defined class.
 
-#### (*EE 2.4 and older*) - `{exp:postmaster:delegate:campaign:subcribe}`
+#### (*EE 2.4 and older*) - `{exp:postmaster:delegate:campaign:subscribe}`
 
 Segment 1 - exp
 :	This segment is standard and is required.

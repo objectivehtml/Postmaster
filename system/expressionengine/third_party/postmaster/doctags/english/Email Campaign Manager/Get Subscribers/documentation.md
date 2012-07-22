@@ -14,6 +14,12 @@ api_key*
 list*
 :	The unique ID of the list in which to add your subscribers.
 
+order_by
+:	(CampaignMonitor only) Order the results by a specific field <em>email, date, or name</em>.
+
+sort
+:	(CampaignMonitor only) Order the results <em>asc</em> or <em>desc</em>.
+
 status
 :	Get the members of the list by a given status.
 
@@ -21,7 +27,7 @@ start
 :	Page number used to the display and paginate results.
 
 limit
-:	Limit the number of members displayed in a page.
+:	Limit the number of subscribers displayed in a page.
 
 prefix
 :	A string that is used to prefix all the variables to avoid naming conflicts.
