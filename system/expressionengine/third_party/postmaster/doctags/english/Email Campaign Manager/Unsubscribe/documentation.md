@@ -44,4 +44,4 @@ errors
 ### Third-Party API Reference
 
 - [MailChimp](http://apidocs.mailchimp.com/api/1.3/listunsubscribe.func.php)
-- [CampaignMonitor] (http://www.campaignmonitor.com/api/subscribers/#unsubscribing_a_subscriber)
+- [CampaignMonitor](http://www.campaignmonitor.com/api/subscribers/#unsubscribing_a_subscriber)

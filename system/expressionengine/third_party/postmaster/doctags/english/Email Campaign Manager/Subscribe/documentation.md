@@ -46,4 +46,4 @@ errors
 ### Third-Party API Reference
 
 - [MailChimp](http://apidocs.mailchimp.com/api/1.3/listsubscribe.func.php)
-- [CampaignMonitor] (http://www.campaignmonitor.com/api/subscribers/#adding_a_subscriber)
+- [CampaignMonitor](http://www.campaignmonitor.com/api/subscribers/#adding_a_subscriber)

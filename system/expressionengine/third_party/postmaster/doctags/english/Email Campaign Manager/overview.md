@@ -19,8 +19,8 @@ Postmaster provides a suite of utilities that help you and your client manage th
 
 ### Supported Services
 
-- [MailChimp] (http://www.mailchimp.com)
-- [CampaignMonitor] (http://www.campaignmonitor.com)
+- [MailChimp](http://www.mailchimp.com)
+- [CampaignMonitor](http://www.campaignmonitor.com)
 
 ### Syntax
 
