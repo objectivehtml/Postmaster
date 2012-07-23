@@ -62,3 +62,4 @@ subscriber:data
 ### Third-party API Reference
 
 - [MailChimp](http://apidocs.mailchimp.com/api/1.3/listmembers.func.php)
+- [CampaignMonitor] (http://www.campaignmonitor.com/api/lists/#active_subscribers)

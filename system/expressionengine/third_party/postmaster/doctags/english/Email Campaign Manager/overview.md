@@ -17,6 +17,11 @@ Postmaster provides a suite of utilities that help you and your client manage th
 
 *We are constantly adding features and compatibility with new services. If the email service you use isn't available, let us know. We implement services based on popular demand.*
 
+### Supported Services
+
+- [MailChimp] (http://www.mailchimp.com)
+- [CampaignMonitor] (http://www.campaignmonitor.com)
+
 ### Syntax
 
 You'll notice that the campaign tags have 4 segments on EE 2.5+ and 5 segments on older versions. Don't let this confuse you, these are just like any other tag with 2 or 3 segments. Since Postmaster is completely extendible, thus developers can create new classes with custom methods that do whatever the developer wants.
