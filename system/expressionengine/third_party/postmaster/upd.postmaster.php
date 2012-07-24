@@ -360,52 +360,53 @@ class Postmaster_upd {
 	
 	public function update($current = '')
 	{
-		if(version_compare($current, POSTMASTER_VERSION, '<'))
+		require_once 'libraries/Data_forge.php';
+	
+		$this->EE->data_forge = new Data_forge();
+		$this->EE->data_forge->update_tables($this->tables);
+
+		foreach($this->actions as $class => $method)
 		{
-			require_once APPPATH.'third_party/postmaster/libraries/Data_forge.php';
-
-			$this->EE->data_forge = new Data_forge();
-			$this->EE->data_forge->update_tables($this->tables);
-
-			foreach($this->actions as $action)
-			{
-				$this->EE->db->where($action);
-				$existing = $this->EE->db->get('actions');
-
-				if($existing->num_rows() == 0)
-				{
-					$this->EE->db->insert('actions', $action);
-				}
-			}
+			$this->EE->db->where(array(
+				'class'  => $class,
+				'method' => $method
+			));
 			
-			foreach($this->hooks as $row)
-			{
-				$this->EE->db->where(array(
-					'class'  => $this->ext_name,
-					'method'  => $row[0],
-					'hook' => $row[1]
-				));
-				
-				$existing = $this->EE->db->get('extensions');
+			$existing = $this->EE->db->get('actions');
 
-				if($existing->num_rows() == 0)
-				{
-					$this->EE->db->insert(
-						'extensions',
-						array(
-							'class' 	=> $this->ext_name,
-							'method' 	=> $row[0],
-							'hook' 		=> ( ! isset($row[1])) ? $row[0] : $row[1],
-							'settings' 	=> ( ! isset($row[2])) ? '' : $row[2],
-							'priority' 	=> ( ! isset($row[3])) ? 10 : $row[3],
-							'version' 	=> $this->version,
-							'enabled' 	=> 'y',
-						)
-					);
-				}
+			if($existing->num_rows() == 0)
+			{
+				$this->EE->db->insert('actions', $action);
 			}
 		}
+		
+		foreach($this->hooks as $row)
+		{
+			$this->EE->db->where(array(
+				'class'  => $this->ext_name,
+				'method'  => $row[0],
+				'hook' => $row[1]
+			));
+			
+			$existing = $this->EE->db->get('extensions');
 
+			if($existing->num_rows() == 0)
+			{
+				$this->EE->db->insert(
+					'extensions',
+					array(
+						'class' 	=> $this->ext_name,
+						'method' 	=> $row[0],
+						'hook' 		=> ( ! isset($row[1])) ? $row[0] : $row[1],
+						'settings' 	=> ( ! isset($row[2])) ? '' : $row[2],
+						'priority' 	=> ( ! isset($row[3])) ? 10 : $row[3],
+						'version' 	=> $this->version,
+						'enabled' 	=> 'y',
+					)
+				);
+			}
+		}
+		
 	    return TRUE;
 	}
 	
