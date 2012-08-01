@@ -1,5 +1,21 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Theme Loader
+ *
+ * A helper class that allows developers to easily add CSS and JS 
+ * packages from the associating third party theme directory.
+ *
+ * @package		Theme Loader
+ * @subpackage	Libraries
+ * @category	Library
+ * @author		Justin Kimbrell
+ * @copyright	Copyright (c) 2011, Justin Kimbrell
+ * @link 		http://www.objectivehtml.com/libraries/channel_data
+ * @version		1.1.0
+ * @build		20120801
+ */
+ 
 if(!class_exists('Theme_loader'))
 {
 	class Theme_loader {
@@ -42,12 +58,26 @@ if(!class_exists('Theme_loader'))
 		
 		public function theme_path()
 		{
-			return $this->EE->config->item('theme_folder_path');
+			if(defined('PATH_THIRD_THEMES'))
+			{
+				return PATH_THIRD_THEMES;
+			}
+			else
+			{
+				return rtrim($this->EE->config->item('theme_folder_path'), '/').'/third_party/';
+			}
 		}
 		
 		public function theme_url()
 		{
-			return $this->EE->config->item('theme_folder_url');
+			if(defined('URL_THIRD_THEMES'))
+			{
+				return URL_THIRD_THEMES;
+			}
+			else
+			{
+				return rtrim($this->EE->config->item('theme_folder_url'), '/').'/third_party/';
+			}
 		}	
 		
 		public function javascript($file)
@@ -79,7 +109,7 @@ if(!class_exists('Theme_loader'))
 			if(!$this->is_valid_url($file))
 			{
 				$file 	= str_replace('.js', '', $file);
-				$file 	= $this->theme_url() . 'third_party/' . $this->module_name . '/' . $directory . '/' . $file . $ext;
+				$file 	= $this->theme_url() . $this->module_name . '/' . $directory . '/' . $file . $ext;
 			}
 			
 			return $file;	

@@ -264,7 +264,7 @@ class Postmaster_mcp {
 		}
 
 		$vars = array(
-			'ib_path'	    => $this->EE->theme_loader->theme_url().'/third_party/postmaster/javascript/InterfaceBuilder.js',
+			'ib_path'	    => $this->EE->theme_loader->theme_url().'postmaster/javascript/InterfaceBuilder.js',
 			'channels'		=> json_encode($channels),
 			'fields'		=> json_encode($field_data),
 			'statuses'		=> json_encode($status_data),
@@ -312,7 +312,7 @@ class Postmaster_mcp {
 		}
 
 		$vars = array(
-			'ib_path'	    => $this->EE->theme_loader->theme_url().'/third_party/postmaster/javascript/InterfaceBuilder.js',
+			'ib_path'	    => $this->EE->theme_loader->theme_url().'postmaster/javascript/InterfaceBuilder.js',
 			'channels'		=> json_encode($channels),
 			'fields'		=> json_encode($field_data),
 			'statuses'		=> json_encode($status_data),

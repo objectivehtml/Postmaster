@@ -36,7 +36,7 @@ class Postmaster_lib {
 	{
 		$this->EE->load->helper('directory');
 
-		$directory = $this->EE->theme_loader->theme_path().'third_party/postmaster/css/themes/';
+		$directory = $this->EE->theme_loader->theme_path().'postmaster/css/themes/';
 
 		$themes = array();
 

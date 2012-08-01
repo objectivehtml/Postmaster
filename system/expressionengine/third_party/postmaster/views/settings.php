@@ -83,9 +83,9 @@
 			</td>
 			<td class="actions">
 				<ul>
-					<li><a href="<? echo $parcel->edit_url?>"><img src="<? echo $theme_url?>/third_party/postmaster/css/icons/edit_page.png" alt="Edit" title="Edit" class="tooltip" /></a></li>
-					<li><a href="<? echo $parcel->duplicate_url?>"><img src="<? echo $theme_url?>/third_party/postmaster/css/icons/copy_paste.png" alt="Duplicate" title="Duplicate" class="tooltip" /></a></li>
-					<li><a href="<? echo $parcel->delete_url?>" title="Delete" class="delete tooltip"><img src="<? echo $theme_url?>/third_party/postmaster/css/icons/delete_page.png" alt="Delete" /></a></li>
+					<li><a href="<? echo $parcel->edit_url?>"><img src="<? echo $theme_url?>postmaster/css/icons/edit_page.png" alt="Edit" title="Edit" class="tooltip" /></a></li>
+					<li><a href="<? echo $parcel->duplicate_url?>"><img src="<? echo $theme_url?>postmaster/css/icons/copy_paste.png" alt="Duplicate" title="Duplicate" class="tooltip" /></a></li>
+					<li><a href="<? echo $parcel->delete_url?>" title="Delete" class="delete tooltip"><img src="<? echo $theme_url?>postmaster/css/icons/delete_page.png" alt="Delete" /></a></li>
 				</ul>
 			</td>
 		</tr>
