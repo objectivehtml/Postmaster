@@ -365,11 +365,11 @@ class Postmaster_upd {
 		$this->EE->data_forge = new Data_forge();
 		$this->EE->data_forge->update_tables($this->tables);
 
-		foreach($this->actions as $class => $method)
+		foreach($this->actions as $action)
 		{
 			$this->EE->db->where(array(
-				'class'  => $class,
-				'method' => $method
+				'class'  => $action['class'],
+				'method' => $action['method']
 			));
 			
 			$existing = $this->EE->db->get('actions');
