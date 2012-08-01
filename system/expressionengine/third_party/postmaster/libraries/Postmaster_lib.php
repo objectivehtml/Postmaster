@@ -9,7 +9,7 @@
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
  * @version		1.1.1
- * @build		20120719
+ * @build		20120801
  */
 
 require_once APPPATH.'libraries/Template.php';
@@ -58,14 +58,15 @@ class Postmaster_lib {
 	public function get_send_date($parsed_object)
 	{
 		$send_date = $parsed_object->post_date_specific;
-		$send_date = !empty($send_date) ? strtotime($send_date) : $this->EE->localize->now;
+		
+		$send_date = !empty($send_date) ? $this->EE->localize->set_localized_time(strtotime($send_date)) : $this->EE->localize->now;
 
 		if(!empty($parsed_object->post_date_relative))
 		{
 			$send_date = strtotime($parsed_object->post_date_relative, $send_date);
 		}
-
-		return $this->EE->localize->set_localized_time($send_date);
+		
+		return $send_date;
 	}
 
 	public function load_service($name)
