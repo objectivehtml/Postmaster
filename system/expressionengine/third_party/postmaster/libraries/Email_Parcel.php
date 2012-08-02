@@ -239,24 +239,31 @@ class Email_Parcel {
 				'sort'     => 'ASC'
 			)
 		)->result_array();
-
+		
 		$groups = array();
-
+		
 		for($i = 1; $i < 5; $i++)
 		{
-			$groups[] = $this->EE->channel_data->get_member_group($i)->row();
+			$group = $this->EE->channel_data->get_member_group($i)->row();
+			
+			$groups[] = $group;
 		}
+		
+		$reserved = array('Super Admins', 'Banned', 'Guests', 'Pending');
 
 		foreach($channel_member_groups as $row)
 		{
 			$group = $this->EE->channel_data->get_member_group($row['group_id']);
-
-			if($group->num_rows() == 1)
+		
+			if(!in_array($group->row('group_title'), $reserved))
 			{
-				$groups[] = $group->row();
+				if($group->num_rows() == 1)
+				{
+					$groups[] = $group->row();
+				}
 			}
 		}
-
+		
 		return $groups;
 	}
 
