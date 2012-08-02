@@ -303,7 +303,7 @@ class Postmaster_upd {
 	
 	private $hooks = array(
 		array('entry_submission_ready', 'entry_submission_ready'),
-		array('entry_submission_end', 'entry_submission_end')
+		array('entry_submission_end', 'entry_submission_end', '', 1)
 	);
 	
     public function __construct()
