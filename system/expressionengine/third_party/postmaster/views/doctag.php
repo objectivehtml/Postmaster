@@ -175,9 +175,9 @@
 	<h2>Contents</h2>
 	
 	<ul>
-		<li><a href="<?=$index_url?>" <?=!$tag || $tag == 'Overview' ? 'class="ui-doctag-active"' : NULL?>>Overview</a></li>
+		<li><a href="<?php echo $index_url?>" <?php echo !$tag || $tag == 'Overview' ? 'class="ui-doctag-active"' : NULL?>>Overview</a></li>
 	<?php foreach($page->methods as $method_name => $method): ?>
-		<li><a href="<?=$method->url?>" <?=$method->selected ? 'class="ui-doctag-active"' : NULL?>><?=$method->title?></a></li>
+		<li><a href="<?php echo $method->url?>" <?php echo $method->selected ? 'class="ui-doctag-active"' : NULL?>><?php echo $method->title?></a></li>
 	<?php endforeach; ?>
 	</ul>
 	
@@ -187,24 +187,24 @@
 
 	<div class="ui-doctag-contents">
 		
-		<?=$page_overview?>
+		<?php echo $page_overview?>
 		
 		<?php foreach($page->methods as $method_name => $method): ?>
-			<? if($method->selected): ?>
-			<div class="ui-doctag-method" id="<?=$method_name?>">
+			<?php if($method->selected): ?>
+			<div class="ui-doctag-method" id="<?php echo $method_name?>">
 				
-				<h3 class="ui-doctag-tag"><a href="<?=$method->url?>"><?php echo $method->tag?></a></h3>
+				<h3 class="ui-doctag-tag"><a href="<?php echo $method->url?>"><?php echo $method->tag?></a></h3>
 			
 				<div class="ui-doctag-overview">
 					
-					<?=$method->documentation?>
+					<?php echo $method->documentation?>
 								
-					<?=$method->snippet_table?>
+					<?php echo $method->snippet_table?>
 					
 				</div>
 				
 			</div>
-			<? endif; ?>
+			<?php endif; ?>
 		<?php endforeach; ?>
 		
 	</div>
@@ -213,10 +213,10 @@
 
 <?php foreach($page->methods as $method_name => $method): ?>
 	<?php foreach($method->snippets as $file_name => $snippet): ?>		
-	<div class="reveal-modal" id="<?=preg_replace("/\\.[\\w]*/u", "", $file_name)?>">
+	<div class="reveal-modal" id="<?php echo preg_replace("/\\.[\\w]*/u", "", $file_name)?>">
 		<a class="close-reveal-modal">&#215;</a>
-		<h3><?=LD.preg_replace("/\\.[\\w]*/u", "", $file_name).RD;?></h3>
-		<textarea><?=$snippet?></textarea>
+		<h3><?php echo LD.preg_replace("/\\.[\\w]*/u", "", $file_name).RD;?></h3>
+		<textarea><?php echo $snippet?></textarea>
 	</div>
 	<?php endforeach; ?>
 <?php endforeach; ?>

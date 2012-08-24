@@ -1,4 +1,4 @@
-<script type="text/javascript" src="<?=$ib_path?>"></script>
+<script type="text/javascript" src="<?php echo $ib_path?>"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
 	
@@ -9,11 +9,11 @@
 
 <style type="text/css">
 	.CodeMirror-scroll {
-		min-height: <? echo $template->height?>;
+		min-height: <?php echo $template->height?>;
 	}
 </style>
 
-<form action="<? echo $template->action?>" method="post" class="group postmaster">
+<form action="<?php echo $template->action?>" method="post" class="group postmaster">
 	
 	<fieldset class="column group sidebar">
 	
@@ -32,42 +32,42 @@
 		<ul>
 			<li class="to_name">
 				<label for="to_name">To (Name)</label>
-				<input type="text" name="to_name" id="to_name" value="<? echo form_prep($template->to_name) ?>" />
+				<input type="text" name="to_name" id="to_name" value="<?php echo form_prep($template->to_name) ?>" />
 			</li>
 			<li class="to_email">
 				<label for="to_email">To (Email)</label>
-				<input type="text" name="to_email" id="to_email" value="<? echo form_prep($template->to_email) ?>" />
+				<input type="text" name="to_email" id="to_email" value="<?php echo form_prep($template->to_email) ?>" />
 			</li>
 			<li class="from">
 				<label for="from">From (Name)</label>
-				<input type="text" name="from_name" id="from_name" value="<? echo form_prep($template->from_name) ?>" />
+				<input type="text" name="from_name" id="from_name" value="<?php echo form_prep($template->from_name) ?>" />
 			</li>
 			<li class="from">
 				<label for="from">From (E-mail)</label>
-				<input type="text" name="from_email" id="from_email" value="<? echo form_prep($template->from_email) ?>" />
+				<input type="text" name="from_email" id="from_email" value="<?php echo form_prep($template->from_email) ?>" />
 			</li>
 			<li class="cc">
 				<label for="cc">CC</label>
-				<input type="text" name="cc" id="cc" value="<? echo form_prep($template->cc) ?>" />
+				<input type="text" name="cc" id="cc" value="<?php echo form_prep($template->cc) ?>" />
 			</li>
 			<li class="bcc">
 				<label for="bcc">BCC</label>
-				<input type="text" name="bcc" id="bcc" value="<? echo form_prep($template->bcc) ?>" />
+				<input type="text" name="bcc" id="bcc" value="<?php echo form_prep($template->bcc) ?>" />
 			</li>
 			<li class="channel">
 				<h3><a href="#channel-helper" class="help">Channel <span>(?)</span></a></h3>
 				<select name="channel_id" id="channel_id">
-				<? foreach($template->channels() as $channel): ?>
-					<option value="<? echo $channel->channel_id?>" <? echo (int)$template->channel_id == (int)$channel->channel_id ? 'selected="selected"' : ''?>><? echo $channel->channel_title?></option>
-				<? endforeach; ?>
+				<?php foreach($template->channels() as $channel): ?>
+					<option value="<?php echo $channel->channel_id?>" <?php echo (int)$template->channel_id == (int)$channel->channel_id ? 'selected="selected"' : ''?>><?php echo $channel->channel_title?></option>
+				<?php endforeach; ?>
 				</select>
 			</li>
 			<li class="entry_trigger container">
 				<h3><a href="#entry_trigger" class="help">Entry Trigger <span>(?)</span></a></h3>
 				
 				<div>
-					<label><input type="checkbox" name="trigger[]" value="new" <? echo in_array('new', $template->trigger) ? 'checked="checked"' : NULL ?> /> New</label>
-					<label><input type="checkbox" name="trigger[]" value="edit" <? echo in_array('edit', $template->trigger) ? 'checked="checked"' : NULL ?> /> Edit</label>
+					<label><input type="checkbox" name="trigger[]" value="new" <?php echo in_array('new', $template->trigger) ? 'checked="checked"' : NULL ?> /> New</label>
+					<label><input type="checkbox" name="trigger[]" value="edit" <?php echo in_array('edit', $template->trigger) ? 'checked="checked"' : NULL ?> /> Edit</label>
 				</div>
 
 			</li>
@@ -75,16 +75,16 @@
 				
 				<h3><a href="#categories" class="help">Categories <span>(?)</span></a></h3>
 				
-				<? if(count($template->category_tree()) == 0): ?>
+				<?php if(count($template->category_tree()) == 0): ?>
 					
 					<p>This channel has no categories.</p>
 				
-				<? else: ?>
+				<?php else: ?>
 
-					<? foreach($template->category_tree() as $cat_id => $category): ?>
-						<label><input type="checkbox" name="category[]" value="<? echo $category[0]?>" <? echo in_array($category[0], $template->categories) ? 'checked="checked"' : NULL ?> /><? echo $category[1]?></label>
-					<? endforeach; ?>	
-				<? endif; ?>
+					<?php foreach($template->category_tree() as $cat_id => $category): ?>
+						<label><input type="checkbox" name="category[]" value="<?php echo $category[0]?>" <?php echo in_array($category[0], $template->categories) ? 'checked="checked"' : NULL ?> /><?php echo $category[1]?></label>
+					<?php endforeach; ?>	
+				<?php endif; ?>
 
 			</li>
 			<li class="statuses container">
@@ -92,19 +92,19 @@
 				<h3><a href="#status" class="help">Statuses <span>(?)</span></a></h3>
 
 				<div>
-				<? 
+				<?php 
 
 				if(count($template->statuses()) == 0): ?>
 					
 					<p>This channel has no statuses.</p>
 				
-				<? else: ?>
+				<?php else: ?>
 
-					<? foreach($template->statuses() as $status): ?>
-						<label><input type="checkbox" name="statuses[]" value="<? echo $status['status']?>" <? echo in_array($status['status'], $template->statuses) ? 'checked="checked"' : NULL ?> /><? echo $status['status']?></label>
-					<? endforeach; ?>
+					<?php foreach($template->statuses() as $status): ?>
+						<label><input type="checkbox" name="statuses[]" value="<?php echo $status['status']?>" <?php echo in_array($status['status'], $template->statuses) ? 'checked="checked"' : NULL ?> /><?php echo $status['status']?></label>
+					<?php endforeach; ?>
 
-				<? endif; ?>
+				<?php endif; ?>
 				</div>
 
 			</li>
@@ -112,9 +112,9 @@
 				<h3><a href="#member-groups" class="help">Member Group <span>(?)</span></a></h3>
 				
 				<div>
-				<? foreach($template->member_groups() as $group): ?>
-					<label><input type="checkbox" name="member_group[]" value="<? echo $group->group_id?>" <? echo in_array($group->group_id, $template->member_groups) ? 'checked="checked"' : NULL ?> /><? echo $group->group_title?></label>
-				<? endforeach; ?>
+				<?php foreach($template->member_groups() as $group): ?>
+					<label><input type="checkbox" name="member_group[]" value="<?php echo $group->group_id?>" <?php echo in_array($group->group_id, $template->member_groups) ? 'checked="checked"' : NULL ?> /><?php echo $group->group_title?></label>
+				<?php endforeach; ?>
 				</div>
 
 			</li>
@@ -129,15 +129,15 @@
 				</div>
 
 				<label for="post_date_specific">Post Date Specific</label>
-				<input type="text" name="post_date_specific" id="post_date_specific" value="<? echo form_prep($template->post_date_specific) ?>" />
+				<input type="text" name="post_date_specific" id="post_date_specific" value="<?php echo form_prep($template->post_date_specific) ?>" />
 			</li>
 			<li class="post-date">
 				<label for="post_date_relative">Post Date Relative</label>
-				<input type="text" name="post_date_relative" id="post_date_relative" value="<? echo form_prep($template->post_date_relative) ?>" />
+				<input type="text" name="post_date_relative" id="post_date_relative" value="<?php echo form_prep($template->post_date_relative) ?>" />
 			</li>
 			<li class="send-every">
 				<label for="send_every">Send Every</label>
-				<input type="text" name="send_every" id="send_every" value="<? echo form_prep($template->send_every) ?>" />
+				<input type="text" name="send_every" id="send_every" value="<?php echo form_prep($template->send_every) ?>" />
 			</li>
 			<li class="send-every">
 				<h3><a href="#extra-conditionals" class="help"><label for="extra_conditionals">Extra Conditionals <span>(?)</span></label></a></h3>
@@ -163,7 +163,7 @@
 					</p>
 				</div>
 
-				<textarea name="extra_conditionals" id="extra_conditionals"><? echo form_prep($template->extra_conditionals) ?></textarea>
+				<textarea name="extra_conditionals" id="extra_conditionals"><?php echo form_prep($template->extra_conditionals) ?></textarea>
 		</ul>
 
 		<div class="help-text" id="channel-helper">
@@ -225,9 +225,9 @@
 							</div>
 							
 							<select name="test_entry" id="test_entry">
-							<? foreach($template->entries->result() as $entry): ?>
-								<option value="<? echo $entry->entry_id?>"><? echo $entry->title?></option>
-							<? endforeach; ?>
+							<?php foreach($template->entries->result() as $entry): ?>
+								<option value="<?php echo $entry->entry_id?>"><?php echo $entry->title?></option>
+							<?php endforeach; ?>
 							</select>
 
 						</div>
@@ -246,9 +246,9 @@
 						<label for="theme">Theme</label>
 						
 						<select name="theme" class="theme">
-						<? foreach($template->themes() as $theme): ?>
-							<option value="<? echo $theme->value?>" <? echo ($theme->value == $template->default_theme) ? 'selected="selected"' : ''?>><? echo $theme->name?></option>
-						<? endforeach; ?>
+						<?php foreach($template->themes() as $theme): ?>
+							<option value="<?php echo $theme->value?>" <?php echo ($theme->value == $template->default_theme) ? 'selected="selected"' : ''?>><?php echo $theme->name?></option>
+						<?php endforeach; ?>
 						</select>
 					
 					</div>		
@@ -262,7 +262,7 @@
 					</div>
 
 					<div style="position:relative">		
-						<textarea name="message" id="message"><? echo $template->message?></textarea>
+						<textarea name="message" id="message"><?php echo $template->message?></textarea>
 
 						<div class="flyout">
 							<a href="#" class="tab">+</a>
@@ -275,9 +275,9 @@
 							</ul>
 
 							<ul class="data">
-							<? foreach($template->fields() as $field): ?>
-								<li><a href="#<? echo $field->field_name?>"><? echo $field->field_label?></a></li>
-							<? endforeach; ?>
+							<?php foreach($template->fields() as $field): ?>
+								<li><a href="#<?php echo $field->field_name?>"><?php echo $field->field_label?></a></li>
+							<?php endforeach; ?>
 							</ul>
 						</div>
 					</div>
@@ -292,7 +292,7 @@
 						<p>This value will appear in the subject of the email. It can be static and/or dynamic and can include: variables, EE tags, and conditionals. Anything you would expect in normal template can be used here too. Just be sure you use the 'parcel:' prefix. Ex: {parcel:title}</p>
 					</div>
 
-					<input type="text" name="subject" id="subject" value="<? echo form_prep($template->subject) ?>" />
+					<input type="text" name="subject" id="subject" value="<?php echo form_prep($template->subject) ?>" />
 				</li>
 			</ul>
 
@@ -308,34 +308,34 @@
 			</div>
 
 			<select name="service" id="service">			
-			<? foreach($template->services() as $service): ?>
-				<option value="<? echo $service->name ?>" <? if($template->service == $service->name): ?>selected="selected"<? endif; ?>><? echo $service->name ?></option>
-			<? endforeach; ?>
+			<?php foreach($template->services() as $service): ?>
+				<option value="<?php echo $service->name ?>" <?php if($template->service == $service->name): ?>selected="selected"<?php endif; ?>><?php echo $service->name ?></option>
+			<?php endforeach; ?>
 			</select>
 
 
 			<div class="service-panels">
 			
-				<? foreach($template->services() as $service): ?>
-				<div class="service-panel" id="<? echo $service->name ?>_panel">
+				<?php foreach($template->services() as $service): ?>
+				<div class="service-panel" id="<?php echo $service->name ?>_panel">
 	
-					<h3><? echo $service->name ?> Settings</h3>
+					<h3><?php echo $service->name ?> Settings</h3>
 	
-					<? echo $service->description ?>
+					<?php echo $service->description ?>
 	
-					<? echo $service->display_settings($template->settings, $template) ?>
+					<?php echo $service->display_settings($template->settings, $template) ?>
 	
 				</div>
-				<? endforeach; ?>
+				<?php endforeach; ?>
 				
 			</div>
 
 		</div>
 		
-		<input type="hidden" name="id" value="<? echo $template->id?>" />
-		<input type="hidden" name="return" value="<? echo $template->return?>" />
+		<input type="hidden" name="id" value="<?php echo $template->id?>" />
+		<input type="hidden" name="return" value="<?php echo $template->return?>" />
 
-		<button type="submit" class="submit float-right"><? echo $template->button?></button>
+		<button type="submit" class="submit float-right"><?php echo $template->button?></button>
 		<button type="button" class="refresh submit float-right margin-right">Refresh Preview</button>
 	
 	</fieldset>
@@ -344,8 +344,8 @@
 
 <script type="text/javascript">
 
-	Postmaster.editorSettings = <? echo $template->editor_settings?>;
-	Postmaster.settings       = <? echo json_encode($template->settings)?>;
-	Postmaster.parser		  = '<? echo $template->parser_url?>';
+	Postmaster.editorSettings = <?php echo $template->editor_settings?>;
+	Postmaster.settings       = <?php echo json_encode($template->settings)?>;
+	Postmaster.parser		  = '<?php echo $template->parser_url?>';
 
 </script>

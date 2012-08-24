@@ -13,83 +13,83 @@
 		</tr>
 	</thead>
 	<tbody>
-		<? if(count($parcels) == 0): ?>
+		<?php if(count($parcels) == 0): ?>
 		<tr>
 			<td colspan="7">
 				<p class="empty">You have not created any e-mail parcels yet.</p>
 			</td>
 		</tr>
-		<? endif; ?>
+		<?php endif; ?>
 
-		<? foreach($parcels as $parcel): ?>
+		<?php foreach($parcels as $parcel): ?>
 		<tr>
 			<td class="channel-name">
-				<? echo $parcel->channel_name;?>
+				<?php echo $parcel->channel_name;?>
 			</td>
 			<td class="categories">
-				<? if(count($parcel->categories) > 0): ?>
+				<?php if(count($parcel->categories) > 0): ?>
 					<ul>
-					<? foreach($parcel->categories as $category): ?>
+					<?php foreach($parcel->categories as $category): ?>
 						<li>
-							<? echo $category->cat_name?>
+							<?php echo $category->cat_name?>
 						</li>
-					<? endforeach; ?>
+					<?php endforeach; ?>
 					</ul>
-				<? else: ?>
+				<?php else: ?>
 					<p>No categories have been defined.</p>
-				<? endif; ?>
+				<?php endif; ?>
 			</td>
 			<td class="member-groups">
-				<? if(count($parcel->member_groups) > 0): ?>
+				<?php if(count($parcel->member_groups) > 0): ?>
 					<ul>
-					<? foreach($parcel->member_groups as $group): ?>
+					<?php foreach($parcel->member_groups as $group): ?>
 						<li>
-							<? echo $group->group_title?>
+							<?php echo $group->group_title?>
 						</li>
-					<? endforeach; ?>
+					<?php endforeach; ?>
 					</ul>
-				<? else: ?>
+				<?php else: ?>
 					<p>No member groups have been defined.</p>
-				<? endif; ?>
+				<?php endif; ?>
 			</td>
 			<td class="statuses">
-				<? if(count($parcel->statuses) > 0): ?>
+				<?php if(count($parcel->statuses) > 0): ?>
 					<ul>
-					<? foreach($parcel->statuses as $status): ?>
+					<?php foreach($parcel->statuses as $status): ?>
 						<li>
-							<? echo $status?>
+							<?php echo $status?>
 						</li>
-					<? endforeach; ?>
+					<?php endforeach; ?>
 					</ul>
-				<? else: ?>
+				<?php else: ?>
 					<p>No statuses have been defined.</p>
-				<? endif; ?>
+				<?php endif; ?>
 			</td>
 			<td class="trigger">
-				<? if(count($parcel->trigger) > 0): ?>
+				<?php if(count($parcel->trigger) > 0): ?>
 					<ul>
-					<? foreach($parcel->trigger as $trigger): ?>
+					<?php foreach($parcel->trigger as $trigger): ?>
 						<li>
-							<? echo $trigger?>
+							<?php echo $trigger?>
 						</li>
-					<? endforeach; ?>
+					<?php endforeach; ?>
 					</ul>
-				<? else: ?>
+				<?php else: ?>
 					<p>No member groups have been defined.</p>
-				<? endif; ?>
+				<?php endif; ?>
 			</td>
 			<td class="service">
-				<? echo $parcel->service;?>
+				<?php echo $parcel->service;?>
 			</td>
 			<td class="actions">
 				<ul>
-					<li><a href="<? echo $parcel->edit_url?>"><img src="<? echo $theme_url?>postmaster/css/icons/edit_page.png" alt="Edit" title="Edit" class="tooltip" /></a></li>
-					<li><a href="<? echo $parcel->duplicate_url?>"><img src="<? echo $theme_url?>postmaster/css/icons/copy_paste.png" alt="Duplicate" title="Duplicate" class="tooltip" /></a></li>
-					<li><a href="<? echo $parcel->delete_url?>" title="Delete" class="delete tooltip"><img src="<? echo $theme_url?>postmaster/css/icons/delete_page.png" alt="Delete" /></a></li>
+					<li><a href="<?php echo $parcel->edit_url?>"><img src="<?php echo $theme_url?>postmaster/css/icons/edit_page.png" alt="Edit" title="Edit" class="tooltip" /></a></li>
+					<li><a href="<?php echo $parcel->duplicate_url?>"><img src="<?php echo $theme_url?>postmaster/css/icons/copy_paste.png" alt="Duplicate" title="Duplicate" class="tooltip" /></a></li>
+					<li><a href="<?php echo $parcel->delete_url?>" title="Delete" class="delete tooltip"><img src="<?php echo $theme_url?>postmaster/css/icons/delete_page.png" alt="Delete" /></a></li>
 				</ul>
 			</td>
 		</tr>
-		<? endforeach; ?>
+		<?php endforeach; ?>
 	</tbody>
 </table>
 
@@ -104,21 +104,21 @@
 		</tr>
 	</thead>
 	<tbody>
-		<? if(count($delegates) == 0): ?>
+		<?php if(count($delegates) == 0): ?>
 		<tr>
 			<td colspan="7">
 				<p class="empty">You have not installed any delegates yet.</p>
 			</td>
 		</tr>
-		<? endif; ?>
+		<?php endif; ?>
 		
-		<? foreach($delegates as $delegate): ?>
+		<?php foreach($delegates as $delegate): ?>
 		<tr>
-			<td><? echo $delegate->name?></td>
-			<td><? echo $delegate->description?></td>
-			<td style="text-align:center"><a href="<? echo $doctag_url . '&id='.$delegate->doctag?>"><?=$lang['documentation']?></a></td>
+			<td><?php echo $delegate->name?></td>
+			<td><?php echo $delegate->description?></td>
+			<td style="text-align:center"><a href="<?php echo $doctag_url . '&id='.$delegate->doctag?>"><?php echo $lang['documentation']?></a></td>
 		</tr>
-		<? endforeach; ?>
+		<?php endforeach; ?>
 		
 	</tbody>
 </table>
@@ -126,7 +126,7 @@
 <h2><a href="#ping" class="help">Ping URL <span>(?)</span></a></h2>
 
 <div class="box">
-	<a href="<? echo $ping_url?>"><? echo $ping_url ?></a>
+	<a href="<?php echo $ping_url?>"><?php echo $ping_url ?></a>
 </div>
 
 <div id="delegates" class="help-text">
