@@ -12,9 +12,25 @@ abstract class Base_hook extends Base_class {
 	
 	protected $var_prefix = 'hook';
 	
-	protected $default_settings = array();
+	protected $default_settings = array(
+		'end_script' => FALSE
+	);
 	
-	protected $fields = array();
+	protected $fields = array(
+		
+		'end_script' => array(
+			'label' => 'End Script',
+			'id'	=> 'end_script',
+			'type'	=> 'radio',
+			'description' => 'Setting this value to true will stop the script from finishing (after the email is sent).',
+			'settings' => array(
+				'options' => array(
+					FALSE => 'False',
+					TRUE  => 'True'
+				)
+			)
+		)
+	);	
 	
 	protected static $parse_fields = array(
 		'to_name',
@@ -51,12 +67,14 @@ abstract class Base_hook extends Base_class {
 		$response = array();
 		
 		foreach($installed_hooks as $hook)
-		{
-			$hook 	    = $this->parse($hook);
-			$settings   = !empty($hook['settings']) ? json_decode($hook['settings']) : array();
+		{	
+			$name             = !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'];
+			$hook             = $this->parse($hook);
+			$settings         = !empty($hook['settings']) ? json_decode($hook['settings']) : array();
+			
 			$hook['settings'] = (object) $settings;
 			
-			$end_script = isset($settings->end_script) ? $settings->end_script : FALSE;
+			$end_script = isset($hook['settings']->$name->end_script) ? (bool) $hook['settings']->$name->end_script : FALSE;
 			
 			$response[] = (object) array(
 				// *optional* 'return_data' => 'Some return data'
@@ -71,8 +89,7 @@ abstract class Base_hook extends Base_class {
 	public function get_installed_hooks($hook)
 	{
 		$this->EE->db->order_by('priority', 'asc');
-		$this->EE->db->or_where('installed_hook', $hook);
-		$this->EE->db->or_where('user_defined_hook', $hook);
+		$this->EE->db->where("(installed_hook != '' AND installed_hook = '$hook') OR (installed_hook = '' AND user_defined_hook = '$hook')", NULL, FALSE);
 		
 		return $this->EE->db->get('postmaster_hooks')->result_array();
 	}

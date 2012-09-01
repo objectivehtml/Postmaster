@@ -225,7 +225,7 @@
 				<ul class="column third">				
 					<li>
 						<h3><a href="#user_defined" class="help">User Defined Hook <span>(?)</span></a></h3>
-						<input type="text" name="user_defined_hook" value="" />
+						<input type="text" name="user_defined_hook" value="<?php echo $template->user_defined_hook?>" />
 					</li>
 				</ul>
 				
@@ -244,7 +244,7 @@
 			<div class="hook-settings clear">
 				<?php foreach($template->hooks() as $hook): ?>
 					<?php if($hook->display_settings($template->settings)): ?>
-						<div class="margin-top" id="<?php $hook->get_name()?>">
+						<div class="margin-top hook-panel" id="<?php $hook->get_name()?>">
 							<h3><?php echo $hook->get_title()?> Settings</h3>
 							<?php echo $hook->display_settings($template->settings); ?>
 						</div>

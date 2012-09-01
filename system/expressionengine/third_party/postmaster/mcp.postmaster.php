@@ -143,7 +143,14 @@ class Postmaster_mcp {
 			'template' => new Template_Hook($saved_data)
 		);
 		
-		$this->EE->cp->set_variable('cp_page_title', 'New Parcel');
+		$title = 'New Hook';
+		
+		if($this->EE->input->get('id'))
+		{
+			$title = 'Edit Hook';	
+		}
+		
+		$this->EE->cp->set_variable('cp_page_title', $title);
 		
 		$this->EE->cp->set_right_nav(array(
 			'&larr; Back to Home' => $this->cp_url('index'),

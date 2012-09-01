@@ -2,8 +2,13 @@
 
 class Checkbox_IBField extends IBFieldtype {
 
-	public function display_field($data = '')
+	public function display_field($data = array())
 	{
+		if(is_null($data))
+		{
+			$data = array();	
+		}
+		
 		$html = array();
 
 		foreach($this->settings['options'] as $option_value => $option_name)
