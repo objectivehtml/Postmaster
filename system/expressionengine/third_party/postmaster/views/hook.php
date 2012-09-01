@@ -242,9 +242,10 @@
 			</div>
 			
 			<div class="hook-settings clear">
-				<?php foreach($template->hooks() as $hook): ?>
+				<?php foreach($template->hooks(TRUE) as $hook): ?>
+				
 					<?php if($hook->display_settings($template->settings)): ?>
-						<div class="margin-top hook-panel" id="<?php $hook->get_name()?>">
+						<div class="margin-top hook-panel" id="<?php echo $hook->get_name()?>_panel">
 							<h3><?php echo $hook->get_title()?> Settings</h3>
 							<?php echo $hook->display_settings($template->settings); ?>
 						</div>
@@ -286,7 +287,7 @@
 				<h2>Email Service</h2>
 				<p>This is the method used to send an email. By default, ExpressionEngine is used to send email. This can be simple and effective for some. But to reliably send emails to thousands of people, you will need to use a third-party service.
 			</div>
-
+			
 			<select name="service" id="service">			
 			<?php foreach($template->services() as $service): ?>
 				<option value="<?php echo $service->name ?>" <?php if($template->service == $service->name): ?>selected="selected"<?php endif; ?>><?php echo $service->name ?></option>

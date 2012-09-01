@@ -31,9 +31,19 @@ class Template_Hook extends Template_Base {
 		$this->IB	  = $this->EE->interface_builder;
 	}
 	
-	public function hooks()
+	public function hooks($reserved = FALSE)
 	{
-		return $this->EE->postmaster_hook->get_hooks();
+		$return = array();
+		
+		foreach($this->EE->postmaster_hook->get_hooks() as $hook)
+		{
+			if(!$reserved && !in_array($hook->get_file_name(), $this->EE->postmaster_hook->get_reserved_files()) || $reserved)
+			{
+				$return[] = $hook;
+			}	
+		}
+		
+		return $return;
 	}
 	
 	public function priorities()

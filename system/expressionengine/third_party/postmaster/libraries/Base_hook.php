@@ -12,6 +12,8 @@ abstract class Base_hook extends Base_class {
 	
 	protected $var_prefix = 'hook';
 	
+	protected $file_name = 'hook';
+	
 	protected $default_settings = array(
 		'end_script' => FALSE
 	);
@@ -54,10 +56,10 @@ abstract class Base_hook extends Base_class {
 		
 		$this->EE->load->library('interface_builder');
 		
-		$this->name     = strtolower(str_replace('_postmaster_hook', '', get_class($this)));
-		$this->IB	    = $this->EE->interface_builder;	
-		$this->IB->meta = array('hook' => $this->name);	
-		$this->settings = $this->get_settings();
+		$this->name      = strtolower(str_replace('_postmaster_hook', '', get_class($this)));
+		$this->file_name = ucfirst($this->name).'.php';
+		$this->IB	     = $this->EE->interface_builder;	
+		$this->settings  = $this->get_settings();
 	}	
 	
 	public function trigger($hook, $args = array())
@@ -122,6 +124,7 @@ abstract class Base_hook extends Base_class {
 		
 		$settings = $this->get_settings($settings);
 		
+		$this->IB->set_meta(array('hook' => $this->name));
 		$this->IB->set_instance('hook');
 		
 		return $this->IB->table($this->fields, $settings, postmaster_table_attr());

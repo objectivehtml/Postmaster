@@ -227,8 +227,22 @@ $(document).ready(function() {
 		$('.service-panel').hide();
 		$('#'+val+'_panel').show();
 	});
-
+	
 	$('select[name="service"]').change();
+	
+	$('select[name="installed_hook"]').change(function() {
+		var $t = $(this);
+		var val = $t.val();
+		
+		if(val == "") {
+			val = 'postmaster_base_hook';
+		}
+
+		$('.hook-panel').hide();
+		$('#'+val+'_panel').show();
+	});
+
+	$('select[name="installed_hook"]').change();
 
 	$('#test_entry').change(function() {
 		Postmaster.refresh();

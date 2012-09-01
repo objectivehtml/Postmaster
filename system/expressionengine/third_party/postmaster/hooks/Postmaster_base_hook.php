@@ -2,7 +2,7 @@
 
 class Postmaster_base_hook extends Base_hook {
 	
-	protected $title = 'Postmaster Default Hook';
+	protected $title = 'User Defined Hook';
 	
 	public function __construct()
 	{

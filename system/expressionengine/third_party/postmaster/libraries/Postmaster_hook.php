@@ -29,7 +29,7 @@ class Postmaster_hook extends Base_class {
 	 * @var string
 	 */
 	 
-	private static $reserved_files = array(
+	protected $reserved_files = array(
 		'Postmaster_base_hook.php'
 	);
 	
@@ -40,7 +40,16 @@ class Postmaster_hook extends Base_class {
 	 * @var string
 	 */
 	 
-	private static $default_hook = 'Postmaster_base_hook.php';
+	protected $default_hook = 'Postmaster_base_hook.php';
+	
+		
+	/**
+	 * Class Suffix
+	 * 
+	 * @var string
+	 */
+	 
+	protected $class_suffix = '_postmaster_hook';
 	
 	
 	/**
@@ -97,7 +106,7 @@ class Postmaster_hook extends Base_class {
 			}
 		}
 				
-		return $this->get_hook(self::$default_hook);
+		return $this->get_hook($this->$default_hook);
 	}
 	
 	
@@ -112,11 +121,13 @@ class Postmaster_hook extends Base_class {
 	{
 		$this->EE->load->helper('directory');
 		
-		$hooks = array();
+		$hooks = array(
+			$this->load($this->default_hook)
+		);
 		
 		foreach(directory_map($this->base_path) as $file)
 		{
-			if(!in_array($file, self::$reserved_files))
+			if(!in_array($file, $this->reserved_files))
 			{
 				if($hook = $this->load($file))
 				{
@@ -157,6 +168,11 @@ class Postmaster_hook extends Base_class {
 		require_once $this->base_path . $file;
 		
 		$class = str_replace('.php', '', $file);
+		
+		if(!in_array($file, $this->reserved_files))
+		{
+			$class .= $this->class_suffix;
+		}
 		
 		if(class_exists($class))
 		{
