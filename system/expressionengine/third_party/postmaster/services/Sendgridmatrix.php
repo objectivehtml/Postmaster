@@ -79,7 +79,7 @@ class SendGridMatrix_postmaster_service extends Postmaster_service {
 		parent::__construct();
 		
 		$this->fields['field_map']['settings']['attributes'] = postmaster_table_attr();
-		$this->IB->meta = array('service' => $this->name);
+		$this->IB->set_meta(array('service' => $this->name));
 	}
 
 	public function send($parsed_object, $parcel)
@@ -131,9 +131,9 @@ class SendGridMatrix_postmaster_service extends Postmaster_service {
 		return new Postmaster_Service_Response(array(
 			'status'     => isset($response->message) && $response->message == 'success' ? POSTMASTER_SUCCESS : POSTMASTER_FAILED,
 			'parcel_id'  => $parcel->id,
-			'channel_id' => $parcel->channel_id,
-			'author_id'  => $parcel->entry->author_id,
-			'entry_id'   => $parcel->entry->entry_id,
+			'channel_id' => isset($parcel->channel_id) ? $parcel->channel_id : FALSE,
+			'author_id'  => isset($parcel->entry->author_id) ? $parcel->entry->author_id : FALSE,
+			'entry_id'   => isset($parcel->entry->entry_id) ? $parcel->entry->entry_id : FALSE,
 			'gmt_date'   => $this->now,
 			'service'    => $parcel->service,
 			'to_name'    => $parsed_object->to_name,

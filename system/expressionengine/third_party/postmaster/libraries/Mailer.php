@@ -8,8 +8,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
- * @version		1.0.0
- * @build		20120324
+ * @version		1.0.1
+ * @build		20120831
  */
 
 class Mailer {
@@ -26,9 +26,12 @@ class Mailer {
 
 		$config = array();
 
-		foreach($parcel->settings->ExpressionEngine as $setting => $value)
+		if(isset($parcel->settings->ExpressionEngine))
 		{
-			$config[$setting] = $value;
+			foreach($parcel->settings->ExpressionEngine as $setting => $value)
+			{
+				$config[$setting] = $value;
+			}
 		}
 		
 		$this->EE->email->initialize($config);

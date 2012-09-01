@@ -36,6 +36,32 @@ class Postmaster_ext {
 	{
 		return '';
 	}
+	
+	public function trigger_hook()
+	{
+		$this->EE->load->library('postmaster_lib');
+		
+		$hook      = $this->EE->extensions->in_progress;
+		$responses = $this->EE->postmaster_lib->trigger_hook($hook, func_get_args());
+				
+		foreach($responses as $response)
+		{
+			if($response->end_script)
+			{
+				$this->EE->extensions->end_script = TRUE;
+			}
+			
+			if(isset($response->return_data))
+			{
+				$return = $response->return_data;
+			}
+		}
+		
+		if(isset($return))
+		{
+			return $return;
+		}
+	}
 		
 	/**
 	 * Plugin Name

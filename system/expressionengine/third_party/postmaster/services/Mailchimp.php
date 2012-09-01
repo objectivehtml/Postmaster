@@ -92,9 +92,9 @@ MailChimp helps you design email newsletters, share them on social networks, int
 		return new Postmaster_Service_Response(array(
 			'status'     => $response ? POSTMASTER_SUCCESS : POSTMASTER_FAILED,
 			'parcel_id'  => $parcel->id,
-			'channel_id' => $parcel->channel_id,
-			'author_id'  => $parcel->entry->author_id,
-			'entry_id'   => $parcel->entry->entry_id,
+			'channel_id' => isset($parcel->channel_id) ? $parcel->channel_id : FALSE,
+			'author_id'  => isset($parcel->entry->author_id) ? $parcel->entry->author_id : FALSE,
+			'entry_id'   => isset($parcel->entry->entry_id) ? $parcel->entry->entry_id : FALSE,
 			'gmt_date'   => $this->now,
 			'service'    => $parcel->service,
 			'to_name'    => $parsed_object->to_name,

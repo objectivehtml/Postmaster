@@ -90,24 +90,102 @@ class Postmaster_model extends CI_Model {
 
 		return $array;
 	}
+	
+	public function create_hook($hook)
+	{		
+		$extension = array(
+			'class'    => 'Postmaster_ext',
+			'method'   => 'trigger_hook',
+			'hook'     => !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'],
+			'priority' => $hook['priority'],
+			'version'  => POSTMASTER_VERSION,
+			'enabled'  => 'y'
+		);
+		
+		$this->db->insert('extensions', $extension);
+		
+		$hook['extension_id'] = $this->db->insert_id();
+		
+		$this->db->insert('postmaster_hooks', $hook);
+	}
 
+	public function edit_hook($id, $hook)
+	{
+		$extension = array(
+			'class'    => 'Postmaster_ext',
+			'method'   => 'trigger_hook',
+			'hook'     => !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'],
+			'priority' => $hook['priority'],
+			'version'  => POSTMASTER_VERSION,
+			'enabled'  => 'y'
+		);
+		
+		$this->db->where('extension_id', $id);
+		$this->db->update('extensions', $extension);
+		
+		$this->db->where('id', $id);
+		$this->db->update('postmaster_hooks', $hook);
+	}
+	
+	public function delete_hook($id)
+	{
+		$entry    = $this->get_hook($id)->row_array();
+		
+		$this->db->where('extension_id', $entry['extension_id']);
+		$this->db->delete('extensions');
+		
+		$this->db->where('id', $id);
+		$this->db->delete('postmaster_hooks');
+	}
+	
+	public function create_parcel($parcel)
+	{
+		$this->EE->db->insert('postmaster_parcels', $parcel);
+	}
+
+	public function edit_parcel($parcel, $id)
+	{
+		$this->EE->db->where('id', $id);
+		$this->EE->db->update('postmaster_parcels', $parcel);
+	}
+	
 	public function delete_parcel($id)
 	{
 		$this->db->where('id', $id);
 		$this->db->delete('postmaster_parcels');
 	}
 	
-	public function duplicate($id)
+	public function duplicate_parcel($id)
 	{
-		$entry = $this->channel_data->get('postmaster_parcels', array(
+		$this->duplicate('postmaster_parcels', $id);
+	}
+	
+	public function duplicate_hook($id)
+	{
+		$entry_id = $this->duplicate('postmaster_hooks', $id);
+		$entry    = $this->get_hook($id)->row_array();
+		
+		$ext_entry_id = $this->duplicate('extensions', $entry['extension_id'], 'extension_id');
+		
+		$this->db->where('id', $ext_entry_id);
+		$this->db->update('postmaster_hooks', array(
+			'extension_id' => $ext_entry_id
+		));
+	}
+	
+	public function duplicate($table, $id, $id_field = 'id')
+	{		
+		$entry = $this->channel_data->get($table, array(
 			'where' => array(
-				'id' => $id
+				$id_field => $id
 			)
 		))->row_array();
 
-		unset($entry['id']);
+		unset($entry[$id_field]);
 
-		$this->db->insert('postmaster_parcels', $entry);
+		$this->db->insert($table, $entry);
+		
+		return $this->db->insert_id();
 	}
 	
 	public function get_editor_settings($key = FALSE)
@@ -214,6 +292,18 @@ class Postmaster_model extends CI_Model {
 		}
 
 		return $parcels;
+	}
+	
+	public function get_hook($id)
+	{
+		$this->db->where('id', $id);
+		
+		return $this->db->get('postmaster_hooks');
+	}
+	
+	public function get_hooks()
+	{
+		return $this->db->get('postmaster_hooks');
 	}
 	
 	public function is_blacklisted($email)

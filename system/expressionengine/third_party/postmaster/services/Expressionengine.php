@@ -10,8 +10,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
- * @version		1.0.0
- * @build		20120412
+ * @version		1.0.1
+ * @build		20120831
  */
 
 require_once PATH_THIRD . 'postmaster/libraries/Postmaster_service.php';
@@ -165,9 +165,9 @@ class ExpressionEngine_postmaster_service extends Postmaster_service {
 		return new Postmaster_Service_Response(array(
 			'status'     => $response ? POSTMASTER_SUCCESS : POSTMASTER_FAILED,
 			'parcel_id'  => $parcel->id,
-			'channel_id' => $parcel->channel_id,
-			'author_id'  => $parcel->entry->author_id,
-			'entry_id'   => $parcel->entry->entry_id,
+			'channel_id' => isset($parcel->channel_id) ? $parcel->channel_id : FALSE,
+			'author_id'  => isset($parcel->entry->author_id) ? $parcel->entry->author_id : FALSE,
+			'entry_id'   => isset($parcel->entry->entry_id) ? $parcel->entry->entry_id : FALSE,
 			'gmt_date'   => $this->now,
 			'service'    => $parcel->service,
 			'to_name'    => $parsed_object->to_name,

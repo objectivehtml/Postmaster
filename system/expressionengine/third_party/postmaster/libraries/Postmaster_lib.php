@@ -32,6 +32,15 @@ class Postmaster_lib {
 		$this->model = $this->EE->postmaster_model;
 	}
 	
+	public function trigger_hook($hook, $args)
+	{
+		$this->EE->load->library('postmaster_hook', array(
+			'base_path' => PATH_THIRD.'postmaster/hooks/'
+		));
+		
+		return $this->EE->postmaster_hook->trigger($hook, $args);	
+	}
+	
 	public function get_themes()
 	{
 		$this->EE->load->helper('directory');
@@ -57,9 +66,9 @@ class Postmaster_lib {
 	
 	public function get_send_date($parsed_object)
 	{
-		$send_date = $parsed_object->post_date_specific;
-		
-		$send_date = !empty($send_date) ? $this->EE->localize->set_localized_time(strtotime($send_date)) : $this->EE->localize->now;
+		$parsed_object = $this->convert_array($parsed_object);
+		$send_date     = $parsed_object->post_date_specific;
+		$send_date     = !empty($send_date) ? $this->EE->localize->set_localized_time(strtotime($send_date)) : $this->EE->localize->now;
 
 		if(!empty($parsed_object->post_date_relative))
 		{
@@ -72,7 +81,6 @@ class Postmaster_lib {
 	public function load_service($name)
 	{
 		require_once PATH_THIRD . 'postmaster/libraries/Postmaster_service.php';
-
 		require_once PATH_THIRD . 'postmaster/services/'.ucfirst(strtolower($name)).'.php';
 
 		$class = $name.$this->service_suffix;
@@ -266,9 +274,22 @@ class Postmaster_lib {
 	
 		return $parse_object;
 	}
+	
+	private function convert_array($obj = array())
+	{
+		if(is_array($obj))
+		{
+			$obj = (object) $obj;
+		}
+		
+		return $obj;
+	}
 
 	public function send($parsed_object, $parcel, $ignore_date = FALSE)
 	{
+		$parsed_object = $this->convert_array($parsed_object);
+		$parcel        = $this->convert_array($parcel);
+		
 		$service   = $this->load_service($parcel->service);
 		$send_date = $this->get_send_date($parsed_object);
 
@@ -284,6 +305,8 @@ class Postmaster_lib {
 					$gmt_date = $this->EE->localize->set_localized_time(strtotime($parsed_object->send_every, $this->EE->localize->now));
 					$this->model->add_to_queue($parsed_object, $parcel, $gmt_date);
 				}
+				
+				return $response;
 			}
 			else
 			{
@@ -294,8 +317,10 @@ class Postmaster_lib {
 		{
 			$this->model->unsubscribe($parsed_object->to_email);
 		}
+		
+		return FALSE;
 	}
-
+	
 	public function send_from_queue($row)
 	{
 		$parcel           = $this->model->get_parcel($row->parcel_id);
@@ -497,16 +522,5 @@ class Postmaster_lib {
 		}
 		
 		return $base_url;
-	}
-
-	public function create_parcel($parcel)
-	{
-		$this->EE->db->insert('postmaster_parcels', $parcel);
-	}
-
-	public function edit_parcel($parcel, $id)
-	{
-		$this->EE->db->where('id', $id);
-		$this->EE->db->update('postmaster_parcels', $parcel);
 	}
 }

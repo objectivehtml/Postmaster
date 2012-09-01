@@ -38,6 +38,10 @@ class Postmaster_upd {
 				'primary_key'		=> TRUE,
 				'auto_increment'	=> TRUE
 			),
+			'title'  => array(
+				'type'       => 'varchar',
+				'constraint' => 250
+			),
 			'channel_id' => array(
 				'type'			=> 'int',
 				'constraint' 	=> 100
@@ -72,6 +76,9 @@ class Postmaster_upd {
 			'from_email' => array(
 				'type'	=> 'text'
 			),
+			'reply_to' => array(
+				'type'	=> 'text'
+			),
 			'cc' => array(
 				'type'	=> 'text'
 			),
@@ -100,6 +107,78 @@ class Postmaster_upd {
 				'type' => 'varchar',
 				'constraint' => 100
 			)
+		),
+		'postmaster_hooks' 	=> array(
+			'id'	=> array(
+				'type'				=> 'int',
+				'constraint'		=> 100,
+				'primary_key'		=> TRUE,
+				'auto_increment'	=> TRUE
+			),
+			'title'  => array(
+				'type'       => 'varchar',
+				'constraint' => 250
+			),
+			'service'  => array(
+				'type'       => 'varchar',
+				'constraint' => 250
+			),
+			'installed_hook'  => array(
+				'type'       => 'varchar',
+				'constraint' => 250
+			),
+			'user_defined_hook'  => array(
+				'type'       => 'varchar',
+				'constraint' => 250
+			),
+			'priority'  => array(
+				'type'       => 'varchar',
+				'constraint' => 250
+			),
+			'to_name' => array(
+				'type'	=> 'text'
+			),
+			'to_email' => array(
+				'type'	=> 'text'
+			),
+			'from_name' => array(
+				'type'	=> 'text'
+			),
+			'from_email' => array(
+				'type'	=> 'text'
+			),
+			'reply_to' => array(
+				'type'	=> 'text'
+			),
+			'cc' => array(
+				'type'	=> 'text'
+			),
+			'bcc' => array(
+				'type'	=> 'text'
+			),
+			'subject' => array(
+				'type'	=> 'text'
+			),
+			'message'	=> array(
+				'type'	=> 'longtext'
+			),
+			'settings' => array(
+				'type'	=> 'longtext'
+			),
+			'post_date_specific'  => array(
+				'type' => 'text'
+			),
+			'post_date_relative'  => array(
+				'type' => 'text'
+			),
+			'send_every'  => array(
+				'type' => 'varchar',
+				'constraint' => 100
+			),
+			'extension_id'  => array(
+				'type' => 'int',
+				'constraint' => 10
+			),
 		),
 		'postmaster_queue' 	=> array(
 			'id'	=> array(
@@ -261,6 +340,22 @@ class Postmaster_upd {
 		),
 		array(
 		    'class'     => 'Postmaster_mcp',
+		    'method'    => 'create_hook_action'
+		),
+		array(
+		    'class'     => 'Postmaster_mcp',
+		    'method'    => 'edit_hook_action'
+		),
+		array(
+		    'class'     => 'Postmaster_mcp',
+		    'method'    => 'delete_hook_action'
+		),
+		array(
+		    'class'     => 'Postmaster_mcp',
+		    'method'    => 'duplicate_hook_action'
+		),
+		array(
+		    'class'     => 'Postmaster_mcp',
 		    'method'    => 'create_parcel_action'
 		),
 		array(
@@ -298,6 +393,10 @@ class Postmaster_upd {
 		array(
 		    'class'     => 'Postmaster_mcp',
 		    'method'    => 'template'
+		),
+		array(
+		    'class'     => 'Postmaster_mcp',
+		    'method'    => 'trigger_hook'
 		)
 	);
 	

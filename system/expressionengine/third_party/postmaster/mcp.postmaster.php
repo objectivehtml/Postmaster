@@ -12,6 +12,7 @@
  */
 
 require_once 'libraries/Email_Parcel.php';
+require_once 'libraries/Template_Hook.php';
 require_once 'config/postmaster_config.php';
 
 class Postmaster_mcp {
@@ -81,10 +82,24 @@ class Postmaster_mcp {
 		
 		$delegate = new Base_Delegate();
 		
+		$results = $this->EE->postmaster_model->get_hooks()->result_array();
+		
+		foreach($results as $index => $value)
+		{
+			$results[$index]['edit_url']      = $this->cp_url('hook').'&id='.$value['id'];
+			$results[$index]['delete_url']    = $this->cp_url('delete_hook_action').'&id='.$value['id'];
+			$results[$index]['duplicate_url'] = $this->cp_url('duplicate_hook_action').'&id='.$value['id'];
+			
+			$results[$index] = (object) $results[$index];
+		}
+		
 		$vars = array(
 			'theme_url' => $this->EE->theme_loader->theme_url(),
 			'themes'  	=> $this->themes,
 			'parcels' 	=> $this->EE->postmaster_model->get_parcels(),
+			'hooks'     => $results,
+			'add_hook_url' => $this->cp_url('hook'),
+			'edit_hook_action' => $this->current_url('ACT', $this->EE->channel_data->get_action_id(__CLASS__, 'edit_hook_action')),
 			'delegates'	=> $delegate->get_delegates(FALSE, PATH_THIRD.'postmaster/delegates'),
 			'doctag_url' => $this->cp_url('doctag'),
 			'ping_url'	=> $this->current_url('ACT', $this->EE->channel_data->get_action_id(__CLASS__, 'send_email')),
@@ -101,7 +116,41 @@ class Postmaster_mcp {
 			/* 'Text Editor Settings' => $this->cp_url('editor_settings') */
 		));
 
-		return $this->EE->load->view('settings', $vars, TRUE);
+		return $this->EE->load->view('index', $vars, TRUE);
+	}
+	
+	public function hook()
+	{
+		$this->EE->theme_loader->javascript('postmaster');
+		$this->EE->theme_loader->javascript('codemirror');
+		$this->EE->theme_loader->javascript('modes');
+		$this->EE->theme_loader->javascript('qtip');
+		$this->EE->theme_loader->css('codemirror');
+		$this->EE->theme_loader->css('qtip');
+
+    	setcookie('postmaster_parcel_message', '', strtotime('+1 week'), '/');
+    	
+    	$saved_data = array();
+    	
+    	if($hook_id = $this->EE->input->get('id'))
+    	{
+	    	$saved_data = $this->EE->postmaster_model->get_hook($hook_id)->row_array();
+	    	$saved_data['settings'] = json_decode($saved_data['settings']);
+    	}
+    	
+		$vars = array(
+			'ib_path'  => $this->EE->theme_loader->theme_url().'postmaster/javascript/InterfaceBuilder.js',
+			'template' => new Template_Hook($saved_data)
+		);
+		
+		$this->EE->cp->set_variable('cp_page_title', 'New Parcel');
+		
+		$this->EE->cp->set_right_nav(array(
+			'&larr; Back to Home' => $this->cp_url('index'),
+			'Text Editor Settings' => $this->cp_url('editor_settings'),
+		));
+		
+		return $this->EE->load->view('hook', $vars, TRUE);
 	}
 	
 	public function doctag()
@@ -166,6 +215,16 @@ class Postmaster_mcp {
 		exit($parcel_object->message);
 	}
 
+	public function delete_hook_action()
+	{
+		$id  = $this->get('id');
+		$url = $this->cp_url('index');
+
+		$this->EE->postmaster_model->delete_hook($id);
+
+		$this->EE->functions->redirect($url);
+	}
+
 	public function delete_parcel_action()
 	{
 		$id  = $this->get('id');
@@ -176,12 +235,22 @@ class Postmaster_mcp {
 		$this->EE->functions->redirect($url);
 	}
 
+	public function duplicate_hook_action()
+	{
+		$id  = $this->get('id');
+		$url = $this->cp_url('index');
+
+		$this->EE->postmaster_model->duplicate_hook($id);
+
+		$this->EE->functions->redirect($url);
+	}
+
 	public function duplicate_parcel_action()
 	{
 		$id  = $this->get('id');
 		$url = $this->cp_url($this->EE->input->get('return'));
 
-		$this->EE->postmaster_model->duplicate($id);
+		$this->EE->postmaster_model->duplicate_parcel($id);
 
 		$this->EE->functions->redirect($url);
 	}
@@ -345,33 +414,93 @@ class Postmaster_mcp {
 		$this->EE->postmaster_model->unsubscribe($this->EE->input->get_post('email'));
 	}
 
+	public function create_hook_action()
+	{
+		$this->EE->load->library('postmaster_lib');
+		
+		$parcel          = array(
+			'title'            => $this->post('title', TRUE),
+			'to_name'            => $this->post('to_name', TRUE),
+			'to_email'           => $this->post('to_email', TRUE),
+			'from_name'          => $this->post('from_name', TRUE),
+			'from_email'         => $this->post('from_email', TRUE),
+			'reply_to'           => $this->post('reply_to', TRUE),
+			'priority'           => $this->post('priority', TRUE),
+			'cc'                 => $this->post('cc', TRUE),
+			'bcc'                => $this->post('bcc', TRUE),
+			'subject'            => $this->post('subject', TRUE),
+			'message'            => $this->post('message', TRUE),
+			'installed_hook'     => $this->post('installed_hook', TRUE),
+			'user_defined_hook'  => $this->post('user_defined_hook', TRUE),
+			'post_date_specific' => $this->post('post_date_specific', TRUE),
+			'post_date_relative' => $this->post('post_date_relative', TRUE),
+			'send_every'         => $this->post('send_every', TRUE),
+			'service'            => $this->post('service', TRUE),
+			'settings'           => json_encode($this->post('setting', TRUE))
+		);
+
+		$this->EE->postmaster_model->create_hook($parcel);
+
+		$this->EE->functions->redirect($this->post('return'));
+	}
+	
+	public function edit_hook_action()
+	{
+		$this->EE->load->library('postmaster_lib');
+		
+		$parcel          = array(
+			'title'              => $this->post('title', TRUE),
+			'to_email'           => $this->post('to_email', TRUE),
+			'from_name'          => $this->post('from_name', TRUE),
+			'from_email'         => $this->post('from_email', TRUE),
+			'reply_to'           => $this->post('reply_to', TRUE),
+			'priority'           => $this->post('priority', TRUE),
+			'cc'                 => $this->post('cc', TRUE),
+			'bcc'                => $this->post('bcc', TRUE),
+			'subject'            => $this->post('subject', TRUE),
+			'message'            => $this->post('message', TRUE),
+			'installed_hook'     => $this->post('installed_hook', TRUE),
+			'user_defined_hook'  => $this->post('user_defined_hook', TRUE),
+			'post_date_specific' => $this->post('post_date_specific', TRUE),
+			'post_date_relative' => $this->post('post_date_relative', TRUE),
+			'send_every'         => $this->post('send_every', TRUE),
+			'service'            => $this->post('service', TRUE),
+			'settings'           => json_encode($this->post('setting', TRUE))
+		);
+		
+		$this->EE->postmaster_model->edit_hook($this->EE->input->post('id'), $parcel);
+
+		$this->EE->functions->redirect($this->post('return'));
+	}
+	
 	public function create_parcel_action()
 	{
 		$this->EE->load->library('postmaster_lib');
 		
 		$parcel          = array(
-			'channel_id'     => $this->post('channel_id'),
-			'to_name'        => $this->post('to_name'),
-			'to_email'       => $this->post('to_email'),
-			'from_name'      => $this->post('from_name'),
-			'from_email'     => $this->post('from_email'),
-			'cc'             => $this->post('cc'),
-			'bcc'            => $this->post('bcc'),
-			'categories'     => $this->post('category') ? implode('|', $this->post('category')) : NULL,
-			'member_groups'  => $this->post('member_group') ? implode('|', $this->post('member_group')) : NULL,
-			'statuses'       => $this->post('statuses') ? implode('|', $this->post('statuses')) : NULL,
-			'subject'        => $this->post('subject'),
-			'message'        => $this->post('message'),
-			'trigger'            => is_array($this->post('trigger')) ? implode('|', $this->post('trigger')) : $this->post('trigger'),
-			'post_date_specific' => $this->post('post_date_specific'),
-			'post_date_relative' => $this->post('post_date_relative'),
-			'send_every'         => $this->post('send_every'),
-			'service'            => $this->post('service'),
-			'extra_conditionals' => $this->post('extra_conditionals'),
-			'settings'           => json_encode($this->post('setting'))
+			'channel_id'     => $this->post('channel_id', TRUE),
+			'to_name'        => $this->post('to_name', TRUE),
+			'to_email'       => $this->post('to_email', TRUE),
+			'from_name'      => $this->post('from_name', TRUE),
+			'from_email'     => $this->post('from_email', TRUE),
+			'reply_to'       => $this->post('reply_to', TRUE),
+			'cc'             => $this->post('cc', TRUE),
+			'bcc'            => $this->post('bcc', TRUE),
+			'categories'     => $this->post('category') ? implode('|', $this->post('category', TRUE)) : NULL,
+			'member_groups'  => $this->post('member_group') ? implode('|', $this->post('member_group', TRUE)) : NULL,
+			'statuses'       => $this->post('statuses') ? implode('|', $this->post('statuses', TRUE)) : NULL,
+			'subject'        => $this->post('subject', TRUE),
+			'message'        => $this->post('message', TRUE),
+			'trigger'            => is_array($this->post('trigger', TRUE)) ? implode('|', $this->post('trigger', TRUE)) : $this->post('trigger'),
+			'post_date_specific' => $this->post('post_date_specific', TRUE),
+			'post_date_relative' => $this->post('post_date_relative', TRUE),
+			'send_every'         => $this->post('send_every', TRUE),
+			'service'            => $this->post('service', TRUE),
+			'extra_conditionals' => $this->post('extra_conditionals', TRUE),
+			'settings'           => json_encode($this->post('setting', TRUE))
 		);
 
-		$this->EE->postmaster_lib->create_parcel($parcel);
+		$this->EE->postmaster_model->create_parcel($parcel);
 
 		$this->EE->functions->redirect($this->post('return'));
 	}
@@ -388,6 +517,7 @@ class Postmaster_mcp {
 			'to_email'           => $this->post('to_email'),
 			'from_name'          => $this->post('from_name'),
 			'from_email'         => $this->post('from_email'),
+			'reply_to'           => $this->post('reply_to'),
 			'cc'                 => $this->post('cc'),
 			'bcc'                => $this->post('bcc'),
 			'categories'         => $this->post('category') ? implode('|', $this->post('category')) : NULL,
@@ -404,7 +534,7 @@ class Postmaster_mcp {
 			'settings'           => json_encode($this->post('setting'))
 		);
 
-		$this->EE->postmaster_lib->edit_parcel($parcel, $this->post('id'));
+		$this->EE->postmaster_model->edit_parcel($parcel, $this->post('id'));
 
 		$this->EE->functions->redirect($this->post('return'));
 	}

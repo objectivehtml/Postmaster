@@ -35,10 +35,43 @@
 	display: inline;
 }
 
+
 .pageContents .column {
 	float: left;
 	border: none;
 	}
+	
+.pageContents .column.half {
+	width: 48%;
+	padding: 0 2% 0 0;
+}
+
+.pageContents .column.third {
+	width: 30%;
+	padding: 0 3.333% 0 0;
+}
+
+.pageContents .column.third input {
+	width: 50%;
+}
+
+.pageContents .column.quarter {
+	width: 22%;
+	padding: 0 3% 0 0;
+}
+
+.pageContents .column.half li {
+	margin-bottom: 1em;
+}
+
+.pageContents .hooks {
+	margin-top: 1em;
+	padding-top: 1em;
+	padding-bottom: 1em;
+	border-bottom: 1px solid rgb(194, 198, 200);
+	border-top: 1px solid rgb(194, 198, 200);
+	width: 100%;
+}
 
 .pageContents form {
 	width: 100%;
@@ -497,7 +530,8 @@ background: linear-gradient(top, rgba(127,127,127,1) 0%,rgba(56,56,56,1) 50%,rgb
 
 /*--------------------------------------*/
 
-.group:after {
+.group:after,
+.columns:after {
 	content: ".";
 	display: block;
 	clear: both;
@@ -506,6 +540,9 @@ background: linear-gradient(top, rgba(127,127,127,1) 0%,rgba(56,56,56,1) 50%,rgb
 	height: 0;
 	}
  
-.group {
+.group,
+.columns {
 	display: inline-block;
 	}
+
+.columns { width: 100%; }

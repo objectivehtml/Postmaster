@@ -16,8 +16,22 @@
 <form action="<?php echo $template->action?>" method="post" class="group postmaster">
 	
 	<fieldset class="column group sidebar">
-	
+				
 		<div class="container">
+			<h3><a href="#help-title" class="help"><label for="title">Hook Title</label> <span>(?)</span></a></h3>
+			
+			<input type="text" name="title" id="title" value="<?php echo form_prep($template->title) ?>" />
+			
+			<div id="help-title" class="help-text">
+				
+				<h2>Hook Title</h2>
+
+				<p>The Hook Title is a value you can use to give each hook you install some meaning or context. This field has no programatic purpose, and is strictly for you to use to know what is what.</p>
+				
+			</div>
+		</div>
+		
+		<div class="container margin-top">
 			<h3><a href="#send-receive" class="help">Send / Receive <span>(?)</span></a></h3>
 					
 			<div id="send-receive" class="help-text">
@@ -46,6 +60,10 @@
 				<label for="from">From (E-mail)</label>
 				<input type="text" name="from_email" id="from_email" value="<?php echo form_prep($template->from_email) ?>" />
 			</li>
+			<li class="reply-to">
+				<label for="from">Reply To (E-mail)</label>
+				<input type="text" name="reply_to" id="reply_tp" value="<?php echo form_prep($template->reply_to) ?>" />
+			</li>
 			<li class="cc">
 				<label for="cc">CC</label>
 				<input type="text" name="cc" id="cc" value="<?php echo form_prep($template->cc) ?>" />
@@ -53,70 +71,6 @@
 			<li class="bcc">
 				<label for="bcc">BCC</label>
 				<input type="text" name="bcc" id="bcc" value="<?php echo form_prep($template->bcc) ?>" />
-			</li>
-			<li class="channel">
-				<h3><a href="#channel-helper" class="help">Channel <span>(?)</span></a></h3>
-				<select name="channel_id" id="channel_id">
-				<?php foreach($template->channels() as $channel): ?>
-					<option value="<?php echo $channel->channel_id?>" <?php echo (int)$template->channel_id == (int)$channel->channel_id ? 'selected="selected"' : ''?>><?php echo $channel->channel_title?></option>
-				<?php endforeach; ?>
-				</select>
-			</li>
-			<li class="entry_trigger container">
-				<h3><a href="#entry_trigger" class="help">Entry Trigger <span>(?)</span></a></h3>
-				
-				<div>
-					<label><input type="checkbox" name="trigger[]" value="new" <?php echo in_array('new', $template->trigger) ? 'checked="checked"' : NULL ?> /> New</label>
-					<label><input type="checkbox" name="trigger[]" value="edit" <?php echo in_array('edit', $template->trigger) ? 'checked="checked"' : NULL ?> /> Edit</label>
-				</div>
-
-			</li>
-			<li class="categories container">
-				
-				<h3><a href="#categories" class="help">Categories <span>(?)</span></a></h3>
-				
-				<?php if(count($template->category_tree()) == 0): ?>
-					
-					<p>This channel has no categories.</p>
-				
-				<?php else: ?>
-
-					<?php foreach($template->category_tree() as $cat_id => $category): ?>
-						<label><input type="checkbox" name="category[]" value="<?php echo $category[0]?>" <?php echo in_array($category[0], $template->categories) ? 'checked="checked"' : NULL ?> /><?php echo $category[1]?></label>
-					<?php endforeach; ?>	
-				<?php endif; ?>
-
-			</li>
-			<li class="statuses container">
-
-				<h3><a href="#status" class="help">Statuses <span>(?)</span></a></h3>
-
-				<div>
-				<?php 
-
-				if(count($template->statuses()) == 0): ?>
-					
-					<p>This channel has no statuses.</p>
-				
-				<?php else: ?>
-
-					<?php foreach($template->statuses() as $status): ?>
-						<label><input type="checkbox" name="statuses[]" value="<?php echo $status['status']?>" <?php echo in_array($status['status'], $template->statuses) ? 'checked="checked"' : NULL ?> /><?php echo $status['status']?></label>
-					<?php endforeach; ?>
-
-				<?php endif; ?>
-				</div>
-
-			</li>
-			<li class="member_groups container">
-				<h3><a href="#member-groups" class="help">Member Group <span>(?)</span></a></h3>
-				
-				<div>
-				<?php foreach($template->member_groups() as $group): ?>
-					<label><input type="checkbox" name="member_group[]" value="<?php echo $group->group_id?>" <?php echo in_array($group->group_id, $template->member_groups) ? 'checked="checked"' : NULL ?> /><?php echo $group->group_title?></label>
-				<?php endforeach; ?>
-				</div>
-
 			</li>
 			<li class="post-date container">
 				<h3><a href="#post-date" class="help">Post Date <span>(?)</span></a></h3>
@@ -138,32 +92,6 @@
 			<li class="send-every">
 				<label for="send_every">Send Every</label>
 				<input type="text" name="send_every" id="send_every" value="<?php echo form_prep($template->send_every) ?>" />
-			</li>
-			<li class="send-every">
-				<h3><a href="#extra-conditionals" class="help"><label for="extra_conditionals">Extra Conditionals <span>(?)</span></label></a></h3>
-				
-				<div class="help-text" id="extra-conditionals">
-					<h2>Extra Conditionals</h2>
-					<p>This field allows you define a set of proprietary conditionals use EE tags and fieldtypes. Three values are expected in this field, all others will be ignored. If you want to email to send return TRUE. If not, return FALSE. If no value is return the field is ignored.</p>
-					<p>For instance, if you wanted to prevent the email from being sent if your member doesn't include their first or last name. In this case, the fields are "member_first_name" and "member_last_name". Use either one of the following examples:</p>
-					
-					<h3>Example 1</h3>
-					
-					<p>	{if parcel:member_first_name != "" && parcel:member_last_name != ""}
-							TRUE
-						{/if}
-					</p>
-					
-					<h3>Example 2</h3>
-					
-					<p>
-						{if parcel:member_first_name == "" || parcel:member_last_name == ""}
-							FALSE
-						{/if}
-					</p>
-				</div>
-
-				<textarea name="extra_conditionals" id="extra_conditionals"><?php echo form_prep($template->extra_conditionals) ?></textarea>
 			</li>
 		</ul>
 
@@ -206,31 +134,7 @@
 						<div class="panel container">
 
 							<h3><a href="#preview" class="help">Preview<span> (?)</span></a></h3>
-							
-							<label for="test_entry"><a href="#parse-entry" class="help">Parse Entry <span>(?)</span></a></label>
-							
-							<div class="help-text" id="preview">
-
-								<h2>Preview</h2>
-
-								<p>This is a live preview that parses EE tags and renders your markup in real time. Everything is including within an iFrame, so anything you would expect out of a normal webpage applies to the preview. You can include your own external stylesheets too.</p>
-							
-							</div>
-
-							<div class="help-text" id="parse-entry">
-
-								<h2>Parse Entry</h2>
-
-								<p>This field allows you to select an entry to parse against your template. This is strictly for development purposes. This field has no effect on the sending the email.</p>
-
-							</div>
-							
-							<select name="test_entry" id="test_entry">
-							<?php foreach($template->entries->result() as $entry): ?>
-								<option value="<?php echo $entry->entry_id?>"><?php echo $entry->title?></option>
-							<?php endforeach; ?>
-							</select>
-
+						
 						</div>
 
 						<iframe src="" class="pain"></iframe> 
@@ -299,7 +203,82 @@
 
 		</div>
 		
-		<div class="margin-top service">
+		<div class="margin-top hooks group">
+			
+			<h2>Email Trigger</h2>
+				
+				
+			<div class="columns">
+				
+				<ul class="column third">
+					<li>
+						<h3><a href="#installed" class="help">Installed Hooks <span>(?)</span></a></h3>			
+						<select name="installed_hook">
+							<option value="">--</option>
+						<?php foreach($template->hooks() as $hook): ?>
+							<option value="<?php echo $hook->get_name()?>" <?php if($hook->get_name() == $template->installed_hook): ?>selected="selected"<? endif; ?>><?php echo $hook->get_title()?></option>
+						<?php endforeach; ?>
+						</select>
+					</li>
+				</ul>
+				
+				<ul class="column third">				
+					<li>
+						<h3><a href="#user_defined" class="help">User Defined Hook <span>(?)</span></a></h3>
+						<input type="text" name="user_defined_hook" value="" />
+					</li>
+				</ul>
+				
+				<div class="column third">
+					<h3><a href="#priority" class="help">Priority <span>(?)</span></a></h3>
+						
+						<select name="priority">
+						<?php foreach($template->priorities() as $priority): ?>
+							<option value="<?php echo $priority?>" <?php if($priority== $template->priority): ?>selected="selected"<? endif; ?>><?php echo $priority?></option>
+						<?php endforeach; ?>
+						</select>
+				</div>
+			
+			</div>
+			
+			<div class="hook-settings clear">
+				<?php foreach($template->hooks() as $hook): ?>
+					<?php if($hook->display_settings($template->settings)): ?>
+						<div class="margin-top" id="<?php $hook->get_name()?>">
+							<h3><?php echo $hook->get_title()?> Settings</h3>
+							<?php echo $hook->display_settings($template->settings); ?>
+						</div>
+					<?php endif; ?>
+				<?php endforeach; ?>
+				
+			</div>
+			
+			<div id="installed" class="help-text">
+				
+				<h2>Installed Hooks</h2>
+				
+				<p>Installed hooks have improved functionality, and can pass variables to the email template. EE tags, snippets, and global variables are also accepted. If you don't see the hook you need, you can use the API to build your own hook. Contact <a href="mailto:support@objectivehtml.com">support@objectivehtml.com</a> if you need custom or advanced integration.</p>
+				
+			</div>
+			
+			<div id="user_defined" class="help-text">
+				
+				<h2>User Defined Hooks</h2>
+				
+				<p>User defined hooks only have only the default functionality. No template variables are passed within user defined hooks, so only EE tags, snippets, and global variables are accepted. Any hook from first or third-parties may be used to send emails. Installed hooks will take precedence if one is defined.</p>
+				
+			</div>
+			
+			<div id="priority" class="help-text">
+				
+				<h2>Priority</h2>
+				
+				<p>Priority used to determine when the same two hooks are fired. Priority goes in order of importance from least to greatest. So 1 is the most important, and 10 being the EE default. When in doubt, select '1' to ensure Postmaster hooks get executed before everything else.</p>
+			</div>
+			
+		</div>
+		
+		<div class="margin-top service clear">
 		
 			<h2><a href="#email_service" class="help">Email Service <span>(?)</span></a></h2>
 
