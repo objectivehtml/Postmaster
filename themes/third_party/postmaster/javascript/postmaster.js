@@ -5,8 +5,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
- * @version		1.1.0
- * @build		20120718
+ * @version		1.1.1
+ * @build		20120901
  */
 
 $(document).ready(function() {
