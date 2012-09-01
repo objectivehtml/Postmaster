@@ -1,3 +1,5 @@
+<a href="#" class="action button"><span class="icon-plus"></span> New Parcel</a>
+
 <h2><a href="#help" class="help">Parcels <span>(?)</span></a></h2>
 
 <table class="mainTable" cellpadding="0" cellspacing="0">

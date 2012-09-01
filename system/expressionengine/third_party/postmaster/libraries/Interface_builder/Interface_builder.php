@@ -2,7 +2,9 @@
 
 if(!class_exists('Interface_Builder'))
 {
-	class Interface_Builder extends Base_class {
+	require 'Interface_builder_core.php';
+	
+	class Interface_Builder extends Interface_builder_core {
 		
 		public  $data  = array();
 		public  $meta  = array();

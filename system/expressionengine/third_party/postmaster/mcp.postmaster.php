@@ -111,8 +111,7 @@ class Postmaster_mcp {
 		$this->EE->cp->set_variable('cp_page_title', 'Postmaster');
 		
 		$this->EE->cp->set_right_nav(array(
-			'postmaster_documentation' => $this->cp_url('doctag').'&id=Parcels',
-			'postmaster_create_new_parcel' => $this->cp_url('create_template'),
+			'postmaster_documentation'     => $this->cp_url('doctag').'&id=Parcels'
 			/* 'Text Editor Settings' => $this->cp_url('editor_settings') */
 		));
 
