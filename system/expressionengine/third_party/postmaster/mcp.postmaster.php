@@ -98,6 +98,7 @@ class Postmaster_mcp {
 			'themes'  	=> $this->themes,
 			'parcels' 	=> $this->EE->postmaster_model->get_parcels(),
 			'hooks'     => $results,
+			'create_parcel_url' => $this->cp_url('create_template'),
 			'add_hook_url' => $this->cp_url('hook'),
 			'edit_hook_action' => $this->current_url('ACT', $this->EE->channel_data->get_action_id(__CLASS__, 'edit_hook_action')),
 			'delegates'	=> $delegate->get_delegates(FALSE, PATH_THIRD.'postmaster/delegates'),

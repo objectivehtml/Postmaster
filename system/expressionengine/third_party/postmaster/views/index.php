@@ -1,4 +1,4 @@
-<a href="#" class="action button"><span class="icon-plus"></span> New Parcel</a>
+<a href="<?=$create_parcel_url?>" class="action button"><span class="icon-plus"></span> New Parcel</a>
 
 <h2><a href="#help" class="help">Parcels <span>(?)</span></a></h2>
 
@@ -102,8 +102,9 @@
 <table class="mainTable" cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
-			<th style="width:40%">Title</th>
-			<th style="width:40%">Hook</th>
+			<th style="width:30%">Title</th>
+			<th style="width:30%">Hook</th>
+			<th style="width:20%">Service</th>
 			<th style="width:5%;max-width:112px;min-width:112px">Actions</th>
 		</tr>
 	</thead>
@@ -120,6 +121,7 @@
 		<tr>
 			<td><?php echo $hook->title?></td>
 			<td><?php echo !empty($hook->installed_hook) ? $hook->installed_hook : $hook->user_defined_hook ?></td>
+			<td><?php echo !empty($hook->service) ? $hook->service : $hook->service ?></td>			
 			<td class="actions">
 				<a href="<?php echo $hook->edit_url?>" title="Edit" class="button tooltip"><span class="icon-edit"></span></a>
 				<a href="<?php echo $hook->duplicate_url?>" title="Duplicate" class="button tooltip"><span class="icon-copy"></span></a>
