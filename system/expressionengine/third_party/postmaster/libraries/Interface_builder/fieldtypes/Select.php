@@ -54,6 +54,11 @@ class Select_IBField extends IBFieldtype {
 
 		$html[] = '<select name="'.$this->name.'" id="'.$this->id.'">';
 
+		if(!is_array($this->settings))
+		{
+			var_dump($this->name);exit();
+		}
+		
 		foreach($this->settings['options'] as $option_value => $option_name)
 		{
 			$html[]   = '<option value="'.$option_value.'" '.((string) $data == (string) $option_value ? 'selected="selected"' : NULL).'>'.$option_name.'</option>';

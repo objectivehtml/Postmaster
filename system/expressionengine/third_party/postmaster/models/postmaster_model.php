@@ -108,6 +108,26 @@ class Postmaster_model extends CI_Model {
 		
 		$this->db->insert('postmaster_hooks', $hook);
 	}
+	
+	public function get_installed_hooks($hook, $json_decode = TRUE)
+	{		
+		$this->db->order_by('priority', 'asc');
+		$this->db->where("(installed_hook != '' AND installed_hook = '$hook') OR (installed_hook = '' AND user_defined_hook = '$hook')", NULL, FALSE);
+		
+		$return = array();
+		
+		foreach($this->db->get('postmaster_hooks')->result_array() as $index => $hook)
+		{
+			$return[$index] = $hook;
+			
+			if($json_decode)
+			{
+				$return[$index]['settings'] = json_decode($hook['settings']);
+			}
+		}
+		
+		return $return;
+	}
 
 	public function edit_hook($id, $hook)
 	{

@@ -19,7 +19,11 @@ abstract class Postmaster_service extends Postmaster_core {
 	
 	abstract public function send($parsed_object, $parcel);
 	abstract public function default_settings();
-	abstract public function display_settings($settings, $obj);
+	
+	public function display_settings($settings, $obj)
+	{
+		return $this->build_table($settings, $obj);
+	}
 	
 	public function get_settings($settings)
 	{
@@ -28,6 +32,18 @@ abstract class Postmaster_service extends Postmaster_core {
 		return isset($settings->{$this->name}) ? (object) array_merge((array) $default_settings, (array) $settings->{$this->name}) : $default_settings;
 	}
 
+	public function build_table($settings, $fields)
+	{	
+		$settings = $this->get_settings($settings);
+		
+		$this->IB->set_var_name($this->name);
+		$this->IB->set_prefix('setting');
+		$this->IB->set_use_array(TRUE);
+		
+		return $this->IB->table($this->fields, $settings, postmaster_table_attr());
+	}
+	
+	/*
 	public function build_table($settings, $fields)
 	{	
 		$html = '
@@ -104,6 +120,9 @@ abstract class Postmaster_service extends Postmaster_core {
 
 		return $html;
 	}
+	
+	*/
+	
 }
 
 class Postmaster_Service_Response {

@@ -29,7 +29,11 @@ abstract class Postmaster_core {
 		$this->uid  = new Uuid();
 		$this->lib  = $this->EE->postmaster_lib;
 		$this->now  = $this->EE->localize->now;
-		$this->IB	= $this->EE->interface_builder;
+				
+		$this->EE->interface_builder->set_var_name($this->name);
+		$this->EE->interface_builder->set_use_array(TRUE);
+		
+		$this->IB	=& $this->EE->interface_builder;		
 	}
 	
 	public function action_url($class, $method)

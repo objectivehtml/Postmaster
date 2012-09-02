@@ -6,8 +6,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/
- * @version		1.0
- * @build		20120824
+ * @version		1.0.1
+ * @build		20120901
  */
 
 abstract class Base_class {
@@ -32,6 +32,7 @@ abstract class Base_class {
 	    
 	    return;
     }    
+   
     
     /**
      * Dynamic create setter/getter methods
@@ -44,7 +45,13 @@ abstract class Base_class {
 	    
 	public function __call($method, $args)
 	{
-		foreach(array('/^get_/' => 'get_' , '/^set_/' => 'set_') as $regex => $replace)
+		$magic_methods = array(
+			'/^get_/'    => 'get_' , 
+			'/^set_/'    => 'set_',
+			'/^append_/' => 'append_'
+		);
+		
+		foreach($magic_methods as $regex => $replace)
 		{
 	    	if(preg_match($regex, $method))
 	    	{
@@ -57,6 +64,7 @@ abstract class Base_class {
 	    	
 	    return call_user_func_array(array($this, $method), $args);
 	}
+	
 	
 	/**
 	 * Get the value of a defined property
@@ -88,9 +96,28 @@ abstract class Base_class {
        
     public function set($prop, $value)
     {
-	    if(isset($this->$prop))
+	    if(property_exists($this, $prop))
 	    {
 		    $this->$prop = $value;
 	    }
     }
+    
+    
+	/**
+	 * Append the value of a defined property
+	 *
+	 * @access	public
+	 * @param	string 	propery name
+	 * @param	string 	propery value
+	 * @return	mixed
+	 */
+       
+	protected function append($prop = 'fields', $value)
+	{
+		if(isset($this->$prop))
+		{
+			$this->$prop = array_merge($this->{'get_'.$prop}(), $value);
+		}
+	}
+	
 }

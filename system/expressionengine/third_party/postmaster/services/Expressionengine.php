@@ -26,20 +26,24 @@ class ExpressionEngine_postmaster_service extends Postmaster_service {
 			'type'  => 'select',
 			'id'	=> 'expressionengine_mailtype',
 			'label' => 'Mail Type',
-			'options' => array(
-				'text' => 'Text',
-				'html' => 'HTML'
+			'settings' => array(
+				'options' => array(
+					'text' => 'Text',
+					'html' => 'HTML'
+				)
 			)
 		),
 		'protocol' => array(
 			'type'  => 'select',
 			'id'	=> 'expressionengine_protocol',
 			'label' => 'Protocol',
-			'options' => array(
-				'mail'     => 'Mail',
-				'sendmail' => 'Sendmail',
-				'smtp'     => 'SMTP'
-			)		
+			'settings' => array(
+				'options' => array(
+					'mail'     => 'Mail',
+					'sendmail' => 'Sendmail',
+					'smtp'     => 'SMTP'
+				)		
+			)
 		),
 		'useragent' => array(
 			'id'	=> 'expressionengine_useragent',
@@ -77,9 +81,11 @@ class ExpressionEngine_postmaster_service extends Postmaster_service {
 			'type'  => 'select',
 			'id'	=> 'expressionengine_wordwrap',
 			'label' => 'Wordwrap',
-			'options' => array(
-				TRUE  => 'True',
-				FALSE => 'False'
+			'settings' => array(
+				'options' => array(
+					TRUE  => 'True',
+					FALSE => 'False'
+				)
 			)
 		),
 		'wrapchars' => array(
@@ -90,50 +96,60 @@ class ExpressionEngine_postmaster_service extends Postmaster_service {
 			'type'  => 'select',
 			'id'	=> 'expressionengine_validate',
 			'label' => 'Validate',
-			'options' => array(
-				TRUE  => 'True',
-				FALSE => 'False'
+			'settings' => array(
+				'options' => array(
+					TRUE  => 'True',
+					FALSE => 'False'
+				)
 			)
 		),
 		'priority' => array(
 			'type'  => 'select',
 			'id'	=> 'expressionengine_priority',
 			'label' => 'Priority',
-			'options' => array(
-				1 => 1,
-				2 => 2,
-				3 => 3,
-				4 => 4,
-				5 => 5
+			'settings' => array(
+				'options' => array(
+					1 => 1,
+					2 => 2,
+					3 => 3,
+					4 => 4,
+					5 => 5
+				)
 			)
 		),
 		'crlf' => array(
 			'type'  => 'select',
 			'id'	=> 'expressionengine_crlf',
 			'label' => 'CRLF',
-			'options' => array(
-				'\r\n' => '\r\n',
-				'\r' => '\r',
-				'\n' => '\n',
+			'settings' => array(
+				'options' => array(
+					'\r\n' => '\r\n',
+					'\r' => '\r',
+					'\n' => '\n',
+				)
 			)
 		),
 		'newline' => array(
 			'type'  => 'select',
 			'id'	=> 'expressionengine_newline',
 			'label' => 'Newline',
-			'options' => array(
-				'\r\n' => '\r\n',
-				'\r' => '\r',
-				'\n' => '\n',
+			'settings' => array(
+				'options' => array(
+					'\r\n' => '\r\n',
+					'\r' => '\r',
+					'\n' => '\n',
+				)
 			)
 		),
 		'bcc_batch_mode' => array(
 			'type'  => 'select',
 			'id'	=> 'expressionengine_bcc_batch_mode',
 			'label' => 'BCC Batch Mode',
-			'options' => array(
-				TRUE  => 'True',
-				FALSE => 'False'
+			'settings' => array(
+				'options' => array(
+					TRUE  => 'True',
+					FALSE => 'False'
+				)
 			)
 		),
 		'bcc_batch_size' => array(

@@ -11,6 +11,14 @@ if(!class_exists('Interface_Builder'))
 		protected  $fields   = array();
 		protected  $instance = FALSE;
 		
+		protected $prefix = '';
+		
+		protected $var_name  = '';
+		
+		protected $var_index = NULL;
+	
+		protected $use_array = FALSE;
+		
 		public function __construct($data = array(), $params = array())
 		{
 			parent::__construct($params);
@@ -111,10 +119,9 @@ if(!class_exists('Interface_Builder'))
 	
 			foreach($fields as $field_name => $field)
 			{
-				$data     = isset($this->data->$field_name) ? $this->data->$field_name : NULL;
-				
-				$obj      = $this->load($field_name, $this->convert_array($field));
-	
+				$data = isset($this->data->$field_name) ? $this->data->$field_name : NULL;
+				$obj  = $this->load($field_name, $this->convert_array($field));
+								
 				$return[$field_name] = (object) array(
 					'label'       => $obj->display_label($data),
 					'description' => $obj->display_description($data),
@@ -127,11 +134,23 @@ if(!class_exists('Interface_Builder'))
 	
 		public function load($name, $field)
 		{
+			if(!isset($field->type))
+			{
+				$field = (array) $field;
+				$field['type'] = 'input';
+				$field = (object) $field;	
+			}
+			
 			$class_name = ucfirst($field->type).'_IBField';
 	
 			require_once 'fieldtypes/'.ucfirst($field->type) . '.php';
 			
-			$obj = new $class_name($name, $field, $this->meta, $this->get_instance());
+			$obj = new $class_name($name, $field, $this->meta, array(
+				'prefix'    => $this->prefix,
+				'var_name'  => $this->var_name,
+				'var_index' => $this->var_index,
+				'use_array' => $this->use_array,
+			));
 			
 			return $obj;
 		}
@@ -249,12 +268,22 @@ if(!class_exists('Interface_Builder'))
 	
 	}
 	
-	abstract class IBFieldtype {
+	abstract class IBFieldtype extends Interface_builder_core {
 	
 		public $name, $label, $id, $type, $default = '', $settings, $meta;
+		
+		protected $prefix = '';
+		
+		protected $var_name = NULL;
+		
+		protected $var_index = NULL;
 	
-		public function __construct($name, $field, $meta, $instance = FALSE)
+		protected $use_array = FALSE;
+		
+		public function __construct($name, $field, $meta, $params = array())
 		{
+			parent::__construct($params);
+			
 			$this->name = $name;
 			$this->meta = $meta;
 			
@@ -268,25 +297,15 @@ if(!class_exists('Interface_Builder'))
 			
 			$this->EE->load->config('interface_builder');
 			
-			if(config_item('interface_builder_use_array'))
-			{
-				$var   = config_item('interface_builder_var_name')   ? config_item('interface_builder_var_name')   : NULL;
-				$index = config_item('interface_builder_meta_index') ? config_item('interface_builder_meta_index') : FALSE; 
-				
-				if($index)
-				{
-					if($instance)
-					{
-						$index = isset($index[$instance]) ? $index[$instance] : $index;
-						$var   = isset($var[$instance])   ? $var[$instance]   : $var;
-					}
-					
-					$index = $index ? '['.(isset($this->meta[$index]) ? $this->meta[$index] : $index).']' : NULL;
-				
-					$this->name = $var.$index.'['.$this->name.']';					
-				}
-			}
+			$var_name = $name;
 			
+			if($this->use_array)
+			{
+				$this->prefix .= '['.$this->var_name.']';
+				$var_name      = '['.$var_name.']';
+			}
+		
+			$this->name = $this->prefix . $var_name;
 		}
 	
 		public function display_label($data = '')

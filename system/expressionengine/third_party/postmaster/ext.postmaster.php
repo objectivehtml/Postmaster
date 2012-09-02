@@ -43,24 +43,16 @@ class Postmaster_ext {
 		
 		$hook      = $this->EE->extensions->in_progress;
 		$responses = $this->EE->postmaster_lib->trigger_hook($hook, func_get_args());
-				
-		foreach($responses as $response)
-		{
-			if($response->end_script)
-			{
-				$this->EE->extensions->end_script = TRUE;
-			}
-			
-			if(isset($response->return_data))
-			{
-				$return = $response->return_data;
-			}
-		}
+		$return    = $this->EE->postmaster_hook->return_data($responses);
 		
-		if(isset($return))
+		$this->EE->extensions->end_script = $this->EE->postmaster_hook->end_script($responses);
+			
+		if(!is_null($return))
 		{
 			return $return;
 		}
+		
+		return NULL;
 	}
 		
 	/**

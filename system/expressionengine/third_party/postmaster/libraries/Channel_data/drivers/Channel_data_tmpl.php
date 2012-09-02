@@ -110,14 +110,14 @@ class Channel_data_tmpl extends Channel_data_lib {
 		{
 			if(!empty($value))
 			{
-				$parse_array[$index] = $this->parse($parse_vars, $channels, $channel_fields, $value);
+				$parse_array[$index] = $this->parse($parse_vars, $channels, $channel_fields, $value, $index);
 			}
 		}
 		
 		return $parse_array;
 	}
 	
-	public function parse($parse_vars = array(), $channels = FALSE, $channel_fields = FALSE, $tagdata = FALSE)
+	public function parse($parse_vars = array(), $channels = FALSE, $channel_fields = FALSE, $tagdata = FALSE, $index = FALSE)
 	{
 		if(!$tagdata)
 		{
@@ -142,12 +142,10 @@ class Channel_data_tmpl extends Channel_data_lib {
 		
 		if(!isset($parse_vars[0]))
 		{
-			$this->EE->TMPL->template = $this->EE->TMPL->parse_variables_row($this->EE->TMPL->template, (array) $parse_vars);
+			$parse_vars = array((array) $parse_vars);
 		}
-		else
-		{
-			$this->EE->TMPL->template = $this->EE->TMPL->parse_variables($this->EE->TMPL->template, $parse_vars);
-		}
+		
+		$this->EE->TMPL->template = $this->EE->TMPL->parse_variables($this->EE->TMPL->template, $parse_vars);
 		
 		$this->EE->TMPL->parse($this->EE->TMPL->template);
 		

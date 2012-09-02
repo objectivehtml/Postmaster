@@ -1,12 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Postmaster_base_hook extends Base_hook {
+class Member_member_logout_postmaster_hook extends Base_hook {
 	
-	protected $title = 'User Defined Hook';
+	protected $title = 'Member Logout';
 	
 	public function __construct()
 	{
 		parent::__construct();
-		
-	}	
+	}
 }

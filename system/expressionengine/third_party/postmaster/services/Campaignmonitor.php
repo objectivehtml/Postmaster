@@ -33,7 +33,9 @@ class CampaignMonitor_postmaster_service extends Postmaster_service {
 			'label'   => 'Client',
 			'id'      => 'compaignmonitor_client_id',
 			'type'    => 'select',
-			'options' => array()
+			'settings' => array(
+				'options' => array()
+			)
 		),
 	);
 

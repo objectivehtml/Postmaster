@@ -11,7 +11,7 @@
  */
 
 abstract class Interface_builder_core {
-		
+	
     /**
      * Contructor
      *
@@ -68,7 +68,7 @@ abstract class Interface_builder_core {
        
     public function get($prop)
     {
-	    if(isset($this->$prop))
+	    if(property_exists($this, $prop))
 	    {
 		    return $this->$prop;
 	    }
@@ -88,7 +88,7 @@ abstract class Interface_builder_core {
        
     public function set($prop, $value)
     {
-	    if(isset($this->$prop))
+	    if(property_exists($this, $prop))
 	    {
 		    $this->$prop = $value;
 	    }

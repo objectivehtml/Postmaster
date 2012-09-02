@@ -85,9 +85,9 @@
 			</td>
 			<td class="actions">
 				<ul>
-					<li><a href="<?php echo $parcel->edit_url?>" class="button"><span class="icon-edit"></span> Edit</a></li>
-					<li><a href="<?php echo $parcel->duplicate_url?>" class="button"><span class="icon-copy"></span> Duplicate</a></li>
-					<li><a href="<?php echo $parcel->delete_url?>" class="button"><span class="icon-trash"></span> Delete</a></li>
+					<li><a href="<?php echo $parcel->edit_url?>" class="button"><span class="icon-edit"></span></a></li>
+					<li><a href="<?php echo $parcel->duplicate_url?>" class="button"><span class="icon-copy"></span></a></li>
+					<li><a href="<?php echo $parcel->delete_url?>" class="delete button"><span class="icon-trash"></span></a></li>
 				</ul>
 			</td>
 		</tr>

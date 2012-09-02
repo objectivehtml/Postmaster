@@ -9,8 +9,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
- * @version		1.3.1
- * @build		20120612
+ * @version		1.4.0
+ * @build		20120815
  */
 
 if(!class_exists('Base_form'))
@@ -47,6 +47,7 @@ if(!class_exists('Base_form'))
 			// Obviously it's much more secure to use your own key!
 			
 			$this->EE->load->library('encrypt');
+			$this->EE->load->library('form_validation');
 			
 			$saved_key = config_item('encryption_key');
 			
@@ -68,7 +69,7 @@ if(!class_exists('Base_form'))
 			$this->groups            = array();
 			$this->hidden_fields     = array();
 			$this->rules             = array();
-			$this->error_handling    = FALSE;
+			$this->error_handling    = 'inline';
 			
 			if($clear_errors)
 			{
@@ -85,7 +86,8 @@ if(!class_exists('Base_form'))
 			$this->required          = '';
 			$this->secure_action     = FALSE;
 			$this->secure_return     = FALSE;
-			$this->tagdata           = '';
+			$this->tagdata           = $this->EE->TMPL->tagdata;
+			$this->validation_field  = 'base_form_submit';
 		}
 		
 		
@@ -209,7 +211,7 @@ if(!class_exists('Base_form'))
 			$post = $this->add_prefix('post', $_POST);
 			
 			// If channel fields and an entry exists, parse the fields with the data
-			if($fields && $entry)
+			if($fields && is_array($entry))
 			{
 				$this->tagdata = $this->parse_fields($fields, $entry);				
 			}
@@ -322,9 +324,14 @@ if(!class_exists('Base_form'))
 			$this->errors['Error '.(count($this->errors) + 1)] = $message;
 		}
 		
+		public function set_message($rule, $message)
+		{
+			$this->EE->form_validation->set_message($rule, $message);		
+		}
+		
 		public function set_field_error($field, $message)
 		{
-			$this->field_errors[$field] = $message;
+			$this->field_errors[$this->decode($field)] = $message;
 		}
 		
 		public function parse_fields($field_data, $entry_data, $prefix = '')
@@ -358,13 +365,19 @@ if(!class_exists('Base_form'))
 					{
 						foreach(explode("\n", $row['field_list_items']) as $option_index => $option)
 						{
-							$vars[0]['options:'.$field_name][$option_index] = array(
+							
+							$values = explode('|', $vars[0][$field_name]);
+							
+							$checked = 'checked="checked"';
+							$selected = 'selected="selected"';
+							
+							$vars[0]['options:'.$field_name][] = array(
 								'option_value'	=> $option,
 								'option_name' 	=> $option,
-								'selected'		=> $vars[0][$field_name] == $option ? 'selected="selected"' : NULL,
-								'checked'		=> $vars[0][$field_name] == $option ? 'checked="checked"' : NULL
-							);							
-						}
+								'selected'		=> in_array($option, $values) ? $selected : NULL,
+								'checked'		=> in_array($option, $values) ? $checked : NULL
+							);										
+						}	
 					}
 				}
 			}
@@ -375,23 +388,25 @@ if(!class_exists('Base_form'))
 		public function validate($required_fields = array(), $additional_rules = array())
 		{
 			if(isset($_POST[$this->validation_field]))
-				{
+			{
 				$vars = array();
-				
-				$this->EE->load->library('form_validation');
+
 				$this->EE->form_validation->set_error_delimiters('', '');
 				
-				$validate_fields = isset($_POST['required']) ? $_POST['required'] : $this->required;
+				$validate_fields = isset($_POST['required']) ? $this->decode($_POST['required']) : $this->required;
 				$validate_fields = !is_array($validate_fields) ? explode('|', $validate_fields) : $validate_fields;
 				
 				$required_fields = array_merge($required_fields, $validate_fields);
-				
+							
 				foreach($required_fields as $field)
 				{
-					$this->EE->form_validation->set_rules($field, ucwords(str_replace(array('-', '_'), ' ', $field)), 'trim|required');
+					if(!empty($field))
+					{
+						$this->EE->form_validation->set_rules($field, ucwords(str_replace(array('-', '_'), ' ', $field)), 'callback_required_field_check');
+					}
 				}
 				
-				$rules = array_merge((isset($_POST['rule']) ? $_POST['rule'] : array()), $this->rules);
+				$rules = $this->decode(array_merge((isset($_POST['rule']) ? $_POST['rule'] : array()), $this->rules));
 				
 				foreach($rules as $field => $rule)
 				{
@@ -407,9 +422,9 @@ if(!class_exists('Base_form'))
 					$error_count = 0;	
 					
 					foreach($required_fields as $field)
-					{		
+					{	
 						$error = form_error($field);
-								
+							
 						if($error !== FALSE && !empty($error))
 						{	
 							$this->set_field_error($field, $error);
@@ -419,18 +434,23 @@ if(!class_exists('Base_form'))
 			}
 		}
 		
+		public function required_field_check()
+		{
+			echo 'test';exit();
+		}
+		
 		public function redirect($group_id = FALSE)
 		{
 			$url = $this->return;
 			
 			if(isset($_POST['return']))
 			{
-				$url = $_POST['return'];
+				$url = $this->decode($this->EE->input->post('return', TRUE));
 			}
-			
+						
 			if(isset($_POST['secure_return']))
 			{
-				$this->secure_return = (int) $_POST['secure_return'] == 1 ? TRUE : FALSE;
+				$this->secure_return = (int) $this->decode($this->EE->input->post('secure_return', TRUE)) == 1 ? TRUE : FALSE;
 			}
 			
 			if($group_id)
@@ -442,7 +462,7 @@ if(!class_exists('Base_form'))
 					$url = $group_redirect;
 				}
 			}
-			
+						
 			$url = $this->secure_url($url, $this->secure_return);
 						
 			return $this->EE->functions->redirect($url);

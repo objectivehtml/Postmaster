@@ -67,9 +67,61 @@ class Postmaster_hook extends Base_class {
 		$this->EE =& get_instance();
 	}
 	
-	public function trigger($index, $args)
+	public function end_script($responses)
 	{
-		return $this->get_hook($index)->trigger($index, $args);
+		if(!is_array($responses))
+		{
+			$responses = array($responses);
+		}
+		
+		foreach($responses as $response)
+		{
+			if(isset($response->end_script) && $response->end_script)
+			{
+				return TRUE;
+			}
+		}
+		
+		return FALSE;
+	}
+	
+	public function return_data($responses)
+	{
+		if(!is_array($responses))
+		{
+			$response = array($response);
+		}
+		
+		foreach($responses as $response)
+		{
+			if(isset($response->return_data))
+			{
+				return $response->return_data;
+			}
+		}
+		
+		return NULL;
+	}
+	
+	public function trigger($index, $vars = array())
+	{
+		$hook_obj = $this->get_hook($index);
+		$hook_obj->pre_process($vars);
+		
+		$responses = array();
+			
+		foreach($this->EE->postmaster_model->get_installed_hooks($index) as $hook)
+		{
+			$hook_name = !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'];
+			
+			$hook_obj->set_settings((object)$hook['settings']->$hook_name);
+			
+			$responses = array_merge($responses, $hook_obj->trigger($index, $vars));
+		}
+		
+		$responses = $hook_obj->post_process($responses, $vars);
+		
+		return $responses;
 	}
 	
 	/**
@@ -98,15 +150,15 @@ class Postmaster_hook extends Base_class {
 			foreach($this->hooks as $x => $obj)
 			{
 				$hook = rtrim(get_class($obj), '_postmaster_hook');
-				
-				if($index == $hook || $x == $index || $index == $obj->get_title())
+								
+				if($index == $obj->get_name() || $index == $obj->get_title())
 				{
 					return $this->hooks[$x];
 				}
 			}
 		}
 				
-		return $this->get_hook($this->$default_hook);
+		return $this->get_hook(rtrim($this->default_hook, '.php'));
 	}
 	
 	
