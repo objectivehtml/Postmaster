@@ -131,6 +131,12 @@ class Postmaster_model extends CI_Model {
 
 	public function edit_hook($id, $hook)
 	{
+		$entry = $this->channel_data->get('postmaster_hooks', array(
+			'where' => array(
+				'id' => $id
+			)
+		))->row_array();
+		
 		$extension = array(
 			'class'    => 'Postmaster_ext',
 			'method'   => 'trigger_hook',
@@ -140,7 +146,7 @@ class Postmaster_model extends CI_Model {
 			'enabled'  => 'y'
 		);
 		
-		$this->db->where('extension_id', $id);
+		$this->db->where('extension_id', $entry['extension_id']);
 		$this->db->update('extensions', $extension);
 		
 		$this->db->where('id', $id);
@@ -186,21 +192,21 @@ class Postmaster_model extends CI_Model {
 		$entry    = $this->get_hook($id)->row_array();
 		
 		$ext_entry_id = $this->duplicate('extensions', $entry['extension_id'], 'extension_id');
-		
-		$this->db->where('id', $ext_entry_id);
+				
+		$this->db->where('id', $entry_id);
 		$this->db->update('postmaster_hooks', array(
 			'extension_id' => $ext_entry_id
 		));
 	}
 	
-	public function duplicate($table, $id, $id_field = 'id')
+	public function duplicate($table, $id, $id_field = 'id', $debug = FALSE)
 	{		
 		$entry = $this->channel_data->get($table, array(
 			'where' => array(
 				$id_field => $id
 			)
 		))->row_array();
-
+		
 		unset($entry[$id_field]);
 
 		$this->db->insert($table, $entry);
