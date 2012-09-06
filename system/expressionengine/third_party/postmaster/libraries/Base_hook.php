@@ -54,7 +54,7 @@ abstract class Base_hook extends Base_class {
 		
 		$this->EE =& get_instance();
 		
-		$this->EE->load->library('interface_builder');
+		$this->EE->load->driver('interface_builder');
 		
 		$this->name      = strtolower(str_replace('_postmaster_hook', '', get_class($this)));
 		$this->file_name = ucfirst($this->name).'.php';
