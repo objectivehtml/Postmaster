@@ -38,7 +38,10 @@ class Postmaster_lib {
 			'base_path' => PATH_THIRD.'postmaster/hooks/'
 		));
 		
-		return $this->EE->postmaster_hook->trigger($hook, $args);	
+		if(!empty($hook))
+		{
+			return $this->EE->postmaster_hook->trigger($hook, $args);
+		}	
 	}
 	
 	public function get_themes()

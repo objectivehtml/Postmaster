@@ -14,7 +14,7 @@ class Template_Hook extends Template_Base {
 	{
 		parent::__construct($params);
 		
-		$this->EE->load->driver('interface_builder');
+		$this->EE->load->driver('Interface_builder');
 		$this->EE->load->library('postmaster_hook', array(
 			'base_path' => PATH_THIRD.'postmaster/hooks/'
 		));

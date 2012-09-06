@@ -24,6 +24,7 @@ class Postmaster_mcp {
 		$this->EE =& get_instance();
 		
 		$this->EE->load->library('postmaster_lib');
+		$this->EE->load->driver('interface_builder');
 		
 		if(REQ == 'CP')
 		{
@@ -153,7 +154,7 @@ class Postmaster_mcp {
 		$this->EE->cp->set_variable('cp_page_title', $title);
 		
 		$this->EE->cp->set_right_nav(array(
-			'&larr; Back to Home' => $this->cp_url('index'),
+			'&larr; Back to Home'  => $this->cp_url('index'),
 			'Text Editor Settings' => $this->cp_url('editor_settings'),
 		));
 		
