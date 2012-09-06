@@ -106,6 +106,7 @@ class Postmaster_hook extends Base_class {
 	public function trigger($index, $vars = array())
 	{
 		$hook_obj = $this->get_hook($index);
+		
 		$hook_obj->pre_process($vars);
 		
 		$responses = array();
@@ -114,7 +115,7 @@ class Postmaster_hook extends Base_class {
 		{
 			$hook_name = !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'];
 			
-			$hook_obj->set_settings((object)$hook['settings']->$hook_name);
+			$hook_obj->set_settings($hook['settings']);
 			
 			$responses = array_merge($responses, $hook_obj->trigger($index, $vars));
 		}

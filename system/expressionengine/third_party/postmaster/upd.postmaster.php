@@ -31,6 +31,21 @@ class Postmaster_upd {
 				'type'			=> 'text'
 			)
 		),
+		'postmaster_previews' => array(
+			'id'	=> array(
+				'type'				=> 'int',
+				'constraint'		=> 100,
+				'primary_key'		=> TRUE,
+				'auto_increment'	=> TRUE
+			),
+			'member_id'	=> array(
+				'type'				=> 'int',
+				'constraint'		=> 10,
+			),
+			'data'	=> array(
+				'type'			=> 'longtext'
+			)
+		),
 		'postmaster_parcels' 	=> array(
 			'id'	=> array(
 				'type'				=> 'int',

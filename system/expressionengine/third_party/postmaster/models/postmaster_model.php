@@ -131,12 +131,6 @@ class Postmaster_model extends CI_Model {
 
 	public function edit_hook($id, $hook)
 	{
-		$entry = $this->channel_data->get('postmaster_hooks', array(
-			'where' => array(
-				'id' => $id
-			)
-		))->row_array();
-		
 		$extension = array(
 			'class'    => 'Postmaster_ext',
 			'method'   => 'trigger_hook',
@@ -146,7 +140,7 @@ class Postmaster_model extends CI_Model {
 			'enabled'  => 'y'
 		);
 		
-		$this->db->where('extension_id', $entry['extension_id']);
+		$this->db->where('extension_id', $id);
 		$this->db->update('extensions', $extension);
 		
 		$this->db->where('id', $id);
@@ -166,13 +160,13 @@ class Postmaster_model extends CI_Model {
 	
 	public function create_parcel($parcel)
 	{
-		$this->EE->db->insert('postmaster_parcels', $parcel);
+		$this->db->insert('postmaster_parcels', $parcel);
 	}
 
 	public function edit_parcel($parcel, $id)
 	{
-		$this->EE->db->where('id', $id);
-		$this->EE->db->update('postmaster_parcels', $parcel);
+		$this->db->where('id', $id);
+		$this->db->update('postmaster_parcels', $parcel);
 	}
 	
 	public function delete_parcel($id)
@@ -192,21 +186,20 @@ class Postmaster_model extends CI_Model {
 		$entry    = $this->get_hook($id)->row_array();
 		
 		$ext_entry_id = $this->duplicate('extensions', $entry['extension_id'], 'extension_id');
-				
-		$this->db->where('id', $entry_id);
-		$this->db->update('postmaster_hooks', array(
+		
+		$this->db->insert('postmaster_hooks', array(
 			'extension_id' => $ext_entry_id
 		));
 	}
 	
-	public function duplicate($table, $id, $id_field = 'id', $debug = FALSE)
+	public function duplicate($table, $id, $id_field = 'id')
 	{		
 		$entry = $this->channel_data->get($table, array(
 			'where' => array(
 				$id_field => $id
 			)
 		))->row_array();
-		
+
 		unset($entry[$id_field]);
 
 		$this->db->insert($table, $entry);
@@ -332,6 +325,49 @@ class Postmaster_model extends CI_Model {
 		return $this->db->get('postmaster_hooks');
 	}
 	
+	public function get_member($member_id = FALSE, $prefix = FALSE)
+	{
+		$member = array();
+		
+		$member_id = $member_id ? $member_id : $this->session->userdata('member_id');
+		
+		if($member_id)
+		{
+			$member = $this->channel_data->get_member($member_id)->row_array();
+		}
+			
+		if($prefix)
+		{
+			$member = $this->channel_data->utility->add_prefix('member', $member);
+		}
+		
+		return $member;
+	}
+	
+	public function get_channels($site_id = FALSE)
+	{
+		if(!$site_id)
+		{
+			$site_id = $this->config->item('site_id');
+		}
+		
+		$channels = $this->channel_data->get_channels(array(
+			'where' => array(
+				'site_id' => $site_id
+			)
+		))->result();
+		
+		return $this->channel_data->utility->reindex($channels, 'channel_id'); 
+	}
+	
+	public function get_channel_fields($channel_id)
+	{
+		$channel_fields = $this->channel_data->get_channel_fields($channel_id)->result();
+		$channel_fields = $this->channel_data->utility->reindex($channel_fields, 'field_name');
+		
+		return $channel_fields;
+	}
+	
 	public function is_blacklisted($email)
 	{
 		$this->db->where('email', $email);
@@ -362,6 +398,42 @@ class Postmaster_model extends CI_Model {
 		}
 	}
 
+	public function get_preview($member_id = FALSE)
+	{
+		if(!$member_id)
+		{
+			$member_id = $this->session->userdata('member_id');
+		}
+		
+		return $this->db->where('member_id', $member_id)->get('postmaster_previews');
+	}
+	
+	public function save_preview($message, $member_id = FALSE)
+	{
+		if(!$member_id)
+		{
+			$member_id = $this->session->userdata('member_id');
+		}
+		
+		$existing_rows = $this->get_preview($member_id);
+		
+		if($existing_rows->num_rows() == 0)
+		{
+			$this->db->insert('postmaster_previews', array(
+				'member_id' => $member_id,
+				'data' 	    => $message
+			));
+		}
+		else {
+			$this->db->where('member_id', $member_id);
+			$this->db->update('postmaster_previews', array(
+				'data' => $message
+			));
+		}
+		
+		return $message;
+	}
+	
 	public function save_response($response)
 	{
 		if(is_object($response->parcel))

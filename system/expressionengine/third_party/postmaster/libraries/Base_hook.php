@@ -89,16 +89,18 @@ abstract class Base_hook extends Base_class {
 	}
 	
 	public function send($hook, $vars = array(), $return_data = 'Undefined')
-	{
+	{	
 		$settings		  = $hook['settings'];
 		$name             = !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'];
-		$hook             = $this->parse($hook, $vars);		
+		
+		$parsed_hook      = $this->parse($hook, $vars);
+		
 		$hook['settings'] = (object) $settings;		
 		$end_script 	  = isset($hook['settings']->$name->end_script) ? (bool) $hook['settings']->$name->end_script : FALSE;
-		
+	
 		$obj = array(
 			'end_script' => $end_script,
-			'response'   => $this->EE->postmaster_lib->send($hook, $hook)
+			'response'   => $this->EE->postmaster_lib->send($parsed_hook, $hook)
 		);
 		
 		if($return_data != 'Undefined')
@@ -130,6 +132,10 @@ abstract class Base_hook extends Base_class {
 		unset($hook['settings']);
 		
 		$vars = $this->EE->channel_data->utility->add_prefix($this->var_prefix, $vars);
+		
+		$member_data = $this->EE->channel_data->utility->add_prefix('member', $this->EE->postmaster_model->get_member());
+		
+		$vars = array_merge($vars, $member_data);
 		
 		return $this->EE->channel_data->tmpl->parse_array($hook, $vars);
 	}

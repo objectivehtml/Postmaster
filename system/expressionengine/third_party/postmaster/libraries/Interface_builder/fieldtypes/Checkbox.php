@@ -2,12 +2,6 @@
 
 class Checkbox_IBField extends IBFieldtype {
 
-	public function __construct()
-	{
-		echo 'test';exit();
-		
-	}
-	
 	public function display_field($data = array())
 	{		
 		if(is_null($data))

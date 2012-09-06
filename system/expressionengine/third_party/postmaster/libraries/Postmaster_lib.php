@@ -88,8 +88,32 @@ class Postmaster_lib {
 		return new $class;
 	}
 	
-	public function parse($parcel)
+	public function parse($parcel, $parse_vars = array())
 	{
+		if(isset($parcel->entry))
+		{
+			$entry_vars = $this->EE->channel_data->utility->add_prefix('entry', $parcel->entry);
+			$parse_vars = array_merge($parse_vars, $entry_vars);
+		}
+	
+		$parse_vars = array_merge($parse_vars, $this->EE->postmaster_model->get_member(FALSE, 'member'));
+	
+		$channel_id     = isset($parcel->entry->channel_id) ? $parcel->entry->channel_id : 0;
+		$channels       = $this->EE->postmaster_model->get_channels();
+		$channel_fields = $this->EE->postmaster_model->get_channel_fields($channel_id);
+			
+		foreach($parcel as $field => $value)
+		{
+			if(is_string($value))
+			{
+				$parcel->$field = $this->EE->channel_data->tmpl->parse_string($value, $parse_vars, $parcel->entry, $channels, $channel_fields);
+			}
+		}
+		
+		return $parcel;
+		
+		/*
+		
 		if(!isset($this->EE->TMPL))
 		{
 			require_once APPPATH.'/libraries/Template.php';
@@ -273,6 +297,7 @@ class Postmaster_lib {
 		}
 	
 		return $parse_object;
+		*/
 	}
 	
 	private function convert_array($obj = array())

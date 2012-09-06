@@ -175,12 +175,15 @@ class Postmaster_mcp {
 		$this->EE->load->library('postmaster_lib');
 		$this->EE->load->driver('channel_data');
 
-		if($cookie = $this->EE->input->post('cookie'))
-		{
-			setcookie('postmaster_parcel_message', $cookie, strtotime('+1 week'), '/');
-			exit();
+		if($message = $this->get('message'))
+		{			
+			$message = $this->EE->postmaster_model->save_preview($message);
 		}
-
+		else
+		{
+			$message = $this->EE->postmaster_model->get_preview()->row('data');
+		}
+		
 		$parcel = (object) array(
 			'to_name'            => $this->get('to_name'),
 			'to_email'           => $this->get('to_email'),
@@ -189,14 +192,14 @@ class Postmaster_mcp {
 			'cc'                 => $this->get('cc'),
 			'bcc'                => $this->get('bcc'),
 			'subject'            => $this->get('subject'),
-			'message'            => isset($_COOKIE['postmaster_parcel_message']) ? urldecode($_COOKIE['postmaster_parcel_message']) : NULL,
+			'message'            => $message,
 			'subject'            => $this->get('subject'),
 			'post_date_specific' => $this->get('post_date_specific'),
 			'post_date_relative' => $this->get('post_date_relative'),
 			'send_every'         => $this->get('send_every'),
 			'extra_conditionals' => $this->get('extra_conditionals'),
 		);
-
+		
 		$entry_id = $this->get('entry_id');
 
 		if(!empty($entry_id))
@@ -457,6 +460,7 @@ class Postmaster_mcp {
 		
 		$parcel          = array(
 			'title'              => $this->post('title', TRUE),
+			'to_name'            => $this->post('to_name', TRUE),
 			'to_email'           => $this->post('to_email', TRUE),
 			'from_name'          => $this->post('from_name', TRUE),
 			'from_email'         => $this->post('from_email', TRUE),
