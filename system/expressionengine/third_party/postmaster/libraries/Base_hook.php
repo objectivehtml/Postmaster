@@ -133,7 +133,7 @@ abstract class Base_hook extends Base_class {
 		
 		$vars = $this->EE->channel_data->utility->add_prefix($this->var_prefix, $vars);
 		
-		$member_data = $this->EE->channel_data->utility->add_prefix('member', $this->EE->postmaster_model->get_member());
+		$member_data = $this->EE->postmaster_model->get_member(FALSE, 'member');
 		
 		$vars = array_merge($vars, $member_data);
 		

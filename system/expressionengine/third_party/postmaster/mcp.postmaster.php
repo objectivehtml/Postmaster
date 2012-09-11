@@ -201,8 +201,9 @@ class Postmaster_mcp {
 			'extra_conditionals' => $this->get('extra_conditionals'),
 		);
 		
-		$entry_id = $this->get('entry_id');
-
+		$entry_id  = $this->get('entry_id');
+		$member_id = FALSE;
+		
 		if(!empty($entry_id))
 		{
 			$entries = $this->EE->channel_data->get_channel_entry($entry_id);
@@ -213,8 +214,13 @@ class Postmaster_mcp {
 		{
 			$parcel->entry = (object) array();
 		}
-
-		$parcel_object = $this->EE->postmaster_lib->parse($parcel);
+		
+		if(isset($parcel->entry->author_id))
+		{
+			$member_id = $parcel->entry->author_id;
+		}
+				
+		$parcel_object = $this->EE->postmaster_lib->parse($parcel, $member_id);
 		
 		if(empty($parcel_object->message)) {
 			$parcel_object->message = '
@@ -430,7 +436,7 @@ class Postmaster_mcp {
 		$this->EE->load->library('postmaster_lib');
 		
 		$parcel          = array(
-			'title'            => $this->post('title', TRUE),
+			'title'              => $this->post('title', TRUE),
 			'to_name'            => $this->post('to_name', TRUE),
 			'to_email'           => $this->post('to_email', TRUE),
 			'from_name'          => $this->post('from_name', TRUE),
@@ -491,6 +497,7 @@ class Postmaster_mcp {
 		
 		$parcel          = array(
 			'channel_id'     => $this->post('channel_id', TRUE),
+			'title'          => $this->post('title', TRUE),
 			'to_name'        => $this->post('to_name', TRUE),
 			'to_email'       => $this->post('to_email', TRUE),
 			'from_name'      => $this->post('from_name', TRUE),
@@ -525,6 +532,7 @@ class Postmaster_mcp {
 		
 		$parcel          = array(
 			'channel_id'         => $this->post('channel_id'),
+			'title'              => $this->post('title'),
 			'to_name'            => $this->post('to_name'),
 			'to_email'           => $this->post('to_email'),
 			'from_name'          => $this->post('from_name'),
@@ -596,6 +604,7 @@ class Postmaster_mcp {
 
 	public function template()
 	{
+		$member_id = FALSE;
 		$entry_id  = $this->get('entry_id');
 		$parcel_id = $this->get('parcel_id');
 
@@ -607,7 +616,12 @@ class Postmaster_mcp {
 		$parcel        = $this->EE->postmaster_model->get_parcel($parcel_id);
 		$parcel->entry = $this->EE->channel_data->get_channel_entry($entry_id)->row();	
 
-		$parsed_object = $this->EE->postmaster_lib->parse($parcel);
+		if(isset($parcel->entry->author_id))
+		{
+			$member_id = $parcel->entry->author_id;
+		}
+		
+		$parsed_object = $this->EE->postmaster_lib->parse($parcel, $member_id);
 
 		if($this->get('strip_tags'))
 		{

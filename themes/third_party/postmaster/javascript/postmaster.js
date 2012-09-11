@@ -80,21 +80,12 @@ $(document).ready(function() {
 				var url 	= Postmaster.parser+'&entry_id='+entryId;
 				
 				$.post(Postmaster.parser, {
-					cookie: message
+					message: message
 				}, function(data) {
+					console.log(data);
 					iframe.src = url;
 				});
 
-				/*
-				$.get(Postmaster.parser,
-					{
-						entry_id: $('#test_entry').val(),
-						message: Postmaster.editor.getValue()	
-					}, function(data) {
-						alert(data);
-					}
-				);
-	*/
 			},
 
 			replaceSelection: function(text) {

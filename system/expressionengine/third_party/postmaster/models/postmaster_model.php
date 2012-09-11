@@ -294,6 +294,7 @@ class Postmaster_model extends CI_Model {
 			if(isset($channels[$parcel->channel_id]))
 			{
 				$parcels[$index]->channel_name 	 = $channels[$parcel->channel_id]->channel_name;
+				$parcels[$index]->channel_title	 = $channels[$parcel->channel_id]->channel_title;
 			}
 			else
 			{

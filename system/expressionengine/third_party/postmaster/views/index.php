@@ -5,13 +5,11 @@
 <table class="mainTable" cellpadding="0" cellspacing="0">
 	<thead>
 		<tr>
-			<th width="20%">Channel</th>
-			<th>Categories</th>
-			<th>Member Groups</th>
-			<th width="10%">Status</th>
-			<th>Trigger</th>
-			<th>Service</th>
-			<th width="10%">Actions</th>
+			<th style="width:30%">Title</th>
+			<th style="width:20%">Channel</th>
+			<th style="width:20%">Triggers</th>
+			<th style="width:20%">Service</th>
+			<th style="width:5%;max-width:112px;min-width:112px">Actions</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -25,47 +23,11 @@
 
 		<?php foreach($parcels as $parcel): ?>
 		<tr>
+			<td class="title">
+				<?php echo $parcel->title;?>
+			</td>
 			<td class="channel-name">
-				<?php echo $parcel->channel_name;?>
-			</td>
-			<td class="categories">
-				<?php if(count($parcel->categories) > 0): ?>
-					<ul>
-					<?php foreach($parcel->categories as $category): ?>
-						<li>
-							<?php echo $category->cat_name?>
-						</li>
-					<?php endforeach; ?>
-					</ul>
-				<?php else: ?>
-					<p>No categories have been defined.</p>
-				<?php endif; ?>
-			</td>
-			<td class="member-groups">
-				<?php if(count($parcel->member_groups) > 0): ?>
-					<ul>
-					<?php foreach($parcel->member_groups as $group): ?>
-						<li>
-							<?php echo $group->group_title?>
-						</li>
-					<?php endforeach; ?>
-					</ul>
-				<?php else: ?>
-					<p>No member groups have been defined.</p>
-				<?php endif; ?>
-			</td>
-			<td class="statuses">
-				<?php if(count($parcel->statuses) > 0): ?>
-					<ul>
-					<?php foreach($parcel->statuses as $status): ?>
-						<li>
-							<?php echo $status?>
-						</li>
-					<?php endforeach; ?>
-					</ul>
-				<?php else: ?>
-					<p>No statuses have been defined.</p>
-				<?php endif; ?>
+				<?php echo $parcel->channel_title;?>
 			</td>
 			<td class="trigger">
 				<?php if(count($parcel->trigger) > 0): ?>
@@ -119,7 +81,7 @@
 		
 		<?php foreach($hooks as $hook): ?>
 		<tr>
-			<td><?php echo $hook->title?></td>
+			<td class="title"><?php echo $hook->title?></td>
 			<td><?php echo !empty($hook->installed_hook) ? $hook->installed_hook : $hook->user_defined_hook ?></td>
 			<td><?php echo !empty($hook->service) ? $hook->service : $hook->service ?></td>			
 			<td class="actions">

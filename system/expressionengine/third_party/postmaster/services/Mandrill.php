@@ -121,7 +121,7 @@ class Mandrill_postmaster_service extends Postmaster_service {
 		}
 		
 		$post = array(
-			'key'	   => '04137e85-fcf8-4b6a-8a85-a04d4ef97744',
+			'key'	   => $settings->api_key,
 			'message'  => (object) array(
 				'html'    => $parsed_object->message,
 				'text'    => strip_tags($parsed_object->message),

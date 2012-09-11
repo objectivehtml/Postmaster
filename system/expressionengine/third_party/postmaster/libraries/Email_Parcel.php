@@ -15,6 +15,7 @@
 class Email_Parcel {
 	
 	public  $id,
+			$title,
 			$to_name,
 			$to_email,
 			$from_name,

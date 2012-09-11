@@ -16,8 +16,22 @@
 <form action="<?php echo $template->action?>" method="post" class="group postmaster">
 	
 	<fieldset class="column group sidebar">
-	
+			
 		<div class="container">
+			<h3><a href="#help-title" class="help"><label for="title">Hook Title</label> <span>(?)</span></a></h3>
+			
+			<input type="text" name="title" id="title" value="<?php echo form_prep($template->title) ?>" />
+			
+			<div id="help-title" class="help-text">
+				
+				<h2>Parcel Title</h2>
+
+				<p>The Parcel Title is a value you can use to give each parcel you some extra meaning or context. This field has no programatic purpose, and is strictly for you to use to know what is what.</p>
+				
+			</div>
+		</div>
+		
+		<div class="container margin-top">
 			<h3><a href="#send-receive" class="help">Send / Receive <span>(?)</span></a></h3>
 					
 			<div id="send-receive" class="help-text">

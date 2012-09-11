@@ -23,7 +23,7 @@ class Postmaster_lib {
 	public function __construct()
 	{
 		$this->EE =& get_instance();
-				
+		
 		$this->EE->load->model('postmaster_model');
 		$this->EE->load->driver('channel_data');
 		$this->EE->load->helper('postmaster_helper');
@@ -91,29 +91,41 @@ class Postmaster_lib {
 		return new $class;
 	}
 	
-	public function parse($parcel, $parse_vars = array())
+	public function parse($parcel, $member_id = FALSE, $parse_vars = array(), $prefix = 'parcel', $delimeter = ':')
 	{
 		if(isset($parcel->entry))
 		{
-			$entry_vars = $this->EE->channel_data->utility->add_prefix('entry', $parcel->entry);
+			$entry = array();
+			
+			if(isset($parcel->entry->entry_id))
+			{
+				$entry = $this->EE->channel_data->get_channel_entry($parcel->entry->entry_id, '*')->row_array();
+			}
+			
+			$entry_vars = array_merge((array) $parcel->entry, $entry);
 			$parse_vars = array_merge($parse_vars, $entry_vars);
 		}
 	
-		$parse_vars = array_merge($parse_vars, $this->EE->postmaster_model->get_member(FALSE, 'member'));
+		$parse_vars = array_merge($parse_vars, $this->EE->postmaster_model->get_member($member_id, 'member'));
 	
 		$channel_id     = isset($parcel->entry->channel_id) ? $parcel->entry->channel_id : 0;
 		$channels       = $this->EE->postmaster_model->get_channels();
 		$channel_fields = $this->EE->postmaster_model->get_channel_fields($channel_id);
-			
+		
+		unset($parcel->entry);
+		
+		$parcel = $this->EE->channel_data->tmpl->parse_array($parcel, $parse_vars, $entry_vars, $channels, $channel_fields, $prefix.$delimeter);
+		
+		/*
 		foreach($parcel as $field => $value)
 		{
 			if(is_string($value))
 			{
 				$parcel->$field = $this->EE->channel_data->tmpl->parse_string($value, $parse_vars, $parcel->entry, $channels, $channel_fields);
 			}
-		}
+		}*/
 		
-		return $parcel;
+		return (object) $parcel;
 		
 		/*
 		
@@ -385,7 +397,14 @@ class Postmaster_lib {
 							{
 								$parcel->entry = $this->EE->channel_data->get_channel_entry($entry_id)->row();
 								
-								$parsed_object = $this->parse($parcel);
+								$member_id = FALSE;
+								
+								if(isset($parcel->entry->author_id))
+								{
+									$member_id = $parcel->entry->author_id;
+								}
+								
+								$parsed_object = $this->parse($parcel, $member_id);
 								
 								$parsed_object->settings = $parcels[$index]->settings;
 
