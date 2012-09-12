@@ -30,6 +30,18 @@ class SendGrid_postmaster_service extends Postmaster_service {
 			'label' => 'Password',
 			'id'	=> 'sendgrid_api_key',
 			'type'  => 'password'
+		),
+		'plain_text_only' => array(
+			'label' => 'Plain Text Only',
+			'id'	=> 'plain_text_only',
+			'description' => 'Whether or not to force the email to be only plain text',
+			'type'  => 'radio',
+			'settings' => array(
+				'options' => array(
+					'true'   => 'True',
+					'false'  => 'False',
+				)
+			)
 		)
 	);
 
@@ -64,12 +76,15 @@ class SendGrid_postmaster_service extends Postmaster_service {
 			'fromname' => $parsed_object->from_name,
 			'subject'  => $parsed_object->subject,
 			'text'     => strip_tags($parsed_object->message),
-			'html'     => $parsed_object->message,
 			'date'     => date('r', $this->now)
 		);
 		
-		$this->curl->create($this->url);
+		if(!isset($settings->plain_text_only) || $settings->plain_text_only == 'false')
+		{
+			$post['html'] = $parsed_object->message;	
+		}
 		
+		$this->curl->create($this->url);		
 		$this->curl->option(CURLOPT_HEADER, FALSE);
 		$this->curl->option(CURLOPT_RETURNTRANSFER, TRUE);
 		$this->curl->post($post);
@@ -113,7 +128,9 @@ class SendGrid_postmaster_service extends Postmaster_service {
 	public function default_settings()
 	{
 		return (object) array(
-			'api_key' => 'POSTMARK_API_TEST'
+			'api_user'        => '',
+			'api_key'         => '',
+			'plain_text_only' => 'false'
 		);
 	}
 

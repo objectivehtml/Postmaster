@@ -117,10 +117,12 @@ class Postmaster_hook extends Base_class {
 			
 			$hook_obj->set_settings($hook['settings']);
 			
-			$responses = array_merge($responses, $hook_obj->trigger($index, $vars));
+			$responses = array_merge($responses, $hook_obj->trigger($vars));
 		}
 		
-		$responses = $hook_obj->post_process($responses, $vars);
+		$hook_obj->set_responses($responses);
+		
+		$responses = $hook_obj->post_process($vars);
 		
 		return $responses;
 	}

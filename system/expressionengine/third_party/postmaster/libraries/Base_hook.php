@@ -18,6 +18,8 @@ abstract class Base_hook extends Base_class {
 		'end_script' => FALSE
 	);
 	
+	protected $responses = array();
+	
 	protected $fields = array(
 		
 		'end_script' => array(
@@ -71,16 +73,16 @@ abstract class Base_hook extends Base_class {
 		return;
 	}
 	
-	public function post_process($responses = array(), $vars = array())
+	public function post_process($vars = array())
 	{
-		return $responses;
+		return $this->responses;
 	}
 		
-	public function trigger($hook, $vars = array(), $return_data = 'Undefined')
+	public function trigger($vars = array(), $return_data = 'Undefined')
 	{
 		$response = array();
 		
-		foreach($this->get_installed_hooks($hook) as $hook)
+		foreach($this->get_installed_hooks($this->name) as $hook)
 		{	
 			$response[] = $this->send($hook, $vars, $return_data);
 		}
@@ -103,11 +105,11 @@ abstract class Base_hook extends Base_class {
 			'response'   => $this->EE->postmaster_lib->send($parsed_hook, $hook)
 		);
 		
-		if($return_data != 'Undefined')
+		if($return_data !== 'Undefined')
 		{
 			$obj['return_data'] = $return_data;	
 		}
-		
+	
 		return (object) $obj;
 	}
 	

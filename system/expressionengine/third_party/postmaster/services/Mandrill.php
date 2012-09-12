@@ -85,6 +85,18 @@ class Mandrill_postmaster_service extends Postmaster_service {
 					'false' => 'False',
 				)
 			)
+		),
+		'plain_text_only' => array(
+			'label'       => 'Plain Text Only',
+			'id'          => 'plain_text_only',
+			'description' => 'Whether or not to force the email to be only plain text',
+			'type'        => 'radio',
+			'settings'    => array(
+				'options' => array(
+					'true'   => 'True',
+					'false'  => 'False',
+				)
+			)
 		)
 	);
 
@@ -122,8 +134,7 @@ class Mandrill_postmaster_service extends Postmaster_service {
 		
 		$post = array(
 			'key'	   => $settings->api_key,
-			'message'  => (object) array(
-				'html'    => $parsed_object->message,
+			'message'  => array(
 				'text'    => strip_tags($parsed_object->message),
 				'subject' => $parsed_object->subject,
 				'to'      => $to,
@@ -137,6 +148,14 @@ class Mandrill_postmaster_service extends Postmaster_service {
 				'preserve_recipients' => $settings->preserve_recipients == 'true' ? TRUE : FALSE,
 			),
 		);
+		
+		
+		if(!isset($settings->plain_text_only) || $settings->plain_text_only == 'false')
+		{
+			$post['message']['html'] = $parsed_object->message;	
+		}
+		
+		$post['message'] = (object) $post['message'];
 		
 		if(!empty($parsed_object->bcc))
 		{
@@ -174,30 +193,6 @@ class Mandrill_postmaster_service extends Postmaster_service {
 		));
 	}
 	
-	private function post($data)
-	{		
-        $ch = curl_init();
-
-        curl_setopt($ch, CURLOPT_URL, $this->url);
-        
-        curl_setopt($ch, CURLOPT_POST, TRUE);
-        
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-        
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Expect:'));
-        curl_setopt($ch, CURLOPT_HEADER, false);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2 * 60 * 1000);
-        
-        $response   = curl_exec($ch);
-        $info       = curl_getinfo($ch);
-        $error      = curl_error($ch);
-           
-        var_dump($response);exit();
-        
-        curl_close($ch);
-	}
-	
 	public function default_settings()
 	{
 		return (object) array(
@@ -207,6 +202,7 @@ class Mandrill_postmaster_service extends Postmaster_service {
 			'auto_text'           => 'false',
 			'url_strip_qs'        => 'false',
 			'preserve_recipients' => 'true',
+			'plain_text_only' 	  => 'false',
 		);
 	}
 

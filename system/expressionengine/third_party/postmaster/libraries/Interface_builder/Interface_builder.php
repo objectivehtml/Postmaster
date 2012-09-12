@@ -121,7 +121,7 @@ if(!class_exists('Interface_Builder'))
 			{
 				$data = isset($this->data->$field_name) ? $this->data->$field_name : NULL;
 				$obj  = $this->load($field_name, $this->convert_array($field));
-								
+							
 				$return[$field_name] = (object) array(
 					'label'       => $obj->display_label($data),
 					'description' => $obj->display_description($data),
@@ -144,7 +144,7 @@ if(!class_exists('Interface_Builder'))
 			$class_name = ucfirst($field->type).'_IBField';
 	
 			require_once 'fieldtypes/'.ucfirst($field->type) . '.php';
-			
+						
 			$obj = new $class_name($name, $field, $this->meta, array(
 				'prefix'    => $this->prefix,
 				'var_name'  => $this->var_name,

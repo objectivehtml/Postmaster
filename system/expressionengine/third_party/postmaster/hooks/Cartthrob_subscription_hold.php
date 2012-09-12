@@ -16,9 +16,9 @@ class Cartthrob_subscription_hold_postmaster_hook extends Base_hook {
 		}
 	}
 	
-	public function trigger($hook, $subscription = array())
+	public function trigger($subscription = array())
 	{		
-		return parent::trigger($hook, $subscription, NULL);
+		return parent::trigger($subscription, NULL);
 	}
 	
 	public function post_process($responses = array())
