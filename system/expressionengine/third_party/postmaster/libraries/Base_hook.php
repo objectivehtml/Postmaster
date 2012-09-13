@@ -10,6 +10,8 @@ abstract class Base_hook extends Base_class {
 	
 	public $settings = array();
 	
+	protected $hook;
+	
 	protected $var_prefix = 'hook';
 	
 	protected $file_name = 'hook';
@@ -59,10 +61,11 @@ abstract class Base_hook extends Base_class {
 		$this->EE->load->driver('interface_builder');
 		
 		$this->name      = strtolower(str_replace('_postmaster_hook', '', get_class($this)));
-		$this->file_name = ucfirst($this->name).'.php';
-		$this->IB	     = $this->EE->interface_builder;	
-		$this->settings  = $this->get_settings();
-				
+		$this->file_name    = ucfirst($this->name).'.php';
+		$this->IB           = $this->EE->interface_builder;
+		$this->channel_data = $this->EE->channel_data;	
+		$this->settings     = $this->get_settings();
+								
 		$this->IB->set_var_name($this->name);
 		$this->IB->set_prefix('setting');
 		$this->IB->set_use_array(TRUE);
@@ -80,18 +83,12 @@ abstract class Base_hook extends Base_class {
 		
 	public function trigger($vars = array(), $return_data = 'Undefined')
 	{
-		$response = array();
-		
-		foreach($this->get_installed_hooks($this->name) as $hook)
-		{	
-			$response[] = $this->send($hook, $vars, $return_data);
-		}
-		
-		return $response;
+		return $this->send($vars, $return_data, $return_data);
 	}
 	
-	public function send($hook, $vars = array(), $return_data = 'Undefined')
+	public function send($vars = array(), $return_data = 'Undefined')
 	{	
+		$hook			  = (array) $this->hook;
 		$settings		  = $hook['settings'];
 		$name             = !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'];
 		

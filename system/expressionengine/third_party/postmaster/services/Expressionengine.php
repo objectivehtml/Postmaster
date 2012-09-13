@@ -166,7 +166,7 @@ class ExpressionEngine_postmaster_service extends Postmaster_service {
 		parent::__construct();
 	}
 
-	public function send($parsed_object, $parcel)
+	public function send($parsed_object, $parcel, $debug = FALSE)
 	{
 		$parsed_object->settings = $parcel->settings;
 

@@ -41,7 +41,7 @@ class Postmaster_lib {
 		if(!empty($hook))
 		{
 			return $this->EE->postmaster_hook->trigger($hook, $args);
-		}	
+		}			
 	}
 	
 	public function get_themes()
@@ -337,7 +337,7 @@ class Postmaster_lib {
 		{
 			if($ignore_date || $send_date <= $this->EE->localize->now)
 			{
-				$response = $service->send($parsed_object, $parcel);
+				$response = $service->send($parsed_object, $parcel, TRUE);
 				$this->model->save_response($response);
 
 				if(!empty($parsed_object->send_every))

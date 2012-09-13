@@ -79,13 +79,15 @@ $(document).ready(function() {
 				var iframe  = $('.pain').get(0);
 				var url 	= Postmaster.parser+'&entry_id='+entryId;
 				
+				//console.log(url);
+				/*
 				$.post(Postmaster.parser, {
 					message: message
 				}, function(data) {
 					console.log(data);
 					iframe.src = url;
 				});
-
+				*/
 			},
 
 			replaceSelection: function(text) {
@@ -299,7 +301,7 @@ $(document).ready(function() {
 
 	$('.refresh').click(function() {
 
-		Postmaster.refresh();
+		//Postmaster.refresh();
 
 		return false;
 
@@ -345,7 +347,7 @@ $(document).ready(function() {
 	});
 
 	if(Postmaster.refresh) {
-		Postmaster.refresh();
+		//Postmaster.refresh();
 	}
 
 });

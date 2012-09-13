@@ -21,7 +21,6 @@ class Channel_data_tmpl extends Channel_data_lib {
 	{
 		parent::__construct();
 		
-		
 		if(!isset($this->EE->TMPL))
 		{
 			$this->init();
@@ -141,6 +140,8 @@ class Channel_data_tmpl extends Channel_data_lib {
 	
 	public function parse($parse_vars = array(), $entry_data = array(), $channels = FALSE, $channel_fields = FALSE, $tagdata = FALSE, $prefix = '', $index = FALSE)
 	{
+		$this->init();
+		
 		if(!$tagdata)
 		{
 			$tagdata = $this->EE->TMPL->template;
@@ -172,7 +173,7 @@ class Channel_data_tmpl extends Channel_data_lib {
 		
 		$this->EE->TMPL->template = $this->EE->TMPL->parse_variables($this->EE->TMPL->template, $parse_vars);
 		
-		$this->EE->TMPL->template = $this->parse_fieldtypes($entry_data, $channels, $channel_fields, $this->EE->TMPL->template, $prefix, $index);	
+		$this->EE->TMPL->template = $this->parse_fieldtypes($entry_data, $channels, $channel_fields, $this->EE->TMPL->template, $prefix);	
 		
 		$this->EE->TMPL->parse($this->EE->TMPL->template);
 		
@@ -183,9 +184,9 @@ class Channel_data_tmpl extends Channel_data_lib {
 		return $return;
 	}
 	
-	public function parse_string($string, $parse_vars = array(), $entry_data = array(),  $channels = array(), $channel_fields = array())
+	public function parse_string($string, $parse_vars = array(), $entry_data = array(),  $channels = array(), $channel_fields = array(), $prefix = '')
 	{
-		return $this->parse($parse_vars, $entry_data, $channels, $channel_fields, $string);
+		return $this->parse($parse_vars, $entry_data, $channels, $channel_fields, $string, $prefix);
 	}
 	
 	public function parse_fieldtypes($entry_data = array(), $channels = array(), $channel_fields = array(), $tagdata = FALSE, $prefix = '', $index = FALSE)
@@ -269,13 +270,20 @@ class Channel_data_tmpl extends Channel_data_lib {
 			else
 			{
 				$var_name = preg_replace('/\s.*$/', '', $single_var);
-					
+				
+				$row_array = array();
+				
 				if(isset($prefix_entry->$var_name))
 				{
-					$tagdata = $this->EE->TMPL->parse_variables_row($tagdata, array(
-						$var_name => $prefix_entry->$var_name
-					));
+					$row_array[$var_name] = $prefix_entry->$var_name;
 				}
+				
+				if(isset($entry_data->$var_name))
+				{
+					$row_array[$var_name] = $entry_data->$var_name;
+				}
+				
+				$tagdata = $this->EE->TMPL->parse_variables_row($tagdata, $row_array);
 			}
 		}
 		
