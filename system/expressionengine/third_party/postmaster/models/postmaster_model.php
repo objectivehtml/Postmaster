@@ -131,6 +131,8 @@ class Postmaster_model extends CI_Model {
 
 	public function edit_hook($id, $hook)
 	{
+		$saved_hook = $this->get_hook($id);
+		
 		$extension = array(
 			'class'    => 'Postmaster_ext',
 			'method'   => 'trigger_hook',
@@ -140,7 +142,7 @@ class Postmaster_model extends CI_Model {
 			'enabled'  => 'y'
 		);
 		
-		$this->db->where('extension_id', $id);
+		$this->db->where('extension_id', $saved_hook->row('extension_id'));
 		$this->db->update('extensions', $extension);
 		
 		$this->db->where('id', $id);
