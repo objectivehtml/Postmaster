@@ -18,7 +18,7 @@
 	<fieldset class="column group sidebar">
 			
 		<div class="container">
-			<h3><a href="#help-title" class="help"><label for="title">Hook Title</label> <span>(?)</span></a></h3>
+			<h3><a href="#help-title" class="help"><label for="title">Parcel Title</label> <span>(?)</span></a></h3>
 			
 			<input type="text" name="title" id="title" value="<?php echo form_prep($template->title) ?>" />
 			
