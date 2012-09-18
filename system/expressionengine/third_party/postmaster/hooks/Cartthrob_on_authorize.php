@@ -16,7 +16,7 @@ class Cartthrob_on_authorize_postmaster_hook extends Base_hook {
 		}
 	}
 	
-	public function trigger($vars = array())
+	public function trigger()
 	{
 		$parse_vars = $this->cart->order();
 		$parse_vars['purchased_items'] = implode('|', $parse_vars['purchased_items']);
