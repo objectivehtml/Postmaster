@@ -6,7 +6,6 @@
  * A helper classes to make life easy when it comes to updating add-on
  * data tables.
  *
- * @package		Google Maps for ExpressionEngine
  * @subpackage	Libraries
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
