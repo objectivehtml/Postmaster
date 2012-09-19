@@ -219,7 +219,7 @@ class Postmaster_mcp {
 		{
 			$member_id = $parcel->entry->author_id;
 		}
-				
+			
 		$parcel_object = $this->EE->postmaster_lib->parse($parcel, $member_id);
 		
 		if(empty($parcel_object->message)) {
