@@ -1,8 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Cartthrob_subscription_hold_postmaster_hook extends Base_hook {
+class Cartthrob_subscription_rebilled_postmaster_hook extends Base_hook {
 	
-	protected $title = 'CartThrob Subscription Hold';
+	protected $title = 'CartThrob Subscription Rebilled';
 	
 	protected $cart;
 	

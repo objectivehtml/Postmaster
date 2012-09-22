@@ -12,8 +12,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2011, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/channel_data
- * @version		1.2.0
- * @build		20120918
+ * @version		1.2.1
+ * @build		20120919
  */
  
 if(!class_exists('Theme_loader'))
@@ -84,7 +84,7 @@ if(!class_exists('Theme_loader'))
 			{
 				$this->module_name = $data['module_name'];
 			}
-			else
+			else if(isset($data[0]))
 			{
 				$this->module_name = strtolower(str_replace(array('_mcp', '_upd'), '', $data[0]));
 			}

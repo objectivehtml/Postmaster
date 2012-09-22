@@ -1,8 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Cartthrob_subscription_hold_postmaster_hook extends Base_hook {
+class Cartthrob_subscription_created_postmaster_hook extends Base_hook {
 	
-	protected $title = 'CartThrob Subscription Hold';
+	protected $title = 'CartThrob Subscription Created';
 	
 	protected $cart;
 	
@@ -16,11 +16,25 @@ class Cartthrob_subscription_hold_postmaster_hook extends Base_hook {
 		}
 	}
 	
-	public function trigger($subscription = array())
+	public function trigger($subscription_id, $sub_data, $item, $sub_permissions)
 	{		
-		$member = $this->EE->postmaster_model->get_member($subscription['member_id'], 'member');
+		$vars = array(
+			'subscription_id' => $subscription_id
+		);
 		
-		return parent::trigger($subscription, $member);
+		if($sub_permissions)
+		{
+			$vars['sub_permissions'] = $sub_permissions;
+		}
+		
+		$vars   = array_merge($vars, $sub_data, $item);
+		
+		$vars['meta'] = array($vars['meta']);
+		$vars['meta'][0]['subscription_options'] = array($vars['meta'][0]['subscription_options']);
+		
+		$member = $this->EE->postmaster_model->get_member($vars['member_id'], 'member');
+		
+		return parent::trigger($vars, $member);
 	}
 	
 	public function post_process($responses = array())

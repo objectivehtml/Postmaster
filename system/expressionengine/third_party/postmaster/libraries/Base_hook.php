@@ -81,18 +81,24 @@ abstract class Base_hook extends Base_class {
 		return $this->responses;
 	}
 		
-	public function trigger($vars = array(), $return_data = 'Undefined')
+	public function trigger($vars = array(), $member_data = FALSE, $return_data = 'Undefined')
 	{
-		return $this->send($vars, $return_data, $return_data);
+		if(!is_array($member_data))
+		{
+			$member_data = FALSE;
+			$return_data = $member_data;	
+		}
+		
+		return $this->send($vars, $member_data, $return_data);
 	}
 	
-	public function send($vars = array(), $return_data = 'Undefined')
+	public function send($vars = array(), $member_data = FALSE, $return_data = 'Undefined')
 	{	
 		$hook			  = (array) $this->hook;
 		$settings		  = $hook['settings'];
 		$name             = !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'];
 		
-		$parsed_hook      = $this->parse($hook, $vars);
+		$parsed_hook      = $this->parse($hook, $vars, $member_data);
 		
 		$hook['settings'] = (object) $settings;		
 		$end_script 	  = isset($hook['settings']->$name->end_script) ? (bool) $hook['settings']->$name->end_script : FALSE;
@@ -126,15 +132,18 @@ abstract class Base_hook extends Base_class {
 	} 
 	*/
 	
-	public function parse($hook, $vars = array())
+	public function parse($hook, $vars = array(), $member_data = FALSE)
 	{
 		unset($hook['settings']);
 		
 		$vars = $this->EE->channel_data->utility->add_prefix($this->var_prefix, $vars);
 		
-		$member_data = $this->EE->postmaster_model->get_member(FALSE, 'member');
+		if(!$member_data)
+		{
+			$member_data = $this->EE->postmaster_model->get_member(FALSE, 'member');
+		}
 		
-		$vars = array_merge($vars, $member_data);
+		$vars = array_merge($member_data, $vars);
 		
 		return $this->EE->channel_data->tmpl->parse_array($hook, $vars);
 	}

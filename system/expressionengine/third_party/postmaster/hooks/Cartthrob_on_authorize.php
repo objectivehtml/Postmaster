@@ -24,7 +24,7 @@ class Cartthrob_on_authorize_postmaster_hook extends Base_hook {
 			$parse_vars['auth']
 		);
 		
-		return parent::trigger($parse_vars, NULL);
+		return parent::trigger($parse_vars);
 	}
 	
 	public function post_process($responses = array())
