@@ -23,7 +23,7 @@ class Postmaster_lib {
 	public function __construct()
 	{
 		$this->EE =& get_instance();
-		
+			
 		$this->EE->load->model('postmaster_model');
 		$this->EE->load->driver('channel_data');
 		$this->EE->load->helper('postmaster_helper');
@@ -105,7 +105,7 @@ class Postmaster_lib {
 			$entry_vars = array_merge((array) $parcel->entry, $entry);
 		}
 	
-		// $parse_vars = array_merge($parse_vars, $this->EE->postmaster_model->get_member($member_id, 'member'));
+		$parse_vars = array_merge($parse_vars, $this->EE->postmaster_model->get_member($member_id, 'member'));
 	
 		$channel_id     = isset($parcel->entry->channel_id) ? $parcel->entry->channel_id : 0;
 		$channels       = $this->EE->postmaster_model->get_channels();
