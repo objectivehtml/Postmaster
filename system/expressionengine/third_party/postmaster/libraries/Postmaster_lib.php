@@ -93,23 +93,35 @@ class Postmaster_lib {
 	
 	public function parse($parcel, $member_id = FALSE, $parse_vars = array(), $prefix = 'parcel', $delimeter = ':')
 	{
-		if(isset($parcel->entry))
-		{
-			$entry = array();
-			
-			if(isset($parcel->entry->entry_id))
-			{
-				$entry = $this->EE->channel_data->get_channel_entry($parcel->entry->entry_id, '*')->row_array();
-			}
-			
-			$entry_vars = array_merge((array) $parcel->entry, $entry);
-		}
-	
-		$parse_vars = array_merge($parse_vars, $this->EE->postmaster_model->get_member($member_id, 'member'));
-	
 		$channel_id     = isset($parcel->entry->channel_id) ? $parcel->entry->channel_id : 0;
 		$channels       = $this->EE->postmaster_model->get_channels();
 		$channel_fields = $this->EE->postmaster_model->get_channel_fields($channel_id);
+		
+		if(isset($parcel->entry))
+		{
+			if(isset($parcel->entry->entry_id))
+			{
+				$entry = $this->EE->channel_data->get_channel_entry($parcel->entry->entry_id, '*')->row_array();
+				$entry_vars = $this->EE->channel_data->utility->add_prefix($prefix, $entry, $delimeter);
+			}
+			else
+			{
+				$entry_vars = $parcel->entry;
+			}
+			
+			foreach($entry_vars as $var => $value)
+			{
+				$field_name  = preg_replace('/^'.$prefix.$delimeter.'|:.*/us', '',  $var);	
+							
+				if(!isset($channel_fields[$field_name]) && !preg_match("/^field_[a-z]{2}_\d$/", $field_name))
+				{
+					$parse_vars[$var] = $value;
+				}
+			}
+			
+		}
+		
+		$parse_vars = array_merge($parse_vars, $this->EE->postmaster_model->get_member($member_id, 'member'));
 		
 		unset($parcel->entry);
 		
