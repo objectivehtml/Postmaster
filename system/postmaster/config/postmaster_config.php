@@ -4,7 +4,7 @@
  *	Version
 /* -------------------------------------- */
 
-$config['postmaster_version'] = '1.1.99.1';
+$config['postmaster_version'] = '1.1.99.2';
 
 if(!defined('POSTMASTER_VERSION'))
 {	

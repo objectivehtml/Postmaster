@@ -7,8 +7,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
- * @version		1.1.1
- * @build		20120719
+ * @version		1.1.99.2
+ * @build		20121005
  */
 
 require_once 'delegates/Base_Delegate.php';
