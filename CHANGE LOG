@@ -5,28 +5,10 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
- * @version		1.1.1
- * @build		20120719
+ * @version		1.0.97
+ * @build		20120415
  */
 
-Version 1.1.1 - 07/19/2012
---------------------------
-- (Bug Fix) Fixed that caused a call to an unknown method as a result of code refactoring
-- (Docs) Added documentation to explain the 4 segment tags.
-
-Version 1.1.0  - 07/18/2012
----------------------------
-- Public release
-
-Version 1.0.99 - 07/07/2012
----------------------------
-- (Feature) Added delegates to the module control panel page.
-- (Feature) Added a subscribe method to the MailChimp email service. CampaignMonitor is coming soon.
-- (API) Added new Postmaster_core class for more modularity and extendibility.
-- (API) Replaced APPPATH with PATH_THIRD constant
-- (API) Abstracted some methods to the new Postmaster_core class.
-- (API) Extended the Postmaster class with Base_Delegate to handle new delegate methods.
-- (API) Added the available delegates to the control panel screen.
 
 Version 1.0.971 - 04/14/2012
 ----------------------------
