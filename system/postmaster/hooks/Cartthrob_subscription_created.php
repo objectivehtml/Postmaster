@@ -28,7 +28,7 @@ class Cartthrob_subscription_created_postmaster_hook extends Base_hook {
 		}
 		
 		$vars   = array_merge($vars, $sub_data, $item);
-
+		
 		$vars['meta'] = array($vars['meta']);
 		$vars['meta'][0]['subscription_options'] = array($vars['meta'][0]['subscription_options']);
 		

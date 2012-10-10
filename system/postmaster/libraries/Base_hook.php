@@ -83,6 +83,11 @@ abstract class Base_hook extends Base_class {
 		
 	public function trigger($vars = array(), $member_data = FALSE, $return_data = 'Undefined')
 	{
+		if(is_object($member_data))
+		{
+			$member_data = (array) $member_data;	
+		}
+		
 		if(!is_array($member_data))
 		{
 			$member_data = FALSE;
@@ -99,7 +104,6 @@ abstract class Base_hook extends Base_class {
 		$name             = !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'];
 		
 		$parsed_hook      = $this->parse($hook, $vars, $member_data);
-		
 		$hook['settings'] = (object) $settings;		
 		$end_script 	  = isset($hook['settings']->$name->end_script) ? (bool) $hook['settings']->$name->end_script : FALSE;
 	
@@ -142,6 +146,8 @@ abstract class Base_hook extends Base_class {
 		{
 			$member_data = $this->EE->postmaster_model->get_member(FALSE, 'member');
 		}
+		
+		$member_data = $this->EE->channel_data->utility->add_prefix('member', $member_data);
 		
 		$vars = array_merge($member_data, $vars);
 		
