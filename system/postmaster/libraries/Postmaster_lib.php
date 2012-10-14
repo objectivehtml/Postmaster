@@ -8,8 +8,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
- * @version		1.1.1
- * @build		20120801
+ * @version		1.1.2
+ * @build		20121014
  */
 
 require_once APPPATH.'libraries/Template.php';
@@ -572,7 +572,7 @@ class Postmaster_lib {
 			 $_SERVER['SCRIPT_URI'] = $http . $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'];
 		}
 		
-		$base_url = $http . $_SERVER['HTTP_HOST'];
+		$base_url = $http . $_SERVER['HTTP_HOST'] . '/' . config_item('site_index');
 		
 		if(!empty($append))
 		{
