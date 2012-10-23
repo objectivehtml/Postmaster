@@ -11,20 +11,20 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/channel_data
- * @version		0.8.7
- * @build		20121005
+ * @version		0.8.8
+ * @build		20121021
  */
  
 class Channel_data_tmpl extends Channel_data_lib {
-	
-	public $fields;
-	public $settings;
 	
 	public function __construct()
 	{
 		parent::__construct();
 				
-		$this->init();
+		if(!isset($this->EE->TMPL))
+		{
+			$this->init();
+		}
 	}
 		
 	public function init($tagdata = FALSE)
@@ -40,14 +40,14 @@ class Channel_data_tmpl extends Channel_data_lib {
 		$this->EE->load->library('api');
 		$this->EE->api->instantiate('channel_fields');
 				
-		$this->fields = $this->EE->api_channel_fields->fetch_custom_channel_fields();
+		$fields = $this->EE->api_channel_fields->fetch_custom_channel_fields();
 
 		if($orig_settings)
 		{
 			$this->EE->api_channel_fields->settings = $orig_settings;
 		}
 		
-		$this->settings = $orig_settings;
+		$parse_object = (object) array();
 	}
 	
 	public function create_alias($tagdata = NULL)
