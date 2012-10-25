@@ -11,8 +11,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/channel_data
- * @version		0.8.8
- * @build		20121021
+ * @version		0.8.9
+ * @build		20121025
  */
  
 class Channel_data_tmpl extends Channel_data_lib {
@@ -52,6 +52,8 @@ class Channel_data_tmpl extends Channel_data_lib {
 	
 	public function create_alias($tagdata = NULL)
 	{	
+		$this->init();
+			
 		$obj = new EE_Template();
 		
 		if(isset($this->EE->TMPL))
@@ -176,7 +178,7 @@ class Channel_data_tmpl extends Channel_data_lib {
 		$this->EE->TMPL->parse($this->EE->TMPL->template);
 		
 		$return = $this->EE->TMPL->template;
-			
+		
 		$this->EE->channel_data->tmpl->reset($TMPL);
 		
 		return $return;
@@ -205,6 +207,53 @@ class Channel_data_tmpl extends Channel_data_lib {
 		return $tagdata;	
 	}
 	
+	public function parse_custom_date_fields($entry_data = array(), $channels = array(), $channel_fields = array(), $tagdata = FALSE, $prefix = '')
+	{		
+		$custom_date_fields = array();
+
+		if (count($channel_fields) > 0)
+		{
+  			foreach($channel_fields as $key => $value)
+  			{
+  				if (strpos($tagdata, LD.$prefix.$key) === FALSE) continue;
+
+				if (preg_match_all("/".LD.$prefix.$key."\s+format=[\"'](.*?)[\"']".RD."/s", $tagdata, $matches))
+				{
+					
+					for ($j = 0; $j < count($matches[0]); $j++)
+					{
+						$matches[0][$j] = str_replace(array(LD,RD), '', $matches[0][$j]);
+						
+						$dkey = $matches[0][$j];
+						$val  = $matches[1][$j];
+						$custom_date_fields[$matches[0][$j]] = $this->EE->localize->fetch_date_params($matches[1][$j]);
+					}
+					
+					
+					if(isset($entry_data->{$prefix.$key}))
+					{
+						$temp_val = $entry_data->{$prefix.$key};
+						$field_id = $value->field_id;
+						
+						$localize = TRUE;
+						
+						if (isset($entry_data->{$prefix.'field_dt_'.$field_id}) AND !empty($entry_data->{$prefix.'field_dt_'.$field_id}))
+						{
+							$temp_val = $this->EE->localize->simpl_offset($temp_val, $entry_data->{$prefix.'field_dt_'.$field_id});
+							$localize = FALSE;
+						}
+					
+						$val = str_replace($custom_date_fields[$dkey], $this->EE->localize->convert_timestamp($custom_date_fields[$dkey], $temp_val, $localize), $val);
+	
+						$tagdata = $this->EE->TMPL->swap_var_single($dkey, $val, $tagdata);
+					}		
+				}
+			}
+		}
+		
+		return $tagdata;
+	}
+	
 	public function parse_single_vars($vars, $entry_data = array(), $channels = array(), $channel_fields = array(), $tagdata = FALSE, $prefix = '', $index = FALSE)
 	{
 		$entry_data   = (object) $entry_data;
@@ -214,9 +263,11 @@ class Channel_data_tmpl extends Channel_data_lib {
 		{
 			$tagdata = $this->EE->TMPL->template;
 		}
-		
+				
 		foreach($vars['var_single'] as $single_var => $single_var_value)
-		{
+		{			
+			$tagdata = $this->parse_custom_date_fields($entry_data, $channels, $channel_fields, $tagdata, $prefix);
+			
 			$params = $this->EE->functions->assign_parameters($single_var);
 
 			$single_var_array = explode(' ', $single_var);
@@ -273,7 +324,6 @@ class Channel_data_tmpl extends Channel_data_lib {
 						$data = $this->EE->api_channel_fields->apply('pre_process', array($row['field_id_'.$field_id]));
 		
 						$entry = $this->EE->api_channel_fields->apply($call_method, array($data, $params, FALSE));
-						
 						
 						$tagdata = $this->EE->TMPL->swap_var_single($single_var, $entry, $tagdata);
 							
