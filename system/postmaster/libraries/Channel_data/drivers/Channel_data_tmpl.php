@@ -207,6 +207,67 @@ class Channel_data_tmpl extends Channel_data_lib {
 		return $tagdata;	
 	}
 	
+	public function parse_path_variables($vars = array(), $entry_data = array(), $tagdata = FALSE, $prefix = '')
+	{		
+		if(!isset($vars['var_single']))
+		{
+			$vars['var_single'] = $vars;
+		}
+		
+		if(!is_array($vars['var_single']))
+		{
+			$vars['var_single'] = array();	
+		}
+		
+		foreach($vars['var_single'] as $key => $value)
+		{	
+			//  parse URL title path
+			if(strncmp($key, $prefix.'url_title_path', 14) == 0)
+			{
+				$path = ($this->EE->functions->extract_path($key) != '' AND $this->EE->functions->extract_path($key) != 'SITE_INDEX') ? $this->EE->functions->extract_path($key).'/'.$entry_data->{$prefix.'url_title'} : $entry_data->{$prefix.'url_title'};
+				
+				$tagdata = $this->EE->TMPL->swap_var_single($key, $this->EE->functions->create_url($path, FALSE), $tagdata);
+			}
+			
+			//  parse title permalink
+			if (strncmp($key, $prefix.'title_permalink', 15) == 0)
+			{
+				$path = ($this->EE->functions->extract_path($key) != '' AND $this->EE->functions->extract_path($key) != 'SITE_INDEX') ? $this->EE->functions->extract_path($key).'/'.$entry_data->{$prefix.'url_title'} : $entry_data->{$prefix.'url_title'};
+
+				$tagdata = $this->EE->TMPL->swap_var_single($key, $this->EE->functions->create_url($path, FALSE), $tagdata);
+			}
+
+			//  parse permalink
+			if (strncmp($key, $prefix.'permalink', 9) == 0)
+			{
+				$path = ($this->EE->functions->extract_path($key) != '' AND $this->EE->functions->extract_path($key) != 'SITE_INDEX') ? $this->EE->functions->extract_path($key).'/'.$entry_data->{$prefix.'entry_id'} : $entry_data->{$prefix.'entry_id'};
+
+				$tagdata = $this->EE->TMPL->swap_var_single($key, $this->EE->functions->create_url($path, FALSE), $tagdata);
+				
+			}
+			
+		}
+		
+		/*
+		if (count($channel_fields) > 0)
+		{
+  			foreach($entry_data as $key => $value)
+  			{
+				//  parse URL title path
+				if (strncmp($prefix.$key, $prefix.'url_title_path', 14) == 0)
+				{
+  				var_dump($key);exit();
+  				
+					$path = ($this->EE->functions->extract_path($key) != '' AND $this->EE->functions->extract_path($key) != 'SITE_INDEX') ? $this->EE->functions->extract_path($key).'/'.$row['url_title'] : $row['url_title'];
+		
+					$tagdata = $this->EE->TMPL->swap_var_single($key, $this->EE->functions->create_url($path), $tagdata);
+				}
+			}
+		}
+		*/
+		return $tagdata;
+	}
+	
 	public function parse_custom_date_fields($entry_data = array(), $channels = array(), $channel_fields = array(), $tagdata = FALSE, $prefix = '')
 	{		
 		$custom_date_fields = array();
@@ -263,9 +324,11 @@ class Channel_data_tmpl extends Channel_data_lib {
 		{
 			$tagdata = $this->EE->TMPL->template;
 		}
+					
+		$tagdata = $this->parse_path_variables($vars['var_single'], $entry_data, $tagdata, $prefix);
 				
 		foreach($vars['var_single'] as $single_var => $single_var_value)
-		{			
+		{	
 			$tagdata = $this->parse_custom_date_fields($entry_data, $channels, $channel_fields, $tagdata, $prefix);
 			
 			$params = $this->EE->functions->assign_parameters($single_var);
