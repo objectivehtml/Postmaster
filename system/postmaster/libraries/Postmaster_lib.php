@@ -93,6 +93,7 @@ class Postmaster_lib {
 	
 	public function parse($parcel, $member_id = FALSE, $parse_vars = array(), $prefix = 'parcel', $delimeter = ':')
 	{
+		$parcel_copy    = clone $parcel;
 		$channel_id     = isset($parcel->entry->channel_id) ? $parcel->entry->channel_id : 0;
 		$channels       = $this->EE->postmaster_model->get_channels();
 		$channel_fields = $this->EE->postmaster_model->get_channel_fields($channel_id);
@@ -101,7 +102,7 @@ class Postmaster_lib {
 		{
 			if(isset($parcel->entry->entry_id))
 			{
-				$entry = $this->EE->channel_data->get_channel_entry($parcel->entry->entry_id, '*')->row_array();
+				$entry = $this->EE->channel_data->get_channel_entry($parcel_copy->entry->entry_id, '*')->row_array();
 				$entry_vars = $this->EE->channel_data->utility->add_prefix($prefix, $entry, $delimeter);
 			}
 			else
@@ -123,207 +124,24 @@ class Postmaster_lib {
 		
 		$parse_vars = array_merge($parse_vars, $this->EE->postmaster_model->get_member($member_id, 'member'));
 		
-		unset($parcel->entry);
+		$entry  = $parcel_copy->entry;
+		unset($parcel_copy->entry);
 		
-		$parcel = $this->EE->channel_data->tmpl->parse_array($parcel, $parse_vars, $entry_vars, $channels, $channel_fields, $prefix.$delimeter);
-		
-		/*
-		foreach($parcel as $field => $value)
-		{
-			if(is_string($value))
-			{
-				$parcel->$field = $this->EE->channel_data->tmpl->parse_string($value, $parse_vars, $parcel->entry, $channels, $channel_fields);
-			}
-		}*/
-		
-		return (object) $parcel;
-		
-		/*
-		
-		if(!isset($this->EE->TMPL))
-		{
-			require_once APPPATH.'/libraries/Template.php';
-		}
-		
-		$this->EE->load->library('typography');
-		$this->EE->load->library('api');
-		$this->EE->api->instantiate('channel_fields');
-
-		$fields = $this->EE->api_channel_fields->fetch_custom_channel_fields();
-
-		//var_dump($fields);exit();
-
-		$entry  = (array) $parcel->entry;
-		
-		
-		$member = $this->EE->channel_data->get_member(isset($entry['author_id']) ? $entry['author_id'] : 0)->row_array();
-		$member = $this->EE->channel_data->utility->add_prefix('member', $member);
-		
-		foreach(array('password', 'salt', 'crypt_key', 'unique_id') as $var)
-		{
-			unset($member[$var]);
-		}
-
-		$fields = array(
-			'to_name',
-			'to_email',
-			'from_name',
-			'from_email',
-			'cc',
-			'bcc',
-			'subject',
-			'message',
-			'post_date_specific',
-			'post_date_relative',
-			'send_every',
-			'extra_conditionals'
-		);
-
-		$parse_object = (object) array();
-
-		$this->EE->load->library('api');
-		$this->EE->api->instantiate('channel_fields');
-
-		//$installed_fieldtypes = $this->EE->api_channel_fields->fetch_installed_fieldtypes();
-		if(isset($parcel->entry->channel_id))
-		{
-			$channel_fields 	  = $this->EE->channel_data->get_channel_fields($parcel->entry->channel_id)->result();
+		return $this->convert_array($this->EE->channel_data->tmpl->parse_array($parcel_copy, $parse_vars, $entry_vars, $channels, $channel_fields, $prefix.$delimeter));
+	}
 	
-			foreach($channel_fields as $index => $field)
-			{
-				$channel_fields[$field->field_name] = $field;
-				unset($channel_fields[$index]);
-			}
+	public function append($obj, $prop, $value)
+	{
+		$return_obj = is_object($obj) ? TRUE : FALSE;
+		$obj 		= (array) $obj;
+		$obj[$prop] = $value;
+		
+		if($return_obj)
+		{
+			$obj = $this->convert_array($obj);
 		}
 		
-		foreach($fields as $field)
-		{
-			if(!empty($parcel->$field))
-			{
-				$this->EE->TMPL = new EE_Template();
-				$this->EE->TMPL->template = $parcel->$field;					
-				$this->EE->TMPL->template = $this->EE->TMPL->parse_globals($this->EE->TMPL->template);
-					
-				$vars = $this->EE->functions->assign_variables($this->EE->TMPL->template);
-
-				foreach($vars['var_single'] as $single_var)
-				{
-					$params = $this->EE->functions->assign_parameters($single_var);
-
-					$single_var_array = explode(' ', $single_var);
-					
-					$field_name = str_replace('parcel:', '', $single_var_array[0]);
-				
-					$entry = FALSE;
-
-					if(isset($channel_fields[$field_name]))
-					{
-						$field_type = $channel_fields[$field_name]->field_type;
-						$field_id   = $channel_fields[$field_name]->field_id;
-						$data       = $parcel->entry->$field_name;
-
-						if($this->EE->api_channel_fields->setup_handler($field_id))
-						{
-							$this->EE->db->select('*');
-							$this->EE->db->join('channel_titles', 'channel_titles.entry_id = channel_data.entry_id');
-							$this->EE->db->join('channels', 'channel_data.channel_id = channels.channel_id');
-							$row = $this->EE->db->get_where('channel_data', array('channel_data.entry_id' => $parcel->entry->entry_id))->row_array();
-					
-							$this->EE->api_channel_fields->apply('_init', array(array('row' => $row)));
-
-							// Preprocess
-							$data = $this->EE->api_channel_fields->apply('pre_process', array($row['field_id_'.$field_id]));
-
-							$entry = $this->EE->api_channel_fields->apply('replace_tag', array($data, $params, FALSE));
-
-							$this->EE->TMPL->template = $this->EE->TMPL->swap_var_single($single_var, $entry, $this->EE->TMPL->template );
-						}
-					}
-				}
-
-				$pair_vars = array();
-
-				foreach($vars['var_pair'] as $pair_var => $params)
-				{
-					$pair_var_array = explode(' ', $pair_var);
-					
-					$field_name = str_replace('parcel:', '', $pair_var_array[0]);
-					$offset = 0;
-
-					while (($end = strpos($this->EE->TMPL->template, LD.'/parcel:'.$field_name.RD, $offset)) !== FALSE)
-					{
-						if (preg_match("/".LD."parcel:{$field_name}(.*?)".RD."(.*?)".LD.'\/parcel:'.$field_name.RD."/s", $this->EE->TMPL->template, $matches, 0, $offset))
-						{
-							$chunk  = $matches[0];
-							$params = $matches[1];
-							$inner  = $matches[2];
-
-							// We might've sandwiched a single tag - no good, check again (:sigh:)
-							if ((strpos($chunk, LD.$field_name, 1) !== FALSE) && preg_match_all("/".LD."parcel:{$field_name}(.*?)".RD."/s", $chunk, $match))
-							{
-								// Let's start at the end
-								$idx = count($match[0]) - 1;
-								$tag = $match[0][$idx];
-								
-								// Reassign the parameter
-								$params = $match[1][$idx];
-
-								// Cut the chunk at the last opening tag (PHP5 could do this with strrpos :-( )
-								while (strpos($chunk, $tag, 1) !== FALSE)
-								{
-									$chunk = substr($chunk, 1);
-									$chunk = strstr($chunk, LD.$field_name);
-									$inner = substr($chunk, strlen($tag), -strlen(LD.'/'.$field_name.RD));
-								}
-							}
-							
-							$pair_vars[$field_name] = array($inner, $this->EE->functions->assign_parameters($params), $chunk);
-						}
-						
-						$offset = $end + 1;
-					}
-
-					foreach($pair_vars as $field_name => $pair_var)
-					{																
-						if(isset($channel_fields[$field_name]))
-						{
-							$field_type = $channel_fields[$field_name]->field_type;
-							$field_id   = $channel_fields[$field_name]->field_id;
-
-							$data       = $parcel->entry->$field_name;
-
-							if($this->EE->api_channel_fields->setup_handler($field_id))
-							{
-								$entry = $this->EE->api_channel_fields->apply('replace_tag', array($data, $pair_var[1], $pair_var[0]));
-
-								$this->EE->TMPL->template = str_replace($pair_var[2], $entry, $this->EE->TMPL->template);
-							}
-						}
-					}
-
-					$entry = FALSE;
-				}
-
-				$entry  = $this->EE->channel_data->utility->add_prefix('parcel', $parcel->entry);
-
-				$entry  = array_merge($member, $entry);
-				
-				$entry['parcel:author'] = isset($member['member:screen_name']) ? $member['member:screen_name'] : isset($member['member:username']) ? $member['member:username'] : '';
-				
-				$this->EE->TMPL->template = $this->EE->TMPL->parse_variables_row($this->EE->TMPL->template, $entry);
-				$this->EE->TMPL->parse($this->EE->TMPL->template);
-				
-				$parcel->$field 	  = $this->EE->TMPL->template;
-				$parse_object->$field = $parcel->$field;	
-			}
-			else
-			{
-				$parse_object->$field = $parcel->$field;
-			}
-		}
-	
-		return $parse_object;
-		*/
+		return $obj;
 	}
 	
 	private function convert_array($obj = array())
@@ -405,8 +223,10 @@ class Postmaster_lib {
 						if($this->validate_member($meta['author_id'], $parcel->member_groups))
 						{
 							if($this->validate_status($meta['status'], $parcel->statuses))
-							{
-								$parcel->entry = $this->EE->channel_data->get_channel_entry($entry_id)->row();
+							{		
+								$entry  = $this->EE->channel_data->get_channel_entry($entry_id)->row();
+								$parcel = $this->append(&$parcel, 'entry', $entry);
+							
 								
 								$member_id = FALSE;
 								
@@ -416,7 +236,7 @@ class Postmaster_lib {
 								}
 								
 								$parsed_object = $this->parse($parcel, $member_id);
-								
+						
 								$parsed_object->settings = $parcels[$index]->settings;
 
 								if($this->validate_conditionals($parsed_object->extra_conditionals))
