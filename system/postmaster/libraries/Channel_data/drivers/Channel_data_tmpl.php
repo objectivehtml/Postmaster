@@ -12,7 +12,7 @@
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/channel_data
  * @version		0.8.9
- * @build		20121025
+ * @build		20121026
  */
  
 class Channel_data_tmpl extends Channel_data_lib {
