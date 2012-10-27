@@ -9,8 +9,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
- * @version		1.4.0
- * @build		20120815
+ * @version		1.4.2
+ * @build		20121021
  */
 
 if(!class_exists('Base_form'))
@@ -215,7 +215,6 @@ if(!class_exists('Base_form'))
 			{
 				$this->tagdata = $this->parse_fields($fields, $entry);				
 			}
-			
 			// Parse the template variables
 			$this->tagdata = $this->parse(array($post));
 					
@@ -273,13 +272,54 @@ if(!class_exists('Base_form'))
 			return form_open($this->action, $params, $this->encode($hidden_fields)) . $this->tagdata . '</form>';
 		}
 		
+		public function get($field_name, $default = FALSE, $decode = TRUE)
+		{
+			$var = $this->EE->input->get($field_name);
+			
+			if($var && $decode)
+			{
+				$var = $this->decode($var);
+			}
+			
+			if($var === FALSE)
+			{
+				$var = $default;
+			}
+			
+			return $var;
+		}
+		
+		public function post($field_name, $default = FALSE, $decode = TRUE)
+		{
+			$var = $this->EE->input->post($field_name);
+			
+			if($var && $decode)
+			{
+				$var = $this->decode($var);
+			}
+			
+			if($var === FALSE)
+			{
+				$var = $default;
+			}
+			
+			return $var;
+		}
+		
 		public function encode($fields = array())
 		{
 			if(is_array($fields))
 			{
 				foreach($fields as $index => $value)
 				{
-					$fields[$index] = $this->EE->encrypt->encode($value, $this->key);
+					if(is_array($value))
+					{
+						$fields[$index] = $this->encode($value);
+					}
+					else
+					{
+						$fields[$index] = $this->EE->encrypt->encode($value, $this->key);
+					}
 				}
 			}
 			else
@@ -296,7 +336,14 @@ if(!class_exists('Base_form'))
 			{
 				foreach($fields as $index => $value)
 				{
-					$fields[$index] = $this->EE->encrypt->decode($value, $this->key);
+					if(is_array($value))
+					{
+						$fields[$index] = $this->decode($value);
+					}
+					else
+					{
+						$fields[$index] = $this->EE->encrypt->decode($value, $this->key);
+					}
 				}
 			}
 			else
@@ -447,15 +494,15 @@ if(!class_exists('Base_form'))
 			{
 				$url = $this->decode($this->EE->input->post('return', TRUE));
 			}
-						
+				
 			if(isset($_POST['secure_return']))
 			{
 				$this->secure_return = (int) $this->decode($this->EE->input->post('secure_return', TRUE)) == 1 ? TRUE : FALSE;
 			}
-			
+				
 			if($group_id)
 			{
-				$group_redirect = $this->EE->input->post('group_'.$group_id.'_return');
+				$group_redirect = $this->decode($this->EE->input->post('group_'.$group_id.'_return'));
 				
 				if($group_redirect)
 				{
@@ -464,7 +511,7 @@ if(!class_exists('Base_form'))
 			}
 						
 			$url = $this->secure_url($url, $this->secure_return);
-						
+							
 			return $this->EE->functions->redirect($url);
 		}
 		

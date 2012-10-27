@@ -7,7 +7,7 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/
- * @version		0.1.0
+ * @version		0.1.1
  * @build		20120609
  */
 
@@ -222,7 +222,7 @@ class Campaign_delegate extends Base_Delegate {
 						$this->EE->functions->redirect($return);
 					}
 					
-					unset($_POST[$this->EE->base_form->validation_field]);	
+					//unset($_POST[$this->EE->base_form->validation_field]);	
 				}				
 			}
 			
