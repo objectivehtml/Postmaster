@@ -229,7 +229,7 @@ class Postmaster_lib {
 							if($this->validate_status($meta['status'], $parcel->statuses))
 							{		
 								$entry  = $this->EE->channel_data->get_channel_entry($entry_id)->row();
-								$parcel = $this->append(&$parcel, 'entry', $entry);
+								$parcel = $this->append($parcel, 'entry', $entry);
 							
 								
 								$member_id = FALSE;
