@@ -192,6 +192,7 @@ class Email_Parcel {
 	{
 		return $this->EE->channel_data->get_statuses(array(
 			'where' => array(
+				'site_id'  => config_item('site_id'),
 				'group_id' => $this->channel->row('status_group')
 			)
 		))->result_array();
@@ -234,6 +235,7 @@ class Email_Parcel {
 		$channel_member_groups = $this->EE->channel_data->get('channel_member_groups',
 			array(
 				'where' => array(
+					'site_id'    => config_item('site_id'),
 					'channel_id' => $this->channel_id
 				),
 				'order_by' => 'group_id',
