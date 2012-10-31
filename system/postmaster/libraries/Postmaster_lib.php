@@ -205,8 +205,12 @@ class Postmaster_lib {
 	public function validate_channel_entry($entry_id, $meta, $data)
 	{
 		$this->EE->TMPL = new EE_Template();
-
-		$parcels = $this->model->get_parcels();
+		
+		$parcels = $this->model->get_parcels(array(
+			'where' => array(
+				'site_id' => $meta['site_id']	
+			)
+		));
 
 		foreach($parcels as $index => $parcel)
 		{

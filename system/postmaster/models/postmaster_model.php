@@ -6,6 +6,32 @@ class Postmaster_model extends CI_Model {
 	{
 		parent::__construct();
 	}
+	
+	public function assign_site_id($site_id = FALSE, $parcels = TRUE, $hooks = TRUE)
+	{
+		if(!$site_id)
+		{
+			$site_id = config_item('site_id');
+		}
+		
+		$site_id = (int) $site_id;
+		
+		if($parcels)
+		{
+			$this->db->where('site_id', NULL);
+			$this->db->update('postmaster_parcels', array(
+				'site_id' => $site_id
+			));
+		}
+		
+		if($hooks)
+		{
+			$this->db->where('site_id', NULL);
+			$this->db->update('postmaster_hooks', array(
+				'site_id' => $site_id
+			));
+		}
+	}
 
 	public function add_to_queue($parsed_object, $parcel, $date = FALSE)
 	{
@@ -104,6 +130,11 @@ class Postmaster_model extends CI_Model {
 		
 		$this->db->insert('extensions', $extension);
 		
+		if(!isset($hook['site_id']))
+		{
+			$hook['site_id']	  = config_item('site_id');
+		}
+		
 		$hook['extension_id'] = $this->db->insert_id();
 		
 		$this->db->insert('postmaster_hooks', $hook);
@@ -162,6 +193,11 @@ class Postmaster_model extends CI_Model {
 	
 	public function create_parcel($parcel)
 	{
+		if(!isset($parcel['site_id']))
+		{
+			$parcel['site_id']	  = config_item('site_id');
+		}
+		
 		$this->db->insert('postmaster_parcels', $parcel);
 	}
 
@@ -283,9 +319,17 @@ class Postmaster_model extends CI_Model {
 		return $this->db->get('postmaster_parcels')->row();
 	}
 
-	public function get_parcels()
+	public function get_parcels($params = array(), $all_sites = FALSE)
 	{
-		$parcels = $this->db->get('postmaster_parcels')->result();
+		if(!$all_sites)
+		{
+			if(!isset($params['where']['site_id']))
+			{
+				$params['where']['site_id'] = config_item('site_id');
+			}
+		}
+		
+		$parcels = $this->channel_data->get('postmaster_parcels', $params)->result();
 
 		$channels      = $this->convert_data($this->channel_data->get_channels(), 'channel_id');
 		$categories    = $this->convert_data($this->channel_data->get_categories(), 'cat_id');
@@ -323,9 +367,17 @@ class Postmaster_model extends CI_Model {
 		return $this->db->get('postmaster_hooks');
 	}
 	
-	public function get_hooks()
+	public function get_hooks($params = array(), $all_sites = FALSE)
 	{
-		return $this->db->get('postmaster_hooks');
+		if(!$all_sites)
+		{
+			if(!isset($params['where']['site_id']))
+			{
+				$params['where']['site_id'] = config_item('site_id');
+			}
+		}
+		
+		return $this->channel_data->get('postmaster_hooks', $params);
 	}
 	
 	public function get_member($member_id = FALSE, $prefix = FALSE)
@@ -351,7 +403,7 @@ class Postmaster_model extends CI_Model {
 	{
 		if(!$site_id)
 		{
-			$site_id = $this->config->item('site_id');
+			$site_id = config_item('site_id');
 		}
 		
 		$channels = $this->channel_data->get_channels(array(

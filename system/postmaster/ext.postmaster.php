@@ -74,7 +74,7 @@ class Postmaster_ext {
 	{		
 		$trigger = 'new';
 
-		if(isset($data['entry_id']) && (int)$data['entry_id'] > 0) 
+		if(isset($data['entry_id']) && (int) $data['entry_id'] > 0) 
 		{
 			$trigger = 'edit';
 		}

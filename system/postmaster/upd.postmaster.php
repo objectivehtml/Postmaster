@@ -53,13 +53,17 @@ class Postmaster_upd {
 				'primary_key'		=> TRUE,
 				'auto_increment'	=> TRUE
 			),
-			'title'  => array(
-				'type'       => 'varchar',
-				'constraint' => 250
+			'site_id' => array(
+				'type'			=> 'int',
+				'constraint' 	=> 100
 			),
 			'channel_id' => array(
 				'type'			=> 'int',
 				'constraint' 	=> 100
+			),
+			'title'  => array(
+				'type'       => 'varchar',
+				'constraint' => 250
 			),
 			'categories' => array(
 				'type'	=> 'text'
@@ -129,6 +133,10 @@ class Postmaster_upd {
 				'constraint'		=> 100,
 				'primary_key'		=> TRUE,
 				'auto_increment'	=> TRUE
+			),
+			'site_id' => array(
+				'type'			=> 'int',
+				'constraint' 	=> 100
 			),
 			'title'  => array(
 				'type'       => 'varchar',
@@ -519,6 +527,19 @@ class Postmaster_upd {
 					)
 				);
 			}
+		}
+		
+		// Version Specific Update Routines
+		
+		if(version_compare($current, '1.1.99.4', '<'))
+		{
+			if(!class_exists('Postmaster_lib'))
+			{				
+				require_once(PATH_THIRD.'postmaster/libraries/Postmaster_lib.php');
+			}
+			
+			$this->EE->postmaster_lib = new Postmaster_lib();
+			$this->EE->postmaster_model->assign_site_id();
 		}
 		
 	    return TRUE;
