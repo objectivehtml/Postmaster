@@ -202,6 +202,9 @@ class Postmaster_upd {
 				'type' => 'int',
 				'constraint' => 10
 			),
+			'extra_conditionals' => array(
+				'type'	=> 'text'
+			),
 		),
 		'postmaster_queue' 	=> array(
 			'id'	=> array(
