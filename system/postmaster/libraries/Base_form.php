@@ -9,8 +9,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
- * @version		1.4.2
- * @build		20121021
+ * @version		1.4.3
+ * @build		20121102
  */
 
 if(!class_exists('Base_form'))
@@ -23,6 +23,7 @@ if(!class_exists('Base_form'))
 		public $class             = '';
 		public $groups            = array();
 		public $hidden_fields     = array();
+		public $encode_fields	  = TRUE;
 		public $error_handling    = 'inline';
 		public $errors            = array();
 		public $field_errors      = array();
@@ -308,23 +309,26 @@ if(!class_exists('Base_form'))
 		
 		public function encode($fields = array())
 		{
-			if(is_array($fields))
+			if($this->encode_fields)
 			{
-				foreach($fields as $index => $value)
+				if(is_array($fields))
 				{
-					if(is_array($value))
+					foreach($fields as $index => $value)
 					{
-						$fields[$index] = $this->encode($value);
-					}
-					else
-					{
-						$fields[$index] = $this->EE->encrypt->encode($value, $this->key);
+						if(is_array($value))
+						{
+							$fields[$index] = $this->encode($value);
+						}
+						else
+						{
+							$fields[$index] = $this->EE->encrypt->encode($value, $this->key);
+						}
 					}
 				}
-			}
-			else
-			{
-				$fields = $this->EE->encrypt->encode($fields, $this->key);
+				else
+				{
+					$fields = $this->EE->encrypt->encode($fields, $this->key);
+				}
 			}
 			
 			return $fields;
@@ -332,23 +336,26 @@ if(!class_exists('Base_form'))
 		
 		public function decode($fields = array())
 		{
-			if(is_array($fields))
+			if($this->encode_fields)
 			{
-				foreach($fields as $index => $value)
+				if(is_array($fields))
 				{
-					if(is_array($value))
+					foreach($fields as $index => $value)
 					{
-						$fields[$index] = $this->decode($value);
-					}
-					else
-					{
-						$fields[$index] = $this->EE->encrypt->decode($value, $this->key);
+						if(is_array($value))
+						{
+							$fields[$index] = $this->decode($value);
+						}
+						else
+						{
+							$fields[$index] = $this->EE->encrypt->decode($value, $this->key);
+						}
 					}
 				}
-			}
-			else
-			{
-				$fields = $this->EE->encrypt->decode($fields, $this->key);
+				else
+				{
+					$fields = $this->EE->encrypt->decode($fields, $this->key);
+				}
 			}
 			
 			return $fields;
