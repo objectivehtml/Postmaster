@@ -84,8 +84,8 @@ class Postmaster_ext {
 	
 	public function entry_submission_end($entry_id, $meta, $data)
 	{	
-		$this->EE->load->library('postmaster_lib');
-
+		$this->EE->load->library('postmaster_lib');		
+		
 		$this->EE->postmaster_lib->validate_channel_entry($entry_id, $meta, $data);
 
 		return $data;

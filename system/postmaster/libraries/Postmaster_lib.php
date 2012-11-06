@@ -198,8 +198,8 @@ class Postmaster_lib {
 
 		$parsed_object = $this->parse($parcel);
 
+		$this->model->remove_from_queue($row->id);		
 		$this->send($parsed_object, $parcel, TRUE);
-		$this->model->remove_from_queue($row->id);
 	}
 
 	public function validate_channel_entry($entry_id, $meta, $data)
