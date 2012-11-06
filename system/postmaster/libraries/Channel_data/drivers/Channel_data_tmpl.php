@@ -11,8 +11,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/channel_data
- * @version		0.8.9
- * @build		20121026
+ * @version		0.8.11
+ * @build		20121106
  */
  
 class Channel_data_tmpl extends Channel_data_lib {
@@ -142,6 +142,7 @@ class Channel_data_tmpl extends Channel_data_lib {
 	
 	public function parse($parse_vars = array(), $entry_data = array(), $channels = FALSE, $channel_fields = FALSE, $tagdata = FALSE, $prefix = '', $index = FALSE)
 	{
+		
 		if(!$tagdata)
 		{
 			$tagdata = $this->EE->TMPL->template;
@@ -198,7 +199,7 @@ class Channel_data_tmpl extends Channel_data_lib {
 			$tagdata = $this->EE->TMPL->template;
 		}
 		
-		$vars    = $this->EE->functions->assign_variables($tagdata);
+		$vars = $this->EE->functions->assign_variables($tagdata);
 		
 		$tagdata = $this->parse_single_vars($vars, $entry_data, $channels, $channel_fields, $tagdata, $prefix, $index);
 		
@@ -209,17 +210,7 @@ class Channel_data_tmpl extends Channel_data_lib {
 	
 	public function parse_path_variables($vars = array(), $entry_data = array(), $tagdata = FALSE, $prefix = '')
 	{		
-		if(!isset($vars['var_single']))
-		{
-			$vars['var_single'] = $vars;
-		}
-		
-		if(!is_array($vars['var_single']))
-		{
-			$vars['var_single'] = array();	
-		}
-		
-		foreach($vars['var_single'] as $key => $value)
+		foreach($vars as $key => $value)
 		{	
 			//  parse URL title path
 			if(strncmp($key, $prefix.'url_title_path', 14) == 0)
@@ -326,7 +317,7 @@ class Channel_data_tmpl extends Channel_data_lib {
 		}
 					
 		$tagdata = $this->parse_path_variables($vars['var_single'], $entry_data, $tagdata, $prefix);
-				
+
 		foreach($vars['var_single'] as $single_var => $single_var_value)
 		{	
 			$tagdata = $this->parse_custom_date_fields($entry_data, $channels, $channel_fields, $tagdata, $prefix);
@@ -428,12 +419,18 @@ class Channel_data_tmpl extends Channel_data_lib {
 		$pair_vars = array();
 
 		foreach($vars['var_pair'] as $pair_var => $params)
-		{
-			foreach($prefixes as $prefix)
+		{		
+			if(preg_match("/exp(:\w*)*/", $pair_var))
 			{
+				continue;
+			}
+
+			foreach($prefixes as $prefix)
+			{		
+			
 				$pair_var_array = explode(' ', $pair_var);
 				
-				$field_name  = preg_replace('/^'.$prefix.'|:.*/us', '',  $pair_var_array[0]);								
+				$field_name  = preg_replace('/^'.$prefix.'|:.*/us', '',  $pair_var_array[0]);												
 				$call_method = preg_replace("/(^((?!:).)*$)|(^.*:)/us", "", preg_replace('/^'.$prefix.'/us', '', $pair_var_array[0]));				
 				$call_method = 'replace_'.(!empty($call_method) ? $call_method : 'tag');
 	
@@ -474,14 +471,17 @@ class Channel_data_tmpl extends Channel_data_lib {
 				}
 			}
 
-	
 			foreach($pair_vars as $field_name => $pair_var)
 			{		
-				if(isset($channel_fields[$field_name]))
+				if(!isset($channel_fields[$field_name]))
 				{
+					continue;
+				}
+				else
+				{					
 					$channel_fields[$field_name] = (object) $channel_fields[$field_name];
 				}
-								
+						
 				$field_id   = isset($channel_fields[$field_name]->field_id) ? $channel_fields[$field_name]->field_id : 0;
 				
 				if((isset($channel_fields[$field_name]) || isset($channel_fields['field_id_'.$field_id])) && (isset($channel_fields[$field_name]->field_type) || isset($channel_fields['field_id_'.$field_id]->field_type)))
@@ -510,12 +510,13 @@ class Channel_data_tmpl extends Channel_data_lib {
 								$row[$index] = $value;
 							}
 						}
-						
+											
 						$this->EE->api_channel_fields->apply('_init', array(array('row' => $row)));
 						$entry = $this->EE->api_channel_fields->apply($call_method, array($data, $pair_var[1], $pair_var[0]));
 						
 						$test = $entry_data;
 						$tagdata = $this->parse_string(str_replace($pair_var[2], $entry, $tagdata), $entry_data,  $channels, $channel_fields);
+						
 						
 					}
 				}

@@ -13,8 +13,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/channel_data
- * @version		0.8.9
- * @build		20121026
+ * @version		0.8.11
+ * @build		20121106
  */
 
 if(!class_exists('Channel_data_lib'))
@@ -125,7 +125,8 @@ if(!class_exists('Channel_data_lib'))
 		
 		public function build_operators($where = array(), $protect_identifiers = TRUE)
 		{			
-			$where_sql = array();
+			$where_sql = array();			
+			$concat    = NULL;
 			
 			foreach($where as $field => $values)
 			{
@@ -167,7 +168,7 @@ if(!class_exists('Channel_data_lib'))
 			
 			
 			$sql = trim(implode('', $where_sql));
-			$sql = trim(ltrim(ltrim($sql, 'AND'), 'OR'));
+			$sql = preg_replace("/^(AND|OR)|(AND|OR)$/", '', trim($sql));
 			
 			return $sql;
 		}
