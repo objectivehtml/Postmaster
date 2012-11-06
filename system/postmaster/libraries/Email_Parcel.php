@@ -232,6 +232,7 @@ class Email_Parcel {
 	
 	public function member_groups()
 	{
+		/*
 		$channel_member_groups = $this->EE->channel_data->get('channel_member_groups',
 			array(
 				'where' => array(
@@ -265,8 +266,15 @@ class Email_Parcel {
 				}
 			}
 		}
+		*/
 		
-		return $groups;
+		$member_groups = $this->EE->channel_data->get('member_groups', array(
+			'where' => array(
+				'site_id' => config_item('site_id')
+			)
+		));
+		
+		return $member_groups->result();
 	}
 
 	private function cp_url($method = 'index', $useAmp = FALSE)
