@@ -144,11 +144,11 @@ abstract class Base_hook extends Base_class {
 		
 		if(!$member_data)
 		{
-			$member_data = $this->EE->postmaster_model->get_member(FALSE, 'member');
+			$member_data = $this->EE->postmaster_model->get_member(FALSE);
 		}
 		
 		$member_data = $this->EE->channel_data->utility->add_prefix('member', $member_data);
-		
+				
 		$vars = array_merge($member_data, $vars);
 		
 		return $this->EE->channel_data->tmpl->parse_array($hook, $vars);
