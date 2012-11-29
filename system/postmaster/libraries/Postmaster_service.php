@@ -14,10 +14,11 @@ require_once PATH_THIRD.'postmaster/libraries/Postmaster_core.php';
  */
 
 abstract class Postmaster_service extends Postmaster_core {
-
+	
 	public $id;
 	
 	abstract public function send($parsed_object, $parcel);
+	
 	abstract public function default_settings();
 	
 	public function display_settings($settings, $obj)
@@ -41,91 +42,10 @@ abstract class Postmaster_service extends Postmaster_core {
 		$this->IB->set_use_array(TRUE);
 		
 		return $this->IB->table($this->fields, $settings, postmaster_table_attr());
-	}
-	
-	/*
-	public function build_table($settings, $fields)
-	{	
-		$html = '
-		<table class="mainTable" cellpadding="0" cellspacing="0">
-			<tr>
-				<th>Preference</th>
-				<th>Setting</th>
-			</tr>';
-
-		foreach($fields as $field_name => $field)
-		{
-			$html .= '<tr>';
-
-			$setting = isset($settings->{$this->name}->$field_name) ? $settings->{$this->name}->$field_name : '';
-
-			if(!isset($field['type']))
-			{
-				$field['type'] = 'text';
-			}
-
-			if($field['type'] == 'select' && isset($field['options']))
-			{
-				$html .= '
-				<td>
-					<label for="'.$field['id'].'">'.$field['label'].'</label>
-				</td>
-				<td>
-					<select name="setting['.$this->name.']['.$field_name.']" id="'.$field['id'].'">';
-
-					foreach($field['options'] as $value => $label)
-					{
-						$selected = $setting == $value ? 'selected="selected"' : '';
-						$html .= '<option value="'.$value.'" '.$selected.'>'.$label.'</option>';
-					}
-
-					$html .= '
-					</select>
-				</td>';
-			}
-			else
-			{
-				if(!isset($field['options']))
-				{
-					$html .= '
-					<td>
-						<label for="'.$field['id'].'">'.$field['label'].'</label>
-					</td>
-					<td>
-						<input type="'.$field['type'].'" name="setting['.$this->name.']['.$field_name.']" value="'.$setting.'" id="'.$field['id'].'" />
-					</td>';
-				}
-				else
-				{
-					$html .= '
-					<td><label>'.$field['label'].'<label></td>
-					<td>';
-
-					foreach($field['options'] as $value => $label)
-					{
-						$checked = $value == $setting ? 'checked="checked"' : NULL;
-						$html .= '
-						<label><input type="'.$field['type'].'" name="setting['.$this->name.']['.$field_name.']" value="'.$value.'" '.$checked.' /> '.$label.'</label><br>';
-					}
-
-					$html .= '
-					</td>';
-				}
-			}
-
-			$html .= '</tr>';
-		}
-
-		$html .= '</table>';
-
-		return $html;
-	}
-	
-	*/
-	
+	}	
 }
 
-class Postmaster_Service_Response {
+class Postmaster_Service_Response extends Base_class {
 
 	public  $parcel_id,
 			$channel_id,
@@ -144,25 +64,8 @@ class Postmaster_Service_Response {
 			$message,
 			$parcel;
 
-	public function __construct($data)
-	{
-		foreach($data as $index => $value)
-		{
-			$this->set($index, $value);
-		}
-		
-	}
-
-	public function get($name)
-	{
-		return isset($this->$name) ? $this->$name : FALSE;
-	}
-
-	public function set($name, $value)
-	{
-		if(property_exists(__CLASS__, $name))
-		{
-			$this->$name = $value;
-		}
+	public function __construct($data = array())
+	{		
+		parent::__construct($data);		
 	}
 }

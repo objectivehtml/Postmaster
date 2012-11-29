@@ -15,21 +15,23 @@ class Cartthrob_on_authorize_postmaster_hook extends Base_hook {
 			$this->cart = $this->EE->cartthrob->cart;
 		}
 	}
-	
+		
 	public function trigger()
 	{
 		$parse_vars = $this->cart->order();
+		
 		$parse_vars['purchased_items'] = implode('|', $parse_vars['purchased_items']);
 		$parse_vars['auth'] = array(
 			$parse_vars['auth']
 		);
 		
-		return parent::trigger($parse_vars);
+		return parent::send($parse_vars);
 	}
 	
-	public function post_process($responses = array())
+	public function post_process()
 	{
-		// If end_script is TRUE, finish processing the order (taken directly from mod.cartthrob.php)
+		$responses = $this->responses;
+		
 		if($this->end_script($responses))
 		{
 			$this->EE->cartthrob->process_discounts()->process_inventory();

@@ -15,6 +15,6 @@ class Member_select_save_row_postmaster_hook extends Base_hook {
 		$parse_vars = array();
 		$member     = $this->EE->channel_data->get_member($value)->row();
 		
-		return parent::trigger($parse_vars, $member);
+		return parent::send($parse_vars, $member);
 	}
 }

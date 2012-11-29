@@ -67,6 +67,15 @@ class Postmaster_hook extends Base_class {
 		$this->EE =& get_instance();
 	}
 	
+	
+	/**
+	 * Checks a response object or array and sets the end_script property
+	 *
+	 * @access	public
+	 * @param	mixed
+	 * @return	bool
+	 */
+	 
 	public function end_script($responses)
 	{
 		if(!is_array($responses))
@@ -85,52 +94,9 @@ class Postmaster_hook extends Base_class {
 		return FALSE;
 	}
 	
-	public function return_data($responses)
-	{
-		if(!is_array($responses))
-		{
-			$response = array($response);
-		}
-		
-		foreach($responses as $response)
-		{
-			$response = (object) $response;
-			
-			if(isset($response->return_data))
-			{
-				return $response->return_data;
-			}
-		}
-		
-		return NULL;
-	}
-	
-	public function trigger($index, $args = array())
-	{
-		$hook_obj = $this->get_hook($index);
-		
-		$hook_obj->pre_process($args);
-		
-		$responses = array();
-			
-		foreach($this->EE->postmaster_model->get_installed_hooks($index) as $hook)
-		{
-			$hook_name = !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'];
-			
-			$hook_obj->set_hook($hook);
-			
-			$responses[] = call_user_func_array(array($hook_obj, 'trigger'), $args);
-		}
-		
-		$hook_obj->set_responses($responses);
-		
-		$responses = $hook_obj->post_process($args);
-		
-		return $responses;
-	}
 	
 	/**
-	 * Get Hook
+	 * Get a single hook from the directory
 	 *
 	 * @access	public
 	 * @param	mixed    A valid index or hook name
@@ -168,7 +134,7 @@ class Postmaster_hook extends Base_class {
 	
 	
 	/**
-	 * Get Hooks
+	 * Get the available hooks from the directory
 	 *
 	 * @access	public
 	 * @return	array
@@ -197,6 +163,36 @@ class Postmaster_hook extends Base_class {
 	}	
 	
 	
+	
+	/**
+	 * Checks a response object or array and returns the proper data type
+	 *
+	 * @access	public
+	 * @param	mixed
+	 * @return	null
+	 */
+	 
+	public function return_data($responses)
+	{
+		if(!is_array($responses))
+		{
+			$response = array($response);
+		}
+		
+		foreach($responses as $response)
+		{
+			$response = (object) $response;
+			
+			if(isset($response->return_data))
+			{
+				return $response->return_data;
+			}
+		}
+		
+		return NULL;
+	}
+	
+	
 	/**
 	 * Total Hooks
 	 *
@@ -209,6 +205,40 @@ class Postmaster_hook extends Base_class {
 		$this->hooks = $this->get_hooks();
 		
 		return count($this->hooks);
+	}
+	
+	
+	/**
+	 * Triggers all the hook's method with all the proper args
+	 *
+	 * @access	public
+	 * @param	string
+	 * @param	array
+	 * @return	array
+	 */
+	 
+	public function trigger($index, $args = array())
+	{
+		$hook_obj = $this->get_hook($index);
+		
+		call_user_func_array(array($hook_obj, 'pre_process'), $args);
+		
+		$responses = array();
+			
+		foreach($this->EE->postmaster_model->get_installed_hooks($index) as $hook)
+		{
+			$hook_name = !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'];
+			
+			$hook_obj->set_hook($hook);
+			
+			$responses[] = call_user_func_array(array($hook_obj, 'trigger'), $args);
+		}
+		
+		$hook_obj->set_responses($responses);
+		
+		call_user_func_array(array($hook_obj, 'post_process'), $args);
+		
+		return $hook_obj->get_responses();
 	}
 	
 	

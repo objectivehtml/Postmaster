@@ -20,7 +20,7 @@ class Channel_entries_tagdata_end_postmaster_hook extends Base_hook {
 				'tagdata' => $tagdata
 			), $entry);
 			
-			return parent::trigger($parse_vars, $tagdata);
+			return parent::send($parse_vars, $tagdata);
 		}
 		
 		return array('return_data' => $tagdata);

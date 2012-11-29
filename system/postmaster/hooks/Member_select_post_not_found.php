@@ -19,6 +19,6 @@ class member_select_post_not_found_postmaster_hook extends Base_hook {
 			$type		=> $data
 		);
 		
-		return parent::trigger($parse_vars);
+		return parent::send($parse_vars);
 	}
 }

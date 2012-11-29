@@ -20,12 +20,13 @@ class Cartthrob_subscription_hold_postmaster_hook extends Base_hook {
 	{		
 		$member = $this->EE->postmaster_model->get_member($subscription['member_id'], 'member');
 		
-		return parent::trigger($subscription, $member);
+		return parent::send($subscription, $member);
 	}
 	
-	public function post_process($responses = array())
+	public function post_process()
 	{
-		// If end_script is TRUE, finish processing the order (taken directly from mod.cartthrob.php)
+		$responses = $this->responses;
+		
 		if($this->end_script($responses))
 		{
 			$update = array('status' => 'hold');

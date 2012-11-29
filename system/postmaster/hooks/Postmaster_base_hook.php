@@ -7,6 +7,5 @@ class Postmaster_base_hook extends Base_hook {
 	public function __construct()
 	{
 		parent::__construct();
-		
-	}	
+	}
 }

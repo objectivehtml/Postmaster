@@ -34,11 +34,13 @@ class Cartthrob_subscription_created_postmaster_hook extends Base_hook {
 		
 		$member = $this->EE->postmaster_model->get_member($vars['member_id'], 'member');
 		
-		return parent::trigger($vars, $member);
+		return parent::send($vars, $member);
 	}
 	
-	public function post_process($responses = array())
+	public function post_process()
 	{
+		$responses = $this->responses;
+		
 		// If end_script is TRUE, finish processing the order (taken directly from mod.cartthrob.php)
 		if($this->end_script($responses))
 		{

@@ -2,6 +2,7 @@
 
 require_once PATH_THIRD.'/postmaster/libraries/Curl.php';
 require_once PATH_THIRD.'/postmaster/libraries/Uuid.php';
+require_once PATH_THIRD.'postmaster/libraries/Base_class.php';
 
 /**
  * Postmaster Core

@@ -18,8 +18,8 @@ class Member_select_post_save_row_postmaster_hook extends Base_hook {
 			'label'	   => $label
 		);
 		
-		$member     = $this->EE->channel_data->get_member($value)->row();
+		$member = $this->EE->channel_data->get_member($value)->row();
 		
-		return parent::trigger($parse_vars, $member);
+		return parent::send($parse_vars, $member);
 	}
 }

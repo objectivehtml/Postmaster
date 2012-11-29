@@ -31,6 +31,6 @@ class Email_send_postmaster_hook extends Base_hook {
 			'finalbody'		=> $vars[0]['finalbody'],
 		);
 		
-		return parent::trigger($parse_vars, TRUE);
+		return parent::send($parse_vars, TRUE);
 	}
 }

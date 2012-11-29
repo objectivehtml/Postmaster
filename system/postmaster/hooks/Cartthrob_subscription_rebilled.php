@@ -20,12 +20,13 @@ class Cartthrob_subscription_rebilled_postmaster_hook extends Base_hook {
 	{		
 		$member = $this->EE->postmaster_model->get_member($subscription['member_id'], 'member');
 		
-		return parent::trigger($subscription, $member);
+		return parent::send($subscription, $member);
 	}
 	
-	public function post_process($responses = array())
+	public function post_process()
 	{
-		// If end_script is TRUE, finish processing the order (taken directly from mod.cartthrob.php)
+		$responses = $this->responses;
+		
 		if($this->end_script($responses))
 		{
 			$update = array('status' => 'hold');
@@ -42,7 +43,5 @@ class Cartthrob_subscription_rebilled_postmaster_hook extends Base_hook {
 			
 			$this->EE->subscription_model->update($update, $subscription['id']);
 		}
-		
-		return $responses;
 	}
 }
