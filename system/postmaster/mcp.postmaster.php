@@ -433,36 +433,23 @@ class Postmaster_mcp {
 
 	public function create_hook_action()
 	{
-		$this->EE->load->library('postmaster_lib');
-		
-		$parcel          = array(
-			'title'              => $this->post('title', TRUE),
-			'to_name'            => $this->post('to_name', TRUE),
-			'to_email'           => $this->post('to_email', TRUE),
-			'from_name'          => $this->post('from_name', TRUE),
-			'from_email'         => $this->post('from_email', TRUE),
-			'reply_to'           => $this->post('reply_to', TRUE),
-			'priority'           => $this->post('priority', TRUE),
-			'cc'                 => $this->post('cc', TRUE),
-			'bcc'                => $this->post('bcc', TRUE),
-			'subject'            => $this->post('subject', TRUE),
-			'message'            => $this->post('message', TRUE),
-			'installed_hook'     => $this->post('installed_hook', TRUE),
-			'user_defined_hook'  => $this->post('user_defined_hook', TRUE),
-			'post_date_specific' => $this->post('post_date_specific', TRUE),
-			'post_date_relative' => $this->post('post_date_relative', TRUE),
-			'send_every'         => $this->post('send_every', TRUE),
-			'service'            => $this->post('service', TRUE),
-			'settings'           => json_encode($this->post('setting', TRUE))
-		);
-
-		$this->EE->postmaster_model->create_hook($parcel);
-
-		$this->EE->functions->redirect($this->post('return'));
+		return $this->_hook_action('create');
 	}
 	
 	public function edit_hook_action()
 	{
+		return $this->_hook_action('edit');
+	}
+	
+	private function _hook_action($method)
+	{
+		if($method == 'add')
+		{
+			$method = 'create';
+		}
+		
+		$method .= '_hook';
+		
 		$this->EE->load->library('postmaster_lib');
 		
 		$parcel          = array(
@@ -482,50 +469,35 @@ class Postmaster_mcp {
 			'post_date_specific' => $this->post('post_date_specific', TRUE),
 			'post_date_relative' => $this->post('post_date_relative', TRUE),
 			'send_every'         => $this->post('send_every', TRUE),
+			'extra_conditionals' => $this->post('extra_conditionals'),
 			'service'            => $this->post('service', TRUE),
 			'settings'           => json_encode($this->post('setting', TRUE))
 		);
 		
-		$this->EE->postmaster_model->edit_hook($this->EE->input->post('id'), $parcel);
+		$this->EE->postmaster_model->$method($this->EE->input->post('id'), $parcel);
 
 		$this->EE->functions->redirect($this->post('return'));
 	}
 	
-	public function create_parcel_action()
+	public function create_parcel_action($method)
 	{
-		$this->EE->load->library('postmaster_lib');
-		
-		$parcel          = array(
-			'channel_id'     => $this->post('channel_id', TRUE),
-			'title'          => $this->post('title', TRUE),
-			'to_name'        => $this->post('to_name', TRUE),
-			'to_email'       => $this->post('to_email', TRUE),
-			'from_name'      => $this->post('from_name', TRUE),
-			'from_email'     => $this->post('from_email', TRUE),
-			'reply_to'       => $this->post('reply_to', TRUE),
-			'cc'             => $this->post('cc', TRUE),
-			'bcc'            => $this->post('bcc', TRUE),
-			'categories'     => $this->post('category') ? implode('|', $this->post('category', TRUE)) : NULL,
-			'member_groups'  => $this->post('member_group') ? implode('|', $this->post('member_group', TRUE)) : NULL,
-			'statuses'       => $this->post('statuses') ? implode('|', $this->post('statuses', TRUE)) : NULL,
-			'subject'        => $this->post('subject', TRUE),
-			'message'        => $this->post('message', TRUE),
-			'trigger'            => is_array($this->post('trigger', TRUE)) ? implode('|', $this->post('trigger', TRUE)) : $this->post('trigger'),
-			'post_date_specific' => $this->post('post_date_specific', TRUE),
-			'post_date_relative' => $this->post('post_date_relative', TRUE),
-			'send_every'         => $this->post('send_every', TRUE),
-			'service'            => $this->post('service', TRUE),
-			'extra_conditionals' => $this->post('extra_conditionals', TRUE),
-			'settings'           => json_encode($this->post('setting', TRUE))
-		);
-
-		$this->EE->postmaster_model->create_parcel($parcel);
-
-		$this->EE->functions->redirect($this->post('return'));
+		return $this->_parcel_action('create');
 	}
 	
 	public function edit_parcel_action()
 	{
+		return $this->_parcel_action('edit');
+	}
+	
+	private function _parcel_action($method)
+	{
+		if($method == 'add')
+		{
+			$method = 'create';
+		}
+		
+		$method .= '_parcel';
+		
 		$this->EE->load->library('postmaster_lib');
 
 		//var_dump($_POST['setting']['SendGridConditional']['field_map']);exit();
@@ -554,7 +526,7 @@ class Postmaster_mcp {
 			'settings'           => json_encode($this->post('setting'))
 		);
 
-		$this->EE->postmaster_model->edit_parcel($parcel, $this->post('id'));
+		$this->EE->postmaster_model->$method($parcel, $this->post('id'));
 
 		$this->EE->functions->redirect($this->post('return'));
 	}

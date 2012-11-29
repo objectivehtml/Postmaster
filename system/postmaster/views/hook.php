@@ -95,6 +95,35 @@
 			</li>
 		</ul>
 
+		<div class="container margin-top">
+			<h3><a href="#extra-conditionals" class="help"><label for="extra_conditionals">Extra Conditionals <span>(?)</span></label></a></h3>
+			
+			<div class="help-text" id="extra-conditionals">
+				
+				<h2>Extra Conditionals</h2>
+				
+				<p>This field allows you define a set of proprietary conditionals use EE tags and fieldtypes. Three values are expected in this field, all others will be ignored. If you want to email to send return TRUE. If not, return FALSE. If no value is return the field is ignored.</p>
+				<p>For instance, if you wanted to prevent the email from being sent if your member doesn't include their first or last name. In this case, the fields are "member_first_name" and "member_last_name". Use either one of the following examples:</p>
+				
+				<h3>Example 1</h3>
+				
+				<p>	{if parcel:member_first_name != "" && parcel:member_last_name != ""}
+						TRUE
+					{/if}
+				</p>
+				
+				<h3>Example 2</h3>
+				
+				<p>
+					{if parcel:member_first_name == "" || parcel:member_last_name == ""}
+						FALSE
+					{/if}
+				</p>
+			</div>
+
+			<textarea name="extra_conditionals" id="extra_conditionals"><?php echo form_prep($template->extra_conditionals) ?></textarea>
+		</div>
+
 		<div class="help-text" id="channel-helper">
 			<h2>Channel</h2>
 			<p>This field is required. Anytime a user submits a new entry in this channel, an email will be sent provided the other triggers are met.</p>

@@ -27,6 +27,7 @@ abstract class Template_Base extends Base_class {
 			$post_date_specific,
 			$post_date_relative,
 			$send_every,
+			$extra_conditionals,
 			$parser_url,
 			$editor_settings;
 			
