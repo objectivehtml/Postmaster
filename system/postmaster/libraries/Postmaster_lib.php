@@ -545,6 +545,12 @@ class Postmaster_lib {
 			}
 		}
 
+		// If no status is defined and entry has no status, return TRUE
+		if(count($statuses) == 0 && empty($subject))
+		{
+			$valid = TRUE;
+		}
+		
 		return $valid;
 	}
 
