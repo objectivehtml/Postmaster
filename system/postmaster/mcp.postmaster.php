@@ -30,6 +30,8 @@ class Postmaster_mcp {
 		{
 			$this->EE->load->library('doctag', array('base_path' => PATH_THIRD.'postmaster/doctags/'));		
 			$this->EE->load->library('theme_loader', array(__CLASS__));
+			
+			$this->EE->theme_loader->requirejs = FALSE;
 			$this->EE->theme_loader->css('postmaster');
 
 			$this->EE->load->driver('channel_data');
@@ -58,7 +60,7 @@ class Postmaster_mcp {
 					'limit' => 100
 				))->result_array();
 			}
-
+			
 			$this->EE->cp->add_to_head('
 			<script type="text/javascript">
 				var Postmaster = {
@@ -479,7 +481,7 @@ class Postmaster_mcp {
 		$this->EE->functions->redirect($this->post('return'));
 	}
 	
-	public function create_parcel_action($method)
+	public function create_parcel_action()
 	{
 		return $this->_parcel_action('create');
 	}

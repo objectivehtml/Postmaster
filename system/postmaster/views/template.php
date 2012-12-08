@@ -89,6 +89,7 @@
 				
 				<h3><a href="#categories" class="help">Categories <span>(?)</span></a></h3>
 				
+				<div>
 				<?php if(count($template->category_tree()) == 0): ?>
 					
 					<p>This channel has no categories.</p>
@@ -99,6 +100,7 @@
 						<label><input type="checkbox" name="category[]" value="<?php echo $category[0]?>" <?php echo in_array($category[0], $template->categories) ? 'checked="checked"' : NULL ?> /><?php echo $category[1]?></label>
 					<?php endforeach; ?>	
 				<?php endif; ?>
+				</div>
 
 			</li>
 			<li class="statuses container">

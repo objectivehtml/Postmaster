@@ -255,13 +255,17 @@ $(document).ready(function() {
 		var $entries	   = $('#test_entry');
 
 		$categories.html('');
-
+		
+		var catCount = 0;
+		
 		if(Postmaster.categories[val]) {
 			$.each(Postmaster.categories[val], function(i, category) {
-					$categories.append('<label><input type="checkbox" name="category[]" value="'+category[0]+'" />'+category[1]+'</label>');
+				$categories.append('<label><input type="checkbox" name="category[]" value="'+category[0]+'" />'+category[1]+'</label>');
+				catCount++;
 			});
 		}
-		else {
+		
+		if(catCount == 0) {
 			$categories.html('<p>This channel has no categories.</p>');
 		}
 
