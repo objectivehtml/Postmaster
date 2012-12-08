@@ -16,6 +16,6 @@ class Postmaster_trigger_tag_postmaster_hook extends Base_hook {
 			'tagdata' => $tagdata
 		));
 		
-		return parent::send($parse_vars, $tagdata);
+		return parent::send($parse_vars, FALSE, array(), $tagdata);
 	}
 }

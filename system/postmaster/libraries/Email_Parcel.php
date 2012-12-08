@@ -207,7 +207,6 @@ class Email_Parcel {
 	
 	public function category_tree()
 	{
-		
 		$channel	= $this->EE->channel_data->get_channel($this->channel_id);
 		
 		$cat_group	= $channel->row('cat_group');

@@ -272,7 +272,7 @@ abstract class Base_hook extends Base_class {
 	 * @return	
 	 */
 	 		
-	public function parse($hook, $vars = array(), $member_data = FALSE)
+	public function parse($hook, $vars = array(), $member_data = FALSE, $entry_data = array())
 	{
 		unset($hook['settings']);
 		
@@ -287,7 +287,7 @@ abstract class Base_hook extends Base_class {
 				
 		$vars = array_merge($member_data, $vars);
 		
-		return $this->EE->channel_data->tmpl->parse_array($hook, $vars, array(), FALSE, array(), $this->var_prefix.':');
+		return $this->EE->channel_data->tmpl->parse_array($hook, $vars, $entry_data, FALSE, array(), $this->var_prefix.':');
 	}
 	
 	
@@ -302,8 +302,9 @@ abstract class Base_hook extends Base_class {
 	 * @return	object
 	 */
 	 	
-	public function send($vars = array(), $member_data = FALSE, $return_data = 'Undefined')
+	public function send($vars = array(), $member_data = FALSE, $entry_data = array(), $return_data = 'Undefined')
 	{	
+	
 		if(is_object($member_data))
 		{
 			$member_data = (array) $member_data;	
@@ -318,7 +319,8 @@ abstract class Base_hook extends Base_class {
 		$hook			  = (array) $this->hook;
 		$settings		  = $hook['settings'];
 		$name             = !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'];		
-		$parsed_hook      = $this->parse($hook, $vars, $member_data);		
+		$parsed_hook      = $this->parse($hook, $vars, $member_data, $entry_data);
+			
 		$hook['settings'] = (object) $settings;		
 		$end_script 	  = isset($hook['settings']->$name->end_script) ? (bool) $hook['settings']->$name->end_script : FALSE;
 	
