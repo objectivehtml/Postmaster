@@ -115,7 +115,7 @@ class Postmaster_lib {
 		
 		$props = array_merge($default_props, $props);
 		
-		require_once(PATH_THIRD.'postmaster/libraries/Postmaster_service.php');
+		require_once(PATH_THIRD.'postmaster/libraries/Base_service.php');
 		
 		return new Postmaster_Service_Response($props);
 	}
@@ -185,7 +185,7 @@ class Postmaster_lib {
 	 
 	public function load_service($name)
 	{
-		require_once PATH_THIRD . 'postmaster/libraries/Postmaster_service.php';
+		require_once PATH_THIRD . 'postmaster/libraries/Base_service.php';
 		require_once PATH_THIRD . 'postmaster/services/'.ucfirst(strtolower($name)).'.php';
 
 		$class = $name.$this->service_suffix;

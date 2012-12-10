@@ -14,12 +14,15 @@
  * @build		20120412
  */
  
-require_once PATH_THIRD.'postmaster/libraries/Postmaster_service.php';
 
-class Postageapp_postmaster_service extends Postmaster_service {
+class Postageapp_postmaster_service extends Base_service {
 
 	public $name = 'PostageApp';
 	public $url  = 'https://api.postageapp.com/v.1.0/send_message.json';
+	
+	public $default_settings = array(
+		'api_key' => ''
+	);
 
 	public $fields = array(
 		'api_key' => array(
@@ -108,12 +111,4 @@ class Postageapp_postmaster_service extends Postmaster_service {
 	{	
 		return $this->build_table($settings, $this->fields);
 	}
-
-	public function default_settings()
-	{
-		return (object) array(
-			'api_key' => ''
-		);
-	}
-
 }

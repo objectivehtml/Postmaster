@@ -10,9 +10,11 @@
  * @build		20120612
  */
 
-class Base_Delegate {
+class Base_delegate {
 	
-	public $EE, $suffix = '_delegate', $doctag, $name;
+	public $EE, $suffix = '_delegate', $name;
+	
+	public $basepath = '../delegates/';
 		
 	public function __construct($name = FALSE)
 	{
@@ -24,7 +26,6 @@ class Base_Delegate {
 		}
 		
 		$this->name	  = $name;
-		$this->doctag = $name;
 	}
 	
 	// ------------------------------------------------------------------
@@ -59,6 +60,7 @@ class Base_Delegate {
 		if(!method_exists($this, $name))
 		{
 			$delegate = $this->load($name);
+			
 			$method   = $this->EE->TMPL->tagparts[2];
 			$params   = $this->EE->TMPL->tagparams;
 		
@@ -87,7 +89,7 @@ class Base_Delegate {
 	
 	protected function load($name)
 	{
-		include_once ucfirst($name).'.php';
+		include_once $this->basepath.ucfirst($name).'.php';
 		
 		$class = $name.$this->suffix;
 
@@ -137,7 +139,7 @@ class Base_Delegate {
 		
 		foreach(directory_map($directory) as $file)
 		{
-			if(file_exists($directory.'/'.$file) && $file != 'Base_Delegate.php')
+			if(file_exists($directory.'/'.$file) && $file != 'Base_delegate.php')
 			{
 				$delegates[] = $this->load(str_replace('.php', '', $file));
 			}
@@ -197,7 +199,7 @@ class Base_Delegate {
 	
 	public function show_error($error)
 	{
-		$this->EE->output->show_user_error('general', $error);
+		show_error($error);
 	}
 	
 	// ------------------------------------------------------------------
@@ -298,4 +300,4 @@ class Base_Delegate {
 	// ------------------------------------------------------------------	
 }
 
-/* End of file Base_Delegate.php */
+/* End of file Base_delegate.php */

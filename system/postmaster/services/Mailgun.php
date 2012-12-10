@@ -14,13 +14,16 @@
  * @build		20121026
  */
 
-require_once PATH_THIRD.'postmaster/libraries/Postmaster_service.php';
-
-class Mailgun_postmaster_service extends Postmaster_service {
+class Mailgun_postmaster_service extends Base_service {
 
 	public $name = 'Mailgun';
 	public $url  = 'https://api.mailgun.net/v2';
 
+	public $default_settings = array(
+		'username'        => '',
+		'api_key'         => ''
+	);
+	
 	public $fields = array(
 		'domain' => array(
 			'label' => 'Domain',
@@ -130,13 +133,4 @@ class Mailgun_postmaster_service extends Postmaster_service {
 	{	
 		return $this->build_table($settings, $this->fields);
 	}
-
-	public function default_settings()
-	{
-		return (object) array(
-			'username'        => '',
-			'api_key'         => ''
-		);
-	}
-
 }

@@ -1,0 +1,30 @@
+{exp:postmaster:campaign:subscribe_form 
+	service="campaignmonitor"
+	api_key="YOUR-API-KEY"
+	list="YOUR-LIST-ID"
+	class="newsletter"
+	novalidate="novalidate"
+	return="YOUR-RETURN-URL"
+}
+	<div class="row">
+			
+		<div class="nine columns">
+			{if total_global_errors}
+			<ul>
+			{global_errors}
+				<li>{error}</li>
+			{/global_errors}
+			</ul>
+			{/if}			
+			
+			<label for="email">E-mail Address</label>
+			<input type="email" name="email" value="" id="email" placeholder="you@example.org" />
+		</div>
+		
+		<div class="three columns">
+			<button type="submit" class="nice round pink button">Sign-up</button>
+		</div>
+	
+	</div>
+	
+{/exp:postmaster:campaign:subscribe_form}

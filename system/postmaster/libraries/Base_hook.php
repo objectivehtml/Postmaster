@@ -23,25 +23,7 @@ abstract class Base_hook extends Base_class {
 	 		 	
 	protected $title;
 	
-	
-	/**
-	 * Hook Name
-	 * 
-	 * @var string
-	 */
-	 		 
-	protected $name;
-	
-	
-	/**
-	 * Custom settings
-	 * 
-	 * @var array
-	 */
-	 		 
-	public $settings = array();
-	
-	
+		
 	/**
 	 * Actual EE hook name to use
 	 * 

@@ -14,15 +14,20 @@
  * @build		20120414
  */
 
-require_once PATH_THIRD.'postmaster/config/postmaster_config.php';
-require_once PATH_THIRD.'postmaster/libraries/Postmaster_service.php';
-
-class CampaignMonitor_postmaster_service extends Postmaster_service {
+class CampaignMonitor_postmaster_service extends Base_service {
 
 	public $name     = 'CampaignMonitor';
 	public $title    = 'Campaign Monitor';
 	public $url      = 'http://api.createsend.com/api/v3/';
 	public $settings = FALSE;
+
+	public $default_settings = array(
+		'api_key'           => '',
+		'client_id'         => '',
+		'html_template_url' => '',
+		'text_template_url' => '',
+		'list_id'           => array()
+	);
 
 	public $fields = array(
 		'api_key' => array(
@@ -461,16 +466,4 @@ class CampaignMonitor_postmaster_service extends Postmaster_service {
 
 		return json_decode($response);
 	}
-
-	public function default_settings()
-	{
-		return (object) array(
-			'api_key'           => '',
-			'client_id'         => '',
-			'html_template_url' => '',
-			'text_template_url' => '',
-			'list_id'           => array()
-		);
-	}
-
 }

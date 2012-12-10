@@ -14,13 +14,15 @@
  * @build		20120412
  */
 
-require_once PATH_THIRD . 'postmaster/libraries/Postmaster_service.php';
-
-class Postmark_postmaster_service extends Postmaster_service {
+class Postmark_postmaster_service extends Base_service {
 
 	public $name = 'Postmark';
 	public $url  = 'http://api.postmarkapp.com/email';
 
+	public $default_settings = array(
+		'api_key' => 'POSTMARK_API_TEST'
+	);
+	
 	public $fields = array(
 		'api_key' => array(
 			'label' => 'API Key',
@@ -113,12 +115,4 @@ class Postmark_postmaster_service extends Postmaster_service {
 	{	
 		return $this->build_table($settings, $this->fields);
 	}
-
-	public function default_settings()
-	{
-		return (object) array(
-			'api_key' => 'POSTMARK_API_TEST'
-		);
-	}
-
 }

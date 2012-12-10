@@ -14,13 +14,34 @@
  * @build		20120831
  */
 
-require_once PATH_THIRD . 'postmaster/libraries/Postmaster_service.php';
 require_once PATH_THIRD . 'postmaster/libraries/Mailer.php';
 
-class ExpressionEngine_postmaster_service extends Postmaster_service {
+class ExpressionEngine_postmaster_service extends Base_service {
 
 	public $name = 'ExpressionEngine';
 
+	public $default_settings = array(
+		'useragent' 		=> 'CodeIgniter',
+		'protocol'			=> 'mail',
+		'mailpath'			=> '/usr/bin/sendmail',
+		'smtp_host' 		=> '',
+		'smtp_user' 		=> '',
+		'smtp_pass'			=> '',
+		'smtp_port' 		=> '',
+		'smtp_timeout' 		=> '',
+		'smtp_wordwrap' 	=> '',
+		'wordwrap'			=> TRUE,
+		'wrapchars'			=> 76,
+		'mailtype'			=> 'html',
+		'charset'			=> 'utf-8',
+		'validate'			=> FALSE,
+		'priority' 			=> 3,
+		'crlf'				=> "\n",
+		'newline'			=> "\n",
+		'bcc_batch_mode'	=> FALSE,
+		'bcc_batch_size'	=> 200
+	);
+	
 	public $fields = array(
 		'mailtype' => array(
 			'type'  => 'select',
@@ -202,30 +223,4 @@ class ExpressionEngine_postmaster_service extends Postmaster_service {
 	{	
 		return $this->build_table($settings, $this->fields);
 	}
-
-	public function default_settings()
-	{
-		return (object) array(
-			'useragent' 		=> 'CodeIgniter',
-			'protocol'			=> 'mail',
-			'mailpath'			=> '/usr/bin/sendmail',
-			'smtp_host' 		=> '',
-			'smtp_user' 		=> '',
-			'smtp_pass'			=> '',
-			'smtp_port' 		=> '',
-			'smtp_timeout' 		=> '',
-			'smtp_wordwrap' 	=> '',
-			'wordwrap'			=> TRUE,
-			'wrapchars'			=> 76,
-			'mailtype'			=> 'html',
-			'charset'			=> 'utf-8',
-			'validate'			=> FALSE,
-			'priority' 			=> 3,
-			'crlf'				=> "\n",
-			'newline'			=> "\n",
-			'bcc_batch_mode'	=> FALSE,
-			'bcc_batch_size'	=> 200
-		);
-	}
-
 }

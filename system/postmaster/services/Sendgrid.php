@@ -14,12 +14,16 @@
  * @build		20120412
  */
 
-require_once PATH_THIRD.'postmaster/libraries/Postmaster_service.php';
-
-class SendGrid_postmaster_service extends Postmaster_service {
+class SendGrid_postmaster_service extends Base_service {
 
 	public $name = 'SendGrid';
 	public $url  = 'http://sendgrid.com/api/mail.send.json';
+
+	public $default_settings = array(
+		'api_user'        => '',
+		'api_key'         => '',
+		'plain_text_only' => 'false'
+	);
 
 	public $fields = array(
 		'api_user' => array(
@@ -124,14 +128,4 @@ class SendGrid_postmaster_service extends Postmaster_service {
 	{	
 		return $this->build_table($settings, $this->fields);
 	}
-
-	public function default_settings()
-	{
-		return (object) array(
-			'api_user'        => '',
-			'api_key'         => '',
-			'plain_text_only' => 'false'
-		);
-	}
-
 }

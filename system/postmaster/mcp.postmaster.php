@@ -81,9 +81,11 @@ class Postmaster_mcp {
 		$this->EE->theme_loader->javascript('qtip');
 		$this->EE->theme_loader->css('qtip');
 		
-		require_once('delegates/Base_Delegate.php');
+		require_once PATH_THIRD . 'postmaster/libraries/Base_delegate.php';
 		
-		$delegate = new Base_Delegate();
+		$delegate = new Base_delegate();
+		$delegate->suffix   = '_postmaster_delegate';
+		$delegate->basepath = PATH_THIRD . 'postmaster/delegates/';
 		
 		$results = $this->EE->postmaster_model->get_hooks()->result_array();
 		
@@ -115,7 +117,7 @@ class Postmaster_mcp {
 		$this->EE->cp->set_variable('cp_page_title', 'Postmaster');
 		
 		$this->EE->cp->set_right_nav(array(
-			'postmaster_documentation'     => $this->cp_url('doctag').'&id=Parcels'
+			'postmaster_documentation'     => $this->cp_url('doctag').'&id=Core'
 			/* 'Text Editor Settings' => $this->cp_url('editor_settings') */
 		));
 

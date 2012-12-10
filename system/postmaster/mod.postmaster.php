@@ -11,9 +11,17 @@
  * @build		20121005
  */
 
-require_once 'delegates/Base_Delegate.php';
+require_once PATH_THIRD . 'postmaster/libraries/Base_delegate.php';
 
-class Postmaster extends Base_Delegate {
+class Postmaster extends Base_delegate {
+
+	public function __construct()
+	{
+		parent::__construct();
+		
+		$this->basepath = PATH_THIRD . 'postmaster/delegates/';
+		$this->suffix   = '_postmaster_delegate';
+	}
 	
 	public function trigger()
 	{

@@ -12,6 +12,8 @@
  * @build		20120502
  */
 
+require_once PATH_THIRD . 'postmaster/libraries/Base_service.php';
+
 class Email_Parcel {
 	
 	public  $id,

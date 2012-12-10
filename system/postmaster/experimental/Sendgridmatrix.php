@@ -13,10 +13,8 @@
  * @version		1.0.0
  * @build		20120412
  */
-
-require_once PATH_THIRD.'postmaster/libraries/Postmaster_service.php';
-
-class SendGridMatrix_postmaster_service extends Postmaster_service {
+ 
+class SendGridMatrix_postmaster_service extends Base_service {
 
 	public $name = 'SendGridMatrix';
 	public $url  = 'http://sendgrid.com/api/mail.send.json';

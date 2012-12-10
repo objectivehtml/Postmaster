@@ -17,7 +17,60 @@ require_once PATH_THIRD.'postmaster/libraries/Base_class.php';
  
 abstract class Postmaster_core {
 
-	public $name, $description, $now, $settings;
+	/**
+	 * Object Name
+	 */
+	 
+	public $name;
+	
+	
+	/**
+	 * Object Description
+	 */
+	 
+	public $description;
+	
+	
+	/**
+	 * Current GMT Time
+	 */
+	 
+	public $now;
+	
+	
+	/**
+	 * Default Settings
+	 */
+	 
+	public $default_settings = array();
+	
+	
+	/**
+	 * Settings
+	 */
+	 
+	public $settings;
+	
+	
+	/**
+	 * cURL Objective
+	 */
+	 
+	public $curl;
+	
+	
+	/**
+	 * Uuid generator
+	 */
+	 
+	public $uid;
+	
+	
+	/**
+	 * Postmaster library
+	 */
+	 
+	public $lib;
 
 	public function __construct()
 	{

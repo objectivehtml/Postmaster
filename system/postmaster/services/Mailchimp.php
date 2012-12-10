@@ -14,13 +14,15 @@
  * @build		20120610
  */
 
-require_once PATH_THIRD.'postmaster/libraries/Postmaster_service.php';
-
-class Mailchimp_postmaster_service extends Postmaster_service {
+class Mailchimp_postmaster_service extends Base_service {
 
 	public $name = 'MailChimp';
 	public $url  = '';
 
+	public $default_settings = array(
+		'api_key' => ''
+	);
+	
 	public $fields = array(
 		'api_key' => array(
 			'label' => 'API Key',
@@ -355,12 +357,4 @@ MailChimp helps you design email newsletters, share them on social networks, int
 	{
 		return json_decode($this->curl->simple_post($url, $data));
 	}
-
-	public function default_settings()
-	{
-		return (object) array(
-			'api_key' => ''
-		);
-	}
-
 }

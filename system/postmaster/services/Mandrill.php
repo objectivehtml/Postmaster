@@ -14,13 +14,21 @@
  * @build		20120902
  */
 
-require_once PATH_THIRD.'postmaster/libraries/Postmaster_service.php';
-
-class Mandrill_postmaster_service extends Postmaster_service {
+class Mandrill_postmaster_service extends Base_service {
 
 	public $name = 'Mandrill';
 	public $url  = 'https://mandrillapp.com/api/1.0/messages/send.json';
 
+	public $default_settings = array(
+		'api_key'             => '',
+		'track_opens'         => 'true',
+		'track_clicks'        => 'true',
+		'auto_text'           => 'false',
+		'url_strip_qs'        => 'false',
+		'preserve_recipients' => 'true',
+		'plain_text_only' 	  => 'false',
+	);
+	
 	public $fields = array(
 		'api_key' => array(
 			'label' => 'API Key',
@@ -192,18 +200,4 @@ class Mandrill_postmaster_service extends Postmaster_service {
 			'parcel'     => $parcel
 		));
 	}
-	
-	public function default_settings()
-	{
-		return (object) array(
-			'api_key'             => '',
-			'track_opens'         => 'true',
-			'track_clicks'        => 'true',
-			'auto_text'           => 'false',
-			'url_strip_qs'        => 'false',
-			'preserve_recipients' => 'true',
-			'plain_text_only' 	  => 'false',
-		);
-	}
-
 }

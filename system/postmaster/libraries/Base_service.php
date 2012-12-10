@@ -13,13 +13,16 @@ require_once PATH_THIRD.'postmaster/libraries/Postmaster_core.php';
  * @build		20120703
  */
 
-abstract class Postmaster_service extends Postmaster_core {
+abstract class Base_service extends Postmaster_core {
 	
 	public $id;
 	
 	abstract public function send($parsed_object, $parcel);
 	
-	abstract public function default_settings();
+	public function default_settings()
+	{
+		return (object) $this->default_settings;
+	}
 	
 	public function display_settings($settings, $obj)
 	{
