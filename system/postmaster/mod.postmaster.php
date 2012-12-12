@@ -11,9 +11,9 @@
  * @build		20121005
  */
 
-require_once PATH_THIRD . 'postmaster/libraries/Base_delegate.php';
+require_once PATH_THIRD . 'postmaster/libraries/Postmaster_base_delegate.php';
 
-class Postmaster extends Base_delegate {
+class Postmaster extends Postmaster_base_delegate {
 
 	public function __construct()
 	{

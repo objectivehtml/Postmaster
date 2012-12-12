@@ -11,10 +11,11 @@
  * @build		20120609
  */
 
-class Campaign_postmaster_delegate extends Base_delegate {
+class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 	
 	public $name        = 'Email Campaign Manager';
 	public $description = 'Easily manage your email campaign subscribers using MailChimp and/or CampaignMonitor.';	
+	public $doctag      = 'Email Campaign Manager';
 	
 	protected $service;
 	

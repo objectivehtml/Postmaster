@@ -81,9 +81,9 @@ class Postmaster_mcp {
 		$this->EE->theme_loader->javascript('qtip');
 		$this->EE->theme_loader->css('qtip');
 		
-		require_once PATH_THIRD . 'postmaster/libraries/Base_delegate.php';
+		require_once PATH_THIRD . 'postmaster/libraries/Postmaster_base_delegate.php';
 		
-		$delegate = new Base_delegate();
+		$delegate = new Postmaster_base_delegate();
 		$delegate->suffix   = '_postmaster_delegate';
 		$delegate->basepath = PATH_THIRD . 'postmaster/delegates/';
 		
@@ -470,6 +470,7 @@ class Postmaster_mcp {
 			'message'            => $this->post('message', TRUE),
 			'installed_hook'     => $this->post('installed_hook', TRUE),
 			'user_defined_hook'  => $this->post('user_defined_hook', TRUE),
+			'priority' 			 => $this->post('priority', TRUE),
 			'post_date_specific' => $this->post('post_date_specific', TRUE),
 			'post_date_relative' => $this->post('post_date_relative', TRUE),
 			'send_every'         => $this->post('send_every', TRUE),
@@ -478,7 +479,14 @@ class Postmaster_mcp {
 			'settings'           => json_encode($this->post('setting', TRUE))
 		);
 		
-		$this->EE->postmaster_model->$method($this->EE->input->post('id'), $parcel);
+		if($this->EE->input->post('id'))
+		{
+			$this->EE->postmaster_model->$method($this->EE->input->post('id'), $parcel);
+		}
+		else
+		{
+			$this->EE->postmaster_model->$method($parcel);
+		}
 
 		$this->EE->functions->redirect($this->post('return'));
 	}
