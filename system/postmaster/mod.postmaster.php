@@ -36,7 +36,7 @@ class Postmaster extends Postmaster_base_delegate {
 			'subject' => $this->param('subject')
 		));
 		
-		$tagdata = $this->EE->channel_data->tmpl->parse_string($tagdata, array(), $entry,  array(), array(), 'hook:');
+		$tagdata = $this->EE->channel_data->tmpl->parse_string($tagdata, array(), $this->EE->channel_data->utility->add_prefix('hook', $entry),  array(), array(), 'hook:');
 		
 		// -------------------------------------------
 		// 'postmaster_trigger_tag' - 

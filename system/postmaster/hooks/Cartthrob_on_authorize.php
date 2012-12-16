@@ -20,6 +20,20 @@ class Cartthrob_on_authorize_postmaster_hook extends Base_hook {
 	{
 		$parse_vars = $this->cart->order();
 		
+		foreach($parse_vars['items'] as $index => $item)
+		{
+			$meta = array(
+				array(
+					'subscription_options' => array(
+						$item['meta']['subscription_options']
+					),
+					'subscription' => $item['meta']['subscription']
+				)
+			);
+			
+			$parse_vars['items'][$index]['meta'] = $meta;
+		}
+		
 		$parse_vars['purchased_items'] = implode('|', $parse_vars['purchased_items']);
 		$parse_vars['auth'] = array(
 			$parse_vars['auth']

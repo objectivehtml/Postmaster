@@ -12,10 +12,10 @@ class Postmaster_trigger_tag_postmaster_hook extends Base_hook {
 		
 	public function trigger($tagdata, $entry)
 	{
-		$parse_vars = array_merge($entry, array(
+		$parse_vars = array(
 			'tagdata' => $tagdata
-		));
+		);
 		
-		return parent::send($parse_vars, FALSE, array(), $tagdata);
+		return parent::send($parse_vars, FALSE, $entry, $tagdata);
 	}
 }
