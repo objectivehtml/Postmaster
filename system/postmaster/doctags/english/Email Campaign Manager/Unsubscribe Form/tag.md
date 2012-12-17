@@ -1,0 +1,1 @@
+{exp:postmaster:campaign:unsubscribe_form}

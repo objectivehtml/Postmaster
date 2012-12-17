@@ -1,0 +1,117 @@
+/**
+ * Postmaster
+ * 
+ * @package		Postmaster
+ * @author		Justin Kimbrell
+ * @copyright	Copyright (c) 2012, Objective HTML
+ * @link 		http://www.objectivehtml.com/postmaster
+ * @version		1.2.0
+ * @build		20121217
+ */
+
+#### 1.2.0
+##### 12/17/2012
+- (Feature) Added new Hooks API
+- (Feature) Added plain text option to SendGrid and Mandrill
+- (Feature) Added exp:postmaster:trigger tag
+- (Feature) Added Carthrob_on_authorize hook
+- (Feature) Added Carthrob_subscription_created hook
+- (Feature) Added Carthrob_subscription_hold hook
+- (Feature) Added Carthrob_subscription_rebilled hook
+- (Feature) Added Channel_entries_tagdata_end hook
+- (Feature) Added Email_send hook (to take control of system emails)
+- (Feature) Added Member_member_login hook
+- (Feature) Added Member_member_logout hook
+- (Feature) Added Profile_edit_end hook
+- (Feature) Added Profile_register_end hook
+- (Feature) Added Trigger tag hook
+- (Feature) Added MSM compatibility
+- (Feature) Added Mailgun support
+- (Bug Fix) Bug fixes for TMPL parsing, inconsistency fixes, etc (A complete rewrite of the parsing engine).
+- (Bug Fix) Postmaster updates for PHP 5.2 compatibility
+- (Bug Fix) Changed the way UI's were built - updated with InterfaceBuilder
+- (Bug Fix) Remove PHP short tags from views.
+- (Bug Fix) Increased priority to 1 on the entry_submission_end hook.
+- (Bug Fix) Fixed an issue that caused member groups to appear twice in Parcels.
+- (Bug Fix) Fixed a bug that caused the update process to fail if new action_id's were added.
+- (Bug Fix) Fixed bugs that caused library to disrespect environmental constants.
+- (Bug Fix) Fixed a localization issue that causes some servers to send emails to the queue when they should send.
+- (Bug Fix) Updated Theme Loader library for EE 2.5.3 config vars.
+- (Bug Fix) Fixed bug in the email preview
+- (Bug Fix) Fixed issue causing the member fields not to parse correctly
+- (Bug Fix) Fixed an issue preventing the parcels from saving if an index.html file existed alongside the index.php file.
+- (Bug Fix) Added custom date field parsing
+- (Bug Fix) Added new method to parse path variables
+- (Bug Fix) Fixed bug that caused a missing entry property in the parcel object.
+- (Bug Fix) Removed the unset($this->EE->base_form->validation_field); from the Campaign.php delegate
+- (Bug Fix) Fixed a call to reference bug introduced in EE 2.5.3
+- (Bug Fix) Updated the Edit_Parcel.php library to account for MSM. Removed the logic to filter out member groups the aren't yet assigned.
+- (Bug Fix) Fixed a bug that prevented reoccurring emails from working properly.
+- (Bug Fix) Added better documentation
+- (Bug Fix) Fixed parsing issues with tag pairs inside of hooks
+- (Bug Fix) Fixed a bug if no status is defined and entry has no status, return TRUE
+- (Bug Fix) Fixed an issue with postmaster not displaying categories correctly.
+
+#### 1.1.0
+##### 07/22/2012
+
+- Public release
+
+#### 1.0.98
+##### 06/12/2012
+
+- (Bug Fix) Fixed a compatibility issue for version of EE prior to 2.5. (PHP magic methods are not required to trigger a delegate.)
+- (Bug Fix) Fixed a routing issue that caused the invalid delegate method.
+- (Feature) Added 5 new methods to the MailChimp service – subscribers(), subscribe(), unsubscribe(), subscribe_form(), unsubscribe_form().
+- (Usability) Added an error message if user calls a non existent delegate method.
+- (Usability) Added delegates to the module control panel page.
+- (API) Added new Postmaster_core class for more modularity and extendibility.
+- (API) Replaced APPPATH with PATH_THIRD constant
+- (API) Abstracted some methods to the new Postmaster_core class.
+- (API) Extended the Postmaster class with Base_Delegate to handle new delegate methods.
+
+#### 1.0.971
+##### 04/14/2012
+
+- (Bug Fix) Fixed an issue when parsing member data.
+
+#### 1.0.97
+
+- (Feature) Added CampaignMonitor integration 
+- (Feature) Added the ability to parse most fieldypes without channel entries loop
+- (Bug Fix) Fixed a required library bug
+- (Bug Fix) Fixed a number of markup issues in the template view itself.
+
+#### 1.0.96
+##### 04/12/2012
+
+- (Bug Fix) Fixed an issue with the parse order throwing an error for advanced conditionals.
+- (Bug Fix) Removed an unnecessary require script to load the EE_Template class.
+- (Bug Fix) Fixed a couple minor CSS issues breaking the CP sidebar.
+
+#### 1.0.9
+##### 04/08/2012
+
+- (Feature) Re-wrote core architecture to support third party API's.
+- (Feature) Included MailChimp, Postmark, PostageApp, and SendGrid API's
+- (Feature) Added robust email queue and reocurring emails
+- (Feature) Added unsubscribe and blacklisting
+- (Feature) Added member data to the default template parsing variables
+
+#### 1.0.1
+##### 03/26/2012
+
+- Fixed a bug that prevented users using the admin.php files from working properly
+- Removed the PHP short echo tags to try to eliminate bugs with some users
+
+#### 1.0.0
+##### 03/24/2012
+
+- First round of UX tweaks 
+- Added tooltips to UI
+- Change input fields to textareas for more flexibility and longer max char length
+
+#### 1.0.0
+##### 03/15/2012
+
+Initial beta release
