@@ -35,9 +35,9 @@ class Postmaster_time extends Base_class {
 		{
 			$index = rtrim($index, 's');
 			
-			if(isset($$index))
+			if(isset($$index) && !empty($param))
 			{
-				$offset += $param * $$index;	
+				$offset += (int) $param * $$index;	
 			}	
 		}
 		

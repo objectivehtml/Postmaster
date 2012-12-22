@@ -116,7 +116,7 @@ class Cartthrob_abandoned_cart_postmaster_notification extends Base_notification
 		
 		$field = $this->IB->load('email_intervals', $this->IB->convert_array($field));
 		
-		return $field->display_field($settings->email_intervals);
+		return $field->display_field(isset($settings->email_intervals) ? $settings->email_intervals : NULL);
 	}
 	
 	public function send()
