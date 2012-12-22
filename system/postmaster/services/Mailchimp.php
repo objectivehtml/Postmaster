@@ -52,7 +52,7 @@ MailChimp helps you design email newsletters, share them on social networks, int
 	{
 		$url = $this->api_url($params['api_key'], 'listMembers', $params);
 		
-		$subscribers = $this->get($url);
+		$subscribers = $this->_get($url);
 		
 		$return = array();
 		
@@ -327,7 +327,7 @@ MailChimp helps you design email newsletters, share them on social networks, int
 	{
 		$url = $this->api_url($api_key, 'lists');
 
-		$lists = $this->get($url);
+		$lists = $this->_get($url);
 
 		if($lists == NULL)
 		{
@@ -348,7 +348,7 @@ MailChimp helps you design email newsletters, share them on social networks, int
 		)));
 	}
 
-	private function get($url)
+	private function _get($url)
 	{
 		return json_decode($this->curl->simple_get($url));
 	}

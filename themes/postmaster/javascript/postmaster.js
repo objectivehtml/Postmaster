@@ -209,6 +209,7 @@ $(document).ready(function() {
 	
 	$('select[name="theme"]').change();
 
+	/*
 	$('select[name="service"]').change(function() {
 		var $t = $(this);
 		var val = $t.val();
@@ -232,7 +233,34 @@ $(document).ready(function() {
 	});
 
 	$('select[name="installed_hook"]').change();
-
+	*/
+	
+	$('select.onchange').change(function() {
+		var $t       = $(this);
+		var val      = $t.val();
+		var _default = $t.data('default');
+		var hide 	 = $t.data('hide');
+		var group 	 = $t.data('group');
+		
+		if(val == "" && _default) {
+			val = _default;
+		}
+		
+		if(hide) {
+			$(hide).hide();
+		}
+		
+		if(group) {
+			$(group).hide();
+		}
+		
+		if(val != "") {
+			$('#'+val+'_panel').show();
+		}
+	});
+	
+	$('select.onchange').change();
+	
 	$('#test_entry').change(function() {
 		Postmaster.refresh();
 	});

@@ -1,9 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once 'Base_class.php';
 require_once 'Base_hook.php';
+require_once 'Postmaster_base_lib.php';
 
-class Postmaster_hook extends Base_class {
+class Postmaster_hook extends Postmaster_base_lib {
 	
 	/**
 	 * Base File Path
@@ -30,7 +30,7 @@ class Postmaster_hook extends Base_class {
 	 */
 	 
 	protected $reserved_files = array(
-		'Postmaster_base_hook.php'
+		'Postmaster_base_hook'
 	);
 	
 		
@@ -40,7 +40,7 @@ class Postmaster_hook extends Base_class {
 	 * @var string
 	 */
 	 
-	protected $default_hook = 'Postmaster_base_hook.php';
+	protected $default_hook = 'Postmaster_base_hook';
 	
 		
 	/**
@@ -62,9 +62,9 @@ class Postmaster_hook extends Base_class {
 	
 	public function __construct($data = array(), $debug = FALSE)
 	{
-		parent::__construct($data);
+		$data['default_object'] = $this->default_hook;
 		
-		$this->EE =& get_instance();
+		parent::__construct($data);
 	}
 	
 	
@@ -105,31 +105,7 @@ class Postmaster_hook extends Base_class {
 	
 	public function get_hook($index = FALSE)
 	{		
-		$this->hooks = $this->get_hooks();
-		
-		if($index && is_int($index))
-		{
-			if(!isset($this->hooks[$index]))
-			{
-				return $index;
-			}
-			
-			return $this->hooks[$index];
-		}
-		else
-		{
-			foreach($this->hooks as $x => $obj)
-			{
-				$hook = rtrim(get_class($obj), '_postmaster_hook');
-								
-				if($index == $obj->get_name() || $index == $obj->get_title())
-				{
-					return $this->hooks[$x];
-				}
-			}
-		}
-				
-		return $this->get_hook(rtrim($this->default_hook, '.php'));
+		return parent::get_object($index);
 	}
 	
 	
@@ -141,27 +117,9 @@ class Postmaster_hook extends Base_class {
 	 */
 	
 	public function get_hooks()
-	{
-		$this->EE->load->helper('directory');
-		
-		$hooks = array(
-			$this->load($this->default_hook)
-		);
-		
-		foreach(directory_map($this->base_path) as $file)
-		{
-			if(!in_array($file, $this->reserved_files))
-			{
-				if($hook = $this->load($file))
-				{
-					$hooks[] = $hook;
-				}
-			}
-		}
-		
-		return $hooks;
+	{	
+		return parent::get_objects();
 	}	
-	
 	
 	
 	/**
@@ -202,9 +160,7 @@ class Postmaster_hook extends Base_class {
 	
 	public function total_hooks()
 	{
-		$this->hooks = $this->get_hooks();
-		
-		return count($this->hooks);
+		return parent::total_objects();
 	}
 	
 	
@@ -240,34 +196,4 @@ class Postmaster_hook extends Base_class {
 		
 		return $hook_obj->get_responses();
 	}
-	
-	
-	/**
-	 * Load
-	 *
-	 * @access	public
-	 * @param	string  A valid file name
-	 * @return	mixed
-	 */
-	
-	public function load($file)
-	{
-		require_once $this->base_path . $file;
-		
-		$class = str_replace('.php', '', $file);
-		
-		if(!in_array($file, $this->reserved_files))
-		{
-			$class .= $this->class_suffix;
-		}
-		
-		if(class_exists($class))
-		{
-			$return = new $class(array());
-			
-			return $return;
-		}
-		
-		return FALSE;
-	}	
 }

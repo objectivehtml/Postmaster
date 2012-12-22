@@ -6,13 +6,13 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/
- * @version		1.0.2
- * @build		20121014
+ * @version		1.2.1
+ * @build		20121116
  */
 
-if(!class_exists('Base_class'))
+if(!class_exists('BaseClass'))
 {
-	abstract class Base_class {
+	abstract class BaseClass {
 			
 	    /**
 	     * Contructor
@@ -47,23 +47,63 @@ if(!class_exists('Base_class'))
 		    
 		public function __call($method, $args)
 		{
-			$magic_methods = array(
-				'/^get_/'    => 'get_' , 
-				'/^set_/'    => 'set_',
-				'/^append_/' => 'append_'
-			);
+			$orig_method = $method;
 			
-			foreach($magic_methods as $regex => $replace)
+			$magic_methods = array('get', 'set', 'append');
+			
+			// Add support for legacy code not supporting PSR-2. 
+			// Setters/getters can look like get_method() & set_method()
+			
+			if(preg_match("/\w*_/us", $method))
+			{			
+				$newMethod = array();
+				
+				foreach(explode('_', $method) as $index => $part)
+				{
+					if($index > 0)
+					{
+						$part = ucfirst($part);
+					}
+					
+					$newMethod[] = $part;
+				}
+				
+				$method = implode('', $newMethod);
+				
+				return call_user_func_array(array($this, $method), $args);
+			}
+			
+			foreach($magic_methods as $replace)
 			{
+				$regex = "/^(".$replace.")([A-Z]\w*)/";
+				
 		    	if(preg_match($regex, $method))
-		    	{
-		    		$property = str_replace($replace, '', $method);
-		    		$method = rtrim($replace, '_');
+		    	{	
+		    		if(preg_match("/^(get)(Total)(\w*)$/", $method, $matches))
+	    			{
+	    				if(isset($matches[3]))
+	    				{
+	    					$method   = 'count';
+		    				$property = lcfirst($matches[3]);
+	    				}
+	    			}
+	    			else
+	    			{
+			    		$method   = preg_replace($regex, '$1 $2', $method);
+			    		$method   = explode(' ', $method);
+			    		$property = lcfirst($method[1]);
+			    		$method   = $method[0];
+	    			}		    		
 			    }
 		    }
 		    
+		    if(!isset($property))
+		    {
+				return;    
+		    }
+		    
 		    $args = array_merge(array($property), $args);	    	
-		    	
+		    
 		    return call_user_func_array(array($this, $method), $args);
 		}
 		
@@ -114,13 +154,43 @@ if(!class_exists('Base_class'))
 		 * @return	mixed
 		 */
 	       
-		protected function append($prop = 'fields', $value)
+		public function append($prop, $value)
 		{
 			if(isset($this->$prop))
 			{
-				$this->$prop = array_merge($this->{'get_'.$prop}(), $value);
+				$this->$prop = array_merge($this->{'get'.ucfirst($prop)}(), $value);
 			}
 		}
 		
+		/**
+		 * Count the defined property
+		 *
+		 * @access	public
+		 * @param	string 	propery name
+		 * @return	int
+		 */
+	       
+		public function count($prop)
+		{
+			if(isset($this->$prop))
+			{
+				return count($this->$prop);
+			}
+			
+			return 0;
+		}	
 	}
+}
+
+
+if(!class_exists('Base_Class'))
+{
+	abstract class Base_Class extends BaseClass {}
+}
+
+if(function_exists('lcfirst') === false) {
+    function lcfirst($str) {
+        $str[0] = strtolower($str[0]);
+        return $str;
+    }
 }

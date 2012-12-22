@@ -94,6 +94,43 @@
 	</tbody>
 </table>
 
+<h2><a href="#notications" class="help">Notifications <span>(?)</span></a></h2>
+
+<a href="<?php echo $add_notification_url?>" class="action button"><span class="icon-plus"></span> New Notification</a>
+
+<table class="mainTable" cellpadding="0" cellspacing="0">
+	<thead>
+		<tr>
+			<th style="width:30%">Title</th>
+			<th style="width:30%">Notification</th>
+			<th style="width:20%">Ping</th>
+			<th style="width:5%;max-width:112px;min-width:112px">Actions</th>
+		</tr>
+	</thead>
+	<tbody>
+		<?php if(count($notifications) == 0): ?>
+		<tr>
+			<td colspan="7">
+				<p class="empty">You have not setup any notifications yet.</p>
+			</td>
+		</tr>
+		<?php endif; ?>
+		
+		<?php foreach($notifications as $notication): ?>
+		<tr>
+			<td class="title"><?php echo $notication->title?></td>
+			<td class="notification"><?php echo $notication->notification?></td>
+			<td><a href="<?php echo $notication->ping_url?>"><?php echo $notication->ping_url?></a></td>			
+			<td class="actions">
+				<a href="<?php echo $notication->edit_url?>" title="Edit" class="button tooltip"><span class="icon-edit"></span></a>
+				<a href="<?php echo $notication->duplicate_url?>" title="Duplicate" class="button tooltip"><span class="icon-copy"></span></a>
+				<a href="<?php echo $notication->delete_url?>" title="Delete" class="button delete tooltip"><span class="icon-trash"></span></a>			
+			</td>
+		</tr>
+		<?php endforeach; ?>
+	</tbody>
+</table>
+
 <h2><a href="#delegates" class="help">Utilities <span>(?)</span></a></h2>
 
 <table class="mainTable" cellpadding="0" cellspacing="0">
@@ -131,8 +168,13 @@
 </div>
 
 <div id="delegates" class="help-text">
-	<h2>Utilities</h2>
+	<h2>What is a Utility?</h2>
 	<p>Utilites are resources that use the API to provide even more functionality. Utilities can extend far beyond just sending emails by creating new templates tags.</p>
+</div>
+
+<div id="notications" class="help-text">
+	<h2>What is a Notifcation?</h2>
+	<p>Notifications are special templates that have very arbitrary and specific rules. Each notification is assigned a driver, and each driver can do something radically different. The Basic Notification driver for instance just send basic emails which others perform much more complicated tasks. Notifications can be triggered within a EE template or with a CRON job.</p>
 </div>
 
 <div id="ping" class="help-text">

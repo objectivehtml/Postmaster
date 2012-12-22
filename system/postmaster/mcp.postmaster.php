@@ -13,6 +13,7 @@
 
 require_once 'libraries/Email_Parcel.php';
 require_once 'libraries/Template_Hook.php';
+require_once 'libraries/Template_Notification.php';
 require_once 'config/postmaster_config.php';
 
 class Postmaster_mcp {
@@ -87,25 +88,40 @@ class Postmaster_mcp {
 		$delegate->suffix   = '_postmaster_delegate';
 		$delegate->basepath = PATH_THIRD . 'postmaster/delegates/';
 		
-		$results = $this->EE->postmaster_model->get_hooks()->result_array();
+		$hooks = $this->EE->postmaster_model->get_hooks()->result_array();
 		
-		foreach($results as $index => $value)
+		foreach($hooks as $index => $value)
 		{
-			$results[$index]['edit_url']      = $this->cp_url('hook').'&id='.$value['id'];
-			$results[$index]['delete_url']    = $this->cp_url('delete_hook_action').'&id='.$value['id'];
-			$results[$index]['duplicate_url'] = $this->cp_url('duplicate_hook_action').'&id='.$value['id'];
+			$hooks[$index]['edit_url']      = $this->cp_url('hook').'&id='.$value['id'];
+			$hooks[$index]['delete_url']    = $this->cp_url('delete_hook_action').'&id='.$value['id'];
+			$hooks[$index]['duplicate_url'] = $this->cp_url('duplicate_hook_action').'&id='.$value['id'];
 			
-			$results[$index] = (object) $results[$index];
+			$hooks[$index] = (object) $hooks[$index];
+		}
+		
+		$notifications = $this->EE->postmaster_model->get_notifications()->result_array();
+		
+		foreach($notifications as $index => $value)
+		{
+			$notifications[$index]['edit_url']      = $this->cp_url('notification').'&id='.$value['id'];
+			$notifications[$index]['delete_url']    = $this->cp_url('delete_notification_action').'&id='.$value['id'];
+			$notifications[$index]['duplicate_url'] = $this->cp_url('duplicate_notification_action').'&id='.$value['id'];
+			$notifications[$index]['ping_url'] 	    = $this->current_url('ACT', $this->EE->channel_data->get_action_id(__CLASS__, 'notification_action')).'&id='.$value['id'];
+			
+			$notifications[$index] = (object) $notifications[$index];
 		}
 		
 		$vars = array(
 			'theme_url' => $this->EE->theme_loader->theme_url(),
 			'themes'  	=> $this->themes,
 			'parcels' 	=> $this->EE->postmaster_model->get_parcels(),
-			'hooks'     => $results,
+			'hooks'     => $hooks,
+			'notifications'     => $notifications,
 			'create_parcel_url' => $this->cp_url('create_template'),
 			'add_hook_url' => $this->cp_url('hook'),
 			'edit_hook_action' => $this->current_url('ACT', $this->EE->channel_data->get_action_id(__CLASS__, 'edit_hook_action')),
+			'add_notification_url' => $this->cp_url('notification'),
+			'edit_hook_action' => $this->current_url('ACT', $this->EE->channel_data->get_action_id(__CLASS__, 'edit_notification_action')),
 			'delegates'	=> $delegate->get_delegates(FALSE, PATH_THIRD.'postmaster/delegates'),
 			'doctag_url' => $this->cp_url('doctag'),
 			'ping_url'	=> $this->current_url('ACT', $this->EE->channel_data->get_action_id(__CLASS__, 'send_email')),
@@ -122,6 +138,47 @@ class Postmaster_mcp {
 		));
 
 		return $this->EE->load->view('index', $vars, TRUE);
+	}
+	
+	public function notification()
+	{
+		$this->EE->theme_loader->javascript('postmaster');
+		$this->EE->theme_loader->javascript('codemirror');
+		$this->EE->theme_loader->javascript('modes');
+		$this->EE->theme_loader->javascript('qtip');
+		$this->EE->theme_loader->css('codemirror');
+		$this->EE->theme_loader->css('qtip');
+
+    	setcookie('postmaster_parcel_message', '', strtotime('+1 week'), '/');
+    	
+    	$saved_data = array();
+    	
+    	if($notification_id = $this->EE->input->get('id'))
+    	{
+	    	$saved_data = $this->EE->postmaster_model->get_notification($notification_id)->row_array();
+	    	$saved_data['settings'] = json_decode($saved_data['settings']);
+    	}
+    	
+		$vars = array(
+			'ib_path'  => $this->EE->theme_loader->theme_url().'postmaster/javascript/InterfaceBuilder.js',
+			'template' => new Template_Notification($saved_data)
+		);
+		
+		$title = 'New Notification';
+		
+		if($this->EE->input->get('id'))
+		{
+			$title = 'Edit Notification';	
+		}
+		
+		$this->EE->cp->set_variable('cp_page_title', $title);
+		
+		$this->EE->cp->set_right_nav(array(
+			'&larr; Back to Home'  => $this->cp_url('index'),
+			'Text Editor Settings' => $this->cp_url('editor_settings'),
+		));
+		
+		return $this->EE->load->view('notification', $vars, TRUE);
 	}
 	
 	public function hook()
@@ -236,6 +293,35 @@ class Postmaster_mcp {
 		exit($parcel_object->message);
 	}
 
+	public function notification_action()
+	{
+		$this->EE->load->library('postmaster_notification', array(
+			'base_path' => PATH_THIRD.'postmaster/notifications/'
+		));
+		
+		$id = $this->EE->input->get_post('id');
+		
+		if(!$id)
+		{
+			return;
+		}
+		
+		$notification = $this->EE->postmaster_model->get_notification($id);
+		
+		if($notification->num_rows() == 0)
+		{
+			return;
+		}
+		
+		$notification = $notification->row();
+		$notification->settings = json_decode($notification->settings);
+			
+		$obj = $this->EE->postmaster_notification->load($notification->notification, $notification);
+		$obj->set_notification($notification);
+		
+		$this->EE->postmaster_notification->trigger($obj);
+	}
+	
 	public function delete_hook_action()
 	{
 		$id  = $this->get('id');
@@ -488,6 +574,60 @@ class Postmaster_mcp {
 			$this->EE->postmaster_model->$method($parcel);
 		}
 
+		$this->EE->functions->redirect($this->post('return'));
+	}
+	
+	public function create_notification_action()
+	{
+		return $this->_notification_action('create');
+	}
+	
+	public function edit_notification_action()
+	{
+		return $this->_notification_action('edit');
+	}
+	
+	private function _notification_action($method)
+	{
+		if($method == 'add')
+		{
+			$method = 'create';
+		}
+		
+		$method .= '_notification';
+		
+		$this->EE->load->library('postmaster_lib');
+		
+		$parcel = array(
+			'site_id'            => config_item('site_id'),
+			'title'              => $this->post('title', TRUE),
+			'to_name'            => $this->post('to_name', TRUE),
+			'to_email'           => $this->post('to_email', TRUE),
+			'from_name'          => $this->post('from_name', TRUE),
+			'from_email'         => $this->post('from_email', TRUE),
+			'reply_to'           => $this->post('reply_to', TRUE),
+			'cc'                 => $this->post('cc', TRUE),
+			'bcc'                => $this->post('bcc', TRUE),
+			'subject'            => $this->post('subject', TRUE),
+			'message'            => $this->post('message', TRUE),
+			'notification'	     => $this->post('notification', TRUE),
+			'post_date_specific' => $this->post('post_date_specific', TRUE),
+			'post_date_relative' => $this->post('post_date_relative', TRUE),
+			'send_every'         => $this->post('send_every', TRUE),
+			'extra_conditionals' => $this->post('extra_conditionals'),
+			'service'            => $this->post('service', TRUE),
+			'settings'           => json_encode($this->post('setting', TRUE))
+		);
+		
+		if($this->EE->input->post('id'))
+		{
+			$this->EE->postmaster_model->$method($this->EE->input->post('id'), $parcel);
+		}
+		else
+		{
+			$this->EE->postmaster_model->$method($parcel);
+		}
+		
 		$this->EE->functions->redirect($this->post('return'));
 	}
 	

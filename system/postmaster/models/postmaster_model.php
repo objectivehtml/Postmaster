@@ -140,6 +140,11 @@ class Postmaster_model extends CI_Model {
 		$this->db->insert('postmaster_hooks', $hook);
 	}
 	
+	public function create_notification($hook)
+	{		
+		$this->db->insert('postmaster_notifications', $hook);
+	}
+	
 	public function get_installed_hooks($hook, $json_decode = TRUE)
 	{		
 		$this->db->order_by('priority', 'asc');
@@ -180,15 +185,16 @@ class Postmaster_model extends CI_Model {
 		$this->db->update('postmaster_hooks', $hook);
 	}
 	
-	public function delete_hook($id)
+	public function edit_notification($id, $notification)
 	{
-		$entry    = $this->get_hook($id)->row_array();
-		
-		$this->db->where('extension_id', $entry['extension_id']);
-		$this->db->delete('extensions');
-		
 		$this->db->where('id', $id);
-		$this->db->delete('postmaster_hooks');
+		$this->db->update('postmaster_notifications', $notification);
+	}
+	
+	public function delete_notifcation($id)
+	{
+		$this->db->where('id', $id);
+		$this->db->delete('postmaster_notifications');
 	}
 	
 	public function create_parcel($parcel)
@@ -369,6 +375,23 @@ class Postmaster_model extends CI_Model {
 	
 	public function get_hooks($params = array(), $all_sites = FALSE)
 	{
+		return $this->get('hooks', $params, $all_sites);
+	}
+	
+	public function get_notification($id)
+	{
+		$this->db->where('id', $id);
+		
+		return $this->db->get('postmaster_notifications');
+	}
+		
+	public function get_notifications($params = array(), $all_sites = FALSE)
+	{
+		return $this->get('notifications', $params, $all_sites);
+	}
+	
+	public function get($table, $params = array(), $all_sites = FALSE)
+	{
 		if(!$all_sites)
 		{
 			if(!isset($params['where']['site_id']))
@@ -377,7 +400,7 @@ class Postmaster_model extends CI_Model {
 			}
 		}
 		
-		return $this->channel_data->get('postmaster_hooks', $params);
+		return $this->channel_data->get('postmaster_'.$table, $params);
 	}
 	
 	public function get_member($member_id = FALSE, $prefix = FALSE)

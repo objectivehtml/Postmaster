@@ -9,8 +9,8 @@ require_once PATH_THIRD.'postmaster/libraries/Postmaster_core.php';
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/
- * @version		1.0.99
- * @build		20120703
+ * @version		1.3.0
+ * @build		20121222
  */
 
 abstract class Base_service extends Postmaster_core {
@@ -48,27 +48,30 @@ abstract class Base_service extends Postmaster_core {
 	}	
 }
 
-class Postmaster_Service_Response extends Base_class {
-
-	public  $parcel_id,
-			$channel_id,
-			$author_id,
-			$entry_id,
-			$gmt_date,
-			$to_name,
-			$to_email,
-			$from_name,
-			$from_email,
-			$cc,
-			$bcc,
-			$service,
-			$subject,
-			$status,
-			$message,
-			$parcel;
-
-	public function __construct($data = array())
-	{		
-		parent::__construct($data);		
+if(!class_exists('Postmaster_Service_Response'))
+{
+	class Postmaster_Service_Response extends Base_class {
+	
+		public  $parcel_id,
+				$channel_id,
+				$author_id,
+				$entry_id,
+				$gmt_date,
+				$to_name,
+				$to_email,
+				$from_name,
+				$from_email,
+				$cc,
+				$bcc,
+				$service,
+				$subject,
+				$status,
+				$message,
+				$parcel;
+	
+		public function __construct($data = array())
+		{		
+			parent::__construct($data);		
+		}
 	}
 }

@@ -204,7 +204,7 @@ if(!class_exists('Theme_loader'))
 				}
 				else
 				{					
-					$this->EE->cp->add_to_head('<script type="text/javascript" src="'.$file.'"></script>');
+					$this->EE->cp->add_to_head('<script type="text/javascript" src="'.$file.'?v='.time().'"></script>');
 				}
 			}
 		}
@@ -230,7 +230,7 @@ if(!class_exists('Theme_loader'))
 			{
 				$this->loaded_files[] = $file;
 			
-				$this->EE->cp->add_to_head('<link type="text/css" href="'.$file.'" rel="stylesheet" media="screen" />');
+				$this->EE->cp->add_to_head('<link type="text/css" href="'.$file.'?v='.time().'" rel="stylesheet" media="screen" />');
 			}
 		}
 		

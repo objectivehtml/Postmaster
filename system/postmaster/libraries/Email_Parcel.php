@@ -233,42 +233,6 @@ class Email_Parcel {
 	
 	public function member_groups()
 	{
-		/*
-		$channel_member_groups = $this->EE->channel_data->get('channel_member_groups',
-			array(
-				'where' => array(
-					'channel_id' => $this->channel_id
-				),
-				'order_by' => 'group_id',
-				'sort'     => 'ASC'
-			)
-		)->result_array();
-		
-		$groups = array();
-		
-		for($i = 1; $i < 5; $i++)
-		{
-			$group = $this->EE->channel_data->get_member_group($i)->row();
-			
-			$groups[] = $group;
-		}
-		
-		$reserved = array('Super Admins', 'Banned', 'Guests', 'Pending');
-
-		foreach($channel_member_groups as $row)
-		{
-			$group = $this->EE->channel_data->get_member_group($row['group_id']);
-		
-			if(!in_array($group->row('group_title'), $reserved))
-			{
-				if($group->num_rows() == 1)
-				{
-					$groups[] = $group->row();
-				}
-			}
-		}
-		*/
-		
 		$member_groups = $this->EE->channel_data->get('member_groups', array(
 			'where' => array(
 				'site_id' => config_item('site_id')

@@ -206,6 +206,74 @@ class Postmaster_upd {
 				'type'	=> 'text'
 			),
 		),
+
+		'postmaster_notifications' 	=> array(
+			'id'	=> array(
+				'type'				=> 'int',
+				'constraint'		=> 100,
+				'primary_key'		=> TRUE,
+				'auto_increment'	=> TRUE
+			),
+			'site_id' => array(
+				'type'			=> 'int',
+				'constraint' 	=> 100
+			),
+			'title'  => array(
+				'type'       => 'varchar',
+				'constraint' => 250
+			),
+			'service'  => array(
+				'type'       => 'varchar',
+				'constraint' => 250
+			),
+			'notification'  => array(
+				'type'       => 'varchar',
+				'constraint' => 250
+			),
+			'to_name' => array(
+				'type'	=> 'text'
+			),
+			'to_email' => array(
+				'type'	=> 'text'
+			),
+			'from_name' => array(
+				'type'	=> 'text'
+			),
+			'from_email' => array(
+				'type'	=> 'text'
+			),
+			'reply_to' => array(
+				'type'	=> 'text'
+			),
+			'cc' => array(
+				'type'	=> 'text'
+			),
+			'bcc' => array(
+				'type'	=> 'text'
+			),
+			'subject' => array(
+				'type'	=> 'text'
+			),
+			'message'	=> array(
+				'type'	=> 'longtext'
+			),
+			'settings' => array(
+				'type'	=> 'longtext'
+			),
+			'post_date_specific'  => array(
+				'type' => 'text'
+			),
+			'post_date_relative'  => array(
+				'type' => 'text'
+			),
+			'send_every'  => array(
+				'type' => 'varchar',
+				'constraint' => 100
+			),
+			'extra_conditionals' => array(
+				'type'	=> 'text'
+			),
+		),
 		'postmaster_queue' 	=> array(
 			'id'	=> array(
 				'type'				=> 'int',
@@ -423,6 +491,22 @@ class Postmaster_upd {
 		array(
 		    'class'     => 'Postmaster_mcp',
 		    'method'    => 'trigger_hook'
+		),
+		array(
+		    'class'     => 'Postmaster_mcp',
+		    'method'    => 'create_notification_action'
+		),
+		array(
+		    'class'     => 'Postmaster_mcp',
+		    'method'    => 'edit_notification_action'
+		),
+		array(
+		    'class'     => 'Postmaster_mcp',
+		    'method'    => 'duplicate_notification_action'
+		),
+		array(
+		    'class'     => 'Postmaster_mcp',
+		    'method'    => 'notification_action'
 		)
 	);
 	
@@ -443,11 +527,11 @@ class Postmaster_upd {
 	
 	public function install()
 	{	
+		$this->EE->load->library('postmaster_installer');
 		$this->EE->load->dbforge();
 		
 		//create tables from $this->tables array
-		$this->EE->load->library('Data_forge');
-		
+		$this->EE->load->library('Data_forge');		
 		$this->EE->data_forge->update_tables($this->tables);
 		
 		$data = array(
@@ -479,7 +563,9 @@ class Postmaster_upd {
 			$this->EE->db->insert('actions', $action);
 		
 		$this->_set_defaults();
-				
+			
+		$this->EE->postmaster_installer->install();
+		
 		return TRUE;
 	}
 	
@@ -544,6 +630,8 @@ class Postmaster_upd {
 			$this->EE->postmaster_lib = new Postmaster_lib();
 			$this->EE->postmaster_model->assign_site_id();
 		}
+		
+		$this->EE->postmaster_installer->update($current);
 		
 	    return TRUE;
 	}

@@ -120,6 +120,7 @@ if(!class_exists('Interface_Builder'))
 			foreach($fields as $field_name => $field)
 			{
 				$data = isset($this->data->$field_name) ? $this->data->$field_name : NULL;
+				
 				$obj  = $this->load($field_name, $this->convert_array($field));
 							
 				$return[$field_name] = (object) array(

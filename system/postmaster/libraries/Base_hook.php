@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once 'Base_class.php';
+require_once 'Postmaster_base_api.php';
 
 /**
  * Base Hook
@@ -9,21 +9,12 @@ require_once 'Base_class.php';
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/
- * @version		1.2
- * @build		20121129
+ * @version		1.3.0
+ * @build		20121221
  */
 
-abstract class Base_hook extends Base_class {
-		
-	/**
-	 * Hook Title
-	 * 
-	 * @var string
-	 */
-	 		 	
-	protected $title;
-	
-		
+abstract class Base_hook extends Postmaster_base_api {
+	 
 	/**
 	 * Actual EE hook name to use
 	 * 
@@ -40,6 +31,15 @@ abstract class Base_hook extends Base_class {
 	 */
 	 		 
 	protected $var_prefix = 'hook';
+	
+	
+	/**
+	 * Class suffix
+	 * 
+	 * @var string
+	 */
+	 		 
+	protected $class_suffix = '_postmaster_hook';
 	
 	
 	/**
@@ -92,30 +92,7 @@ abstract class Base_hook extends Base_class {
 			)
 		)
 	);
-		
-	
-	/**
-	 * Fields to parse
-	 * 
-	 * @var string
-	 */
-	 		 
-	protected static $parse_fields = array(
-		'to_name',
-		'to_email',
-		'from_name',
-		'from_email',
-		'cc',
-		'bcc',
-		'subject',
-		'message',
-		'post_date_specific',
-		'post_date_relative',
-		'send_every',
-		'extra_conditionals'
-	);
-	
-	
+			
 	/**
 	 * Sets all the hook default and loads necessary dependencies
 	 *
@@ -126,48 +103,8 @@ abstract class Base_hook extends Base_class {
 	 		
 	public function __construct($params = array())
 	{
-		parent::__construct($params = array());
-		
-		$this->EE =& get_instance();
-		
-		$this->EE->load->driver('interface_builder');
-		
-		$this->name      = strtolower(str_replace('_postmaster_hook', '', get_class($this)));
-		$this->file_name    = ucfirst($this->name).'.php';
-		$this->IB           = $this->EE->interface_builder;
-		$this->channel_data = $this->EE->channel_data;	
-		$this->settings     = $this->get_settings();
-								
-		$this->IB->set_var_name($this->name);
-		$this->IB->set_prefix('setting');
-		$this->IB->set_use_array(TRUE);
+		parent::__construct($params);
 	}	
-	
-	
-	/**
-	 * Display the settings table
-	 *
-	 * @access	public
-	 * @param	array 	The InterfaceBuilder schema array 
-	 * @return	string
-	 */
-	 		
-	public function display_settings($data = array())
-	{
-		if(count($this->fields) == 0)
-		{		
-			return FALSE;
-		}
-		
-		$settings = isset($data->{$this->name}) ? $data->{$this->name} : $this->get_default_settings();
-		
-		$this->IB->set_var_name($this->name);
-		$this->IB->set_prefix('setting');
-		$this->IB->set_use_array(TRUE);
-				
-		return $this->IB->table($this->fields, $settings, postmaster_table_attr());
-	}
-	
 		
 	/**
 	 * Checks a response and sets the end_script to TRUE of needed
@@ -181,55 +118,7 @@ abstract class Base_hook extends Base_class {
 	{
 		return $this->EE->postmaster_hook->end_script($response);
 	}
-	
-	
-	/**
-	 * Pre process allows devs to execute arbitrary logic before the 
-	 * hook's email is sent.
-	 *
-	 * @access	public
-	 * @param	array
-	 * @return	null
-	 */
-	 	
-	public function pre_process($vars = array())
-	{
-		return;
-	}
-	
-	
-	/**
-	 * Post process allows devs to execute arbitrary logic after the 
-	 * hook's email is sent.
-	 *
-	 * @access	public
-	 * @param	array
-	 * @return	null
-	 */
-	 		
-	public function post_process($vars = array())
-	{
-		return;
-	}
 		
-	
-	/**
-	 * Triggers the email to be sent
-	 *
-	 * @access	public
-	 * @param	array	An array of custom variables to parse
-	 * @param	mixed 	An array of member data. If FALSE, default is used
-	 * @param	mixed 	If 'Undefined', NULL is returned, otherwise the
-	 					the passed value is returned
-	 * @return	
-	 */
-	 	
-	public function trigger()
-	{
-		return $this->send();
-	}
-	
-	
 	/**
 	 * Gets all the installed hooks
 	 *
@@ -241,35 +130,6 @@ abstract class Base_hook extends Base_class {
 	public function get_installed_hooks($hook)
 	{
 		return $this->EE->postmaster_model->get_installed_hooks($hook);
-	}
-	
-	
-	/**
-	 * Parse the hook object
-	 *
-	 * @access	public
-	 * @param	string 	The hook name
-	 * @param	array 	An array of custom vars to parse
-	 * @param	mixed 	An array of member data. If FALSE, default is used
-	 * @return	
-	 */
-	 		
-	public function parse($hook, $vars = array(), $member_data = FALSE, $entry_data = array())
-	{
-		unset($hook['settings']);
-		
-		$vars = $this->EE->channel_data->utility->add_prefix($this->var_prefix, $vars);
-		
-		if(!$member_data)
-		{
-			$member_data = $this->EE->postmaster_model->get_member(FALSE);
-		}
-		
-		$member_data = $this->EE->channel_data->utility->add_prefix('member', $member_data);
-				
-		$vars = array_merge($member_data, $vars);
-		
-		return $this->EE->channel_data->tmpl->parse_array($hook, $vars, $entry_data, FALSE, array(), $this->var_prefix.':');
 	}
 	
 	
@@ -286,7 +146,6 @@ abstract class Base_hook extends Base_class {
 	 	
 	public function send($vars = array(), $member_data = FALSE, $entry_data = array(), $return_data = 'Undefined')
 	{	
-	
 		if(is_object($member_data))
 		{
 			$member_data = (array) $member_data;	

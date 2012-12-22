@@ -15,6 +15,7 @@ class Template_Hook extends Template_Base {
 		parent::__construct($params);
 		
 		$this->EE->load->driver('Interface_builder');
+		
 		$this->EE->load->library('postmaster_hook', array(
 			'base_path' => PATH_THIRD.'postmaster/hooks/'
 		));
@@ -37,10 +38,10 @@ class Template_Hook extends Template_Base {
 		
 		foreach($this->EE->postmaster_hook->get_hooks() as $hook)
 		{
-			if(!$reserved && !in_array($hook->get_file_name(), $this->EE->postmaster_hook->get_reserved_files()) || $reserved)
+			if(!$reserved && !in_array($hook->get_filename(), $this->EE->postmaster_hook->get_reserved_files()) || $reserved)
 			{
 				$return[] = $hook;
-			}	
+			}
 		}
 		
 		return $return;

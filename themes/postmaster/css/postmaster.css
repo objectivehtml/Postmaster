@@ -193,6 +193,7 @@
 	margin: 1em 0 0;
 }
 
+.panel,
 .service-panel {
 	display: none;
 	margin: 2em 0 0;
@@ -591,7 +592,7 @@ background: linear-gradient(top, rgba(127,127,127,1) 0%,rgba(56,56,56,1) 50%,rgb
  
 .group,
 .columns {
-	display: inline-block;
+	display: block;
 	}
 
 .columns { width: 100%; }
