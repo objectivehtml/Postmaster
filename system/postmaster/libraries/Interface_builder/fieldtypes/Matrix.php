@@ -17,7 +17,7 @@ class Matrix_IBField extends IBFieldtype {
 				$attribute_array[] = $name.'="'.$value.'"';
 			}
 		}
-
+		
 		$html[] = '<div id="ib-matrix-'.$this->name.'" data-name="'.$this->name.'" class="ib-matrix">';
 		$html[] = '<table '.implode(NULL, $attribute_array).' class="ib-field-matrix">';
 		$html[] = '<thead><tr><th style="width:1px"></th>';

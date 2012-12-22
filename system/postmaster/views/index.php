@@ -94,9 +94,9 @@
 	</tbody>
 </table>
 
-<h2><a href="#notications" class="help">Notifications <span>(?)</span></a></h2>
-
 <a href="<?php echo $add_notification_url?>" class="action button"><span class="icon-plus"></span> New Notification</a>
+
+<h2><a href="#notications" class="help">Notifications <span>(?)</span></a></h2>
 
 <table class="mainTable" cellpadding="0" cellspacing="0">
 	<thead>

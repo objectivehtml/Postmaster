@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once 'Base_class.php';
+require_once 'Postmaster_base_api.php';
 
 /**
  * Base Hook

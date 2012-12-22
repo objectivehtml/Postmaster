@@ -237,7 +237,7 @@ abstract class Postmaster_base_api extends Base_class {
 	 * @return	
 	 */
 	 
-	abstract function send($vars = array(), $member_data = FALSE, $entry_data = array());
+	abstract function send();
 	
 	
 	/**

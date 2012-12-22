@@ -315,7 +315,9 @@ class Postmaster_mcp {
 		
 		$notification = $notification->row();
 		$notification->settings = json_decode($notification->settings);
-			
+		
+		// var_dump($notification->settings);exit();
+
 		$obj = $this->EE->postmaster_notification->load($notification->notification, $notification);
 		$obj->set_notification($notification);
 		
