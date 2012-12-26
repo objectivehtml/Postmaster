@@ -90,22 +90,6 @@ class Postmaster_service extends Postmaster_base_lib {
 		return parent::get_objects();
 	}	
 	
-	
-	/**
-	 * Load Service
-	 *
-	 * @access	public
-	 * @param	string  A valid file name
-	 * @return	mixed
-	 */
-	
-	public function load($file, $params = array())
-	{
-		$service = parent::load($file, $params);
-		
-		$this->log_action('The '.$service.' email service was instantiated.');
-	}
-	
 	/**
 	 * Total Services
 	 *
