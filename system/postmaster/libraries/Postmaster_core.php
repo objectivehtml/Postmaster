@@ -244,4 +244,17 @@ abstract class Postmaster_core extends Base_class {
 	{
 		return;
 	}
+	
+	
+	/**
+	 * Uninstall the API
+	 *
+	 * @access	public
+	 * @return	
+	 */
+	 	
+	public function uninstall()
+	{
+		return;
+	}
 }

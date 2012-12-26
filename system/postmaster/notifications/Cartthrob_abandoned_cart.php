@@ -123,7 +123,7 @@ class Cartthrob_abandoned_cart_postmaster_notification extends Base_notification
 	{
 		$response = FALSE;
 		
-		$entries = $this->EE->channel_data->get('cartthrob_cart', array(
+		$entries = $this->channel_data->get('cartthrob_cart', array(
 			'left join' => array(
 				'postmaster_cartthrob_emails' => 'cartthrob_cart.id = postmaster_cartthrob_emails.cart_id'
 			)
@@ -131,10 +131,8 @@ class Cartthrob_abandoned_cart_postmaster_notification extends Base_notification
 		
 		if($entries->num_rows() > 0)
 		{
-			$entry = $entries->row();
-			
-			$localized_cart = $this->EE->localize->set_localized_time($entry->timestamp);
-			$intervals      = $this->settings->cartthrob_abandoned_cart->email_intervals;
+			$entry     = $entries->row();
+			$intervals = $this->settings->cartthrob_abandoned_cart->email_intervals;
 			
 			if ($entries)
 			{

@@ -46,6 +46,7 @@ class Postmaster_lib {
 	{
 		$this->EE =& get_instance();
 			
+		$this->EE->load->config('postmaster_config');
 		$this->EE->load->model('postmaster_model');
 		$this->EE->load->driver('channel_data');
 		$this->EE->load->helper('postmaster_helper');
@@ -269,11 +270,24 @@ class Postmaster_lib {
 			if($ignore_date || $send_date <= $this->EE->localize->now)
 			{
 				$response = $service->send($parsed_object, $parcel, TRUE);
+				
+				if($response->status == 'success')
+				{
+					$this->log_action('An email was successfully sent to "'.(!empty($parsed_object->to_email) ? $parsed_object->to_email : 'N/A').'".');
+				}
+				else
+				{					
+					$this->log_action('An email was failed to send to "'.(!empty($parsed_object->to_email) ? $parsed_object->to_email : 'N/A').'".');
+				}
+				
 				$this->model->save_response($response);
 
 				if(!empty($parsed_object->send_every))
 				{
 					$gmt_date = $this->EE->localize->set_localized_time(strtotime($parsed_object->send_every, $this->EE->localize->now));
+					
+					$this->log_action('The email to "'.$parsed_object->to_email.'" is set to be sent every "'.$parsed_object->send_every.'". The next time it will be sent will be '.date('Y-m-d H:i', $send_date).'.');
+				
 					$this->model->add_to_queue($parsed_object, $parcel, $gmt_date);
 				}
 				
@@ -281,11 +295,13 @@ class Postmaster_lib {
 			}
 			else
 			{
+				$this->log_action('The email to "'.$parsed_object->to_email.'" has been added to the queue and is set to be sent at '.date('Y-m-d H:i', $send_date).'.');
 				$this->model->add_to_queue($parsed_object, $parcel);
 			}
 		}
 		else
 		{
+			$this->log_action('"'.$parsed_object->to_email.'" is not a valid email. It has been removed from the queue.');		
 			$this->model->unsubscribe($parsed_object->to_email);
 		}
 		
@@ -354,10 +370,14 @@ class Postmaster_lib {
 				'site_id' => $meta['site_id']	
 			)
 		));
+		
+		$this->log_action('Entry '.$entry_id.' validation has started. There '.(count($parcels) == 1 ? 'is' : 'are').'  '.count($parcels).' parcel'.(count($parcels) > 1 ? 's' : NULL).' to validate.');
 
 		foreach($parcels as $index => $parcel)
 		{
 			$entry_data = isset($data['revision_post']) ? $data['revision_post'] : $data;
+
+			//$this->log_action('Entry '.$entry_id.' validation has started. There are '.count($parcels).' parcels to validate.');
 
 			if($parcel->channel_id == $data['channel_id'])
 			{
@@ -366,14 +386,13 @@ class Postmaster_lib {
 				if($this->validate_trigger($parcel->trigger))
 				{
 					if($this->validate_categories($entry_data['category'], $parcel->categories))
-					{
+					{		
 						if($this->validate_member($meta['author_id'], $parcel->member_groups))
-						{
+						{		
 							if($this->validate_status($meta['status'], $parcel->statuses))
-							{		
+							{	
 								$entry  = $this->EE->channel_data->get_channel_entry($entry_id)->row();
-								$parcel = $this->append($parcel, 'entry', $entry);
-							
+								$parcel = $this->append($parcel, 'entry', $entry);							
 								
 								$member_id = FALSE;
 								
@@ -387,13 +406,17 @@ class Postmaster_lib {
 								$parsed_object->settings = $parcels[$index]->settings;
 
 								if($this->validate_conditionals($parsed_object->extra_conditionals))
-								{
+								{	
 									$this->send($parsed_object, $parcel);
 								}
 							}
 						}
 					}
 				}
+			}
+			else
+			{				
+				$this->log_action('The "'.$parcel->title.'" parcel does not have a valid channel_id, which is "'.$data['channel_id'].'"');
 			}
 		}
 	}
@@ -413,10 +436,12 @@ class Postmaster_lib {
 
 		if(empty($extra_conditionals) || $extra_conditionals == 'TRUE')
 		{
+			//$this->log_action('The parcel has valid extra conditions.');				
 			return TRUE;
 		}
 		else
 		{
+			$this->log_action('The parcel does not have valid extra conditions.');
 			return FALSE;
 		}
 	}
@@ -441,7 +466,18 @@ class Postmaster_lib {
 			}
 		}
 		
-		return count($valid_categories) == $valid ? TRUE : FALSE;
+		if(count($valid_categories) == $valid)
+		{
+			$valid = TRUE;			
+			//$this->log_action('The parcel has a valid category.');			
+		}
+		else
+		{		
+			$valid = FALSE;
+			$this->log_action('The parcel does not have a valid category.');
+		}
+
+		return $valid;
 	}
 	
 	/**
@@ -519,6 +555,15 @@ class Postmaster_lib {
 				$valid = TRUE;
 			}
 		}
+		
+		if($valid)
+		{
+			//$this->log_action('The parcel has a valid author of "'.$subject.'".');			
+		}
+		else
+		{
+			$this->log_action('The parcel does not have a valid author, which has a member_id of '.$subject.'.');
+		}
 
 		return $valid;
 	}
@@ -551,6 +596,15 @@ class Postmaster_lib {
 			$valid = TRUE;
 		}
 		
+		if($valid)
+		{
+			//$this->log_action('The parcel has a valid status of "'.$subject.'".');
+		}
+		else
+		{
+			$this->log_action('The parcel does not have a valid status, which is "'.$subject.'".');
+		}
+		
 		return $valid;
 	}
 
@@ -572,17 +626,38 @@ class Postmaster_lib {
 
 		$entry_trigger = $this->EE->session->cache('postmaster', 'entry_trigger');
 
-		$valid  	   = FALSE;
-
 		if(in_array($entry_trigger, $triggers))
 		{
 			$valid = TRUE;
+			//$this->log_action('The parcel has a valid entry trigger.');		
 		}
-
+		else
+		{
+			$valid = FALSE;
+			$this->log_action('The parcel does not have a valid entry trigger.');	
+		}
+		
 		return $valid;
+	}	
+	
+		
+	/**
+	 * Log Action
+	 *
+	 * @access	public
+	 * @param	string  The string to log
+	 * @return	mixed
+	 */
+	
+	public function log_action($str)
+	{
+		if(config_item('postmaster_debug'))
+		{
+			$this->EE->load->library('logger');
+			$this->EE->logger->log_action($str);
+		}
 	}
-
-
+	
 	/**
 	 * Return a CP url
 	 *

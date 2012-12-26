@@ -187,4 +187,20 @@ abstract class Postmaster_base_lib extends Base_class {
 		
 		return FALSE;
 	}	
+	
+		
+	/**
+	 * Log Action
+	 *
+	 * @access	public
+	 * @param	string  The string to log
+	 * @return	mixed
+	 */
+	
+	public function log_action($str)
+	{	
+		$this->EE->load->library('postmaster_lib');	
+		
+		$this->EE->postmaster_lib->log_action($str);
+	}
 }

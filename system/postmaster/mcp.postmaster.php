@@ -295,6 +295,8 @@ class Postmaster_mcp {
 
 	public function notification_action()
 	{
+		$this->EE->TMPL->log_item('test');
+		
 		$this->EE->load->library('postmaster_notification', array(
 			'base_path' => PATH_THIRD.'postmaster/notifications/'
 		));
