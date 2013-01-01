@@ -1,6 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once 'Markdown.php';
+if(!function_exists('Markdown'))
+{
+	require_once 'Markdown.php';
+}
 
 class Doctag {
 
