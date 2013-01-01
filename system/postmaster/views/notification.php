@@ -135,12 +135,6 @@
 
 					<div class="window">
 
-						<div class="panel container">
-
-							<h3><a href="#preview" class="help">Preview<span> (?)</span></a></h3>
-						
-						</div>
-
 						<iframe src="" class="pain"></iframe> 
 
 					</div>
