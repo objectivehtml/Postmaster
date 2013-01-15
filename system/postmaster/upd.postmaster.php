@@ -635,6 +635,7 @@ class Postmaster_upd {
 			$this->EE->postmaster_model->assign_site_id();
 		}
 		
+		$this->EE->load->library('postmaster_installer');
 		$this->EE->postmaster_installer->update($current);
 		
 	    return TRUE;
