@@ -35,12 +35,24 @@ class Postmaster_model extends CI_Model {
 
 	public function add_to_queue($parsed_object, $parcel, $date = FALSE)
 	{
-		$this->db->where(array(
-			'parcel_id'     => $parcel->id,
-			'channel_id'    => $parcel->channel_id,
-			'author_id'     => $parcel->entry->author_id,
-			'entry_id'      => $parcel->entry->entry_id,
-		));
+		$where = array(
+			'parcel_id'     => $parcel->id
+		);
+		
+		foreach(array('author_id', 'channel_id', 'entry_id') as $key)
+		{
+			if(isset($parcel->entry->$key))
+			{
+				$where[$key] = $parcel->entry->$key;
+			}
+		}
+		
+		if(isset($parsed_object->hook_id))
+		{
+			$where['hook_id'] = $parsed_object->hook_id;
+		}
+		
+		$this->db->where($where);
 
 		$existing = $this->db->get('postmaster_queue');
 
@@ -51,11 +63,7 @@ class Postmaster_model extends CI_Model {
 				$date = $this->postmaster_lib->get_send_date($parsed_object);
 			}
 
-			$data = array(
-				'parcel_id'     => $parcel->id,
-				'channel_id'    => $parcel->channel_id,
-				'author_id'     => $parcel->entry->author_id,
-				'entry_id'      => $parcel->entry->entry_id,
+			$data = array_merge($where, array(
 				'gmt_date'      => $this->localize->now,
 				'gmt_send_date' => $date,
 				'service'       => $parcel->service,
@@ -68,7 +76,7 @@ class Postmaster_model extends CI_Model {
 				'subject'       => $parsed_object->subject,
 				'message'       => $parsed_object->message,
 				'send_every'    => $parsed_object->send_every
-			);
+			));
 
 			$this->db->insert('postmaster_queue', $data);
 		}

@@ -293,6 +293,10 @@ class Postmaster_upd {
 				'type'			=> 'int',
 				'constraint' 	=> 100
 			),
+			'hook_id' => array(
+				'type'			=> 'int',
+				'constraint' 	=> 100
+			),
 			'entry_id' => array(
 				'type'			=> 'int',
 				'constraint' 	=> 100

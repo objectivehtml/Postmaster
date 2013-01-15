@@ -167,6 +167,8 @@ abstract class Base_hook extends Postmaster_base_api {
 	
 		$obj = array('end_script' => $end_script);
 		
+		$parsed_hook['hook_id'] = $hook['id'];
+		
 		if($this->EE->postmaster_lib->validate_conditionals($parsed_hook['extra_conditionals']))
 		{
 			$obj['response'] = $this->EE->postmaster_lib->send($parsed_hook, $hook);
