@@ -238,6 +238,8 @@ class Postmaster_lib {
 			
 		}
 		
+		$parse_vars[$prefix.$delimeter.'safecracker'] = isset($this->EE->safecracker) ? TRUE : FALSE;
+		
 		$parse_vars = array_merge($parse_vars, $this->EE->postmaster_model->get_member($member_id, 'member'));
 		
 		$entry  = $parcel_copy->entry;
@@ -394,6 +396,8 @@ class Postmaster_lib {
 								$entry  = $this->EE->channel_data->get_channel_entry($entry_id)->row();
 								$parcel = $this->append($parcel, 'entry', $entry);							
 								
+								$this->append($parcel, 'safecracker', (isset($this->EE->safecracker) ? TRUE : FALSE));
+								
 								$member_id = FALSE;
 								
 								if(isset($parcel->entry->author_id))
@@ -402,7 +406,6 @@ class Postmaster_lib {
 								}
 								
 								$parsed_object = $this->parse($parcel, $member_id);
-						
 								$parsed_object->settings = $parcels[$index]->settings;
 
 								if($this->validate_conditionals($parsed_object->extra_conditionals))
