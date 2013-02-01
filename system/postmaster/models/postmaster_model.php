@@ -126,11 +126,16 @@ class Postmaster_model extends CI_Model {
 	}
 	
 	public function create_hook($hook)
-	{		
+	{	
+		$this->load->library('postmaster_hook');
+		$this->postmaster_hook->set_base_path(PATH_THIRD . 'postmaster/hooks/');
+		
+		$obj = $this->postmaster_hook->get_hook(!empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook']);
+			
 		$extension = array(
 			'class'    => 'Postmaster_ext',
 			'method'   => 'trigger_hook',
-			'hook'     => !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'],
+			'hook'     => $obj->get_hook(),
 			'priority' => $hook['priority'],
 			'version'  => POSTMASTER_VERSION,
 			'enabled'  => 'y'
@@ -201,10 +206,15 @@ class Postmaster_model extends CI_Model {
 	{
 		$saved_hook = $this->get_hook($id);
 		
+		$this->load->library('postmaster_hook');
+		$this->postmaster_hook->set_base_path(PATH_THIRD . 'postmaster/hooks/');
+		
+		$obj = $this->postmaster_hook->get_hook(!empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook']);
+			
 		$extension = array(
 			'class'    => 'Postmaster_ext',
 			'method'   => 'trigger_hook',
-			'hook'     => !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'],
+			'hook'     => $obj->get_hook(),
 			'priority' => $hook['priority'],
 			'version'  => POSTMASTER_VERSION,
 			'enabled'  => 'y'

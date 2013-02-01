@@ -68,14 +68,14 @@ if(!class_exists('BaseClass'))
 					$newMethod[] = $part;
 				}
 				
-				$method = implode('', $newMethod);
-				
-				return call_user_func_array(array($this, $method), $args);
+				//$method = implode('', $newMethod);
+			
+				//return call_user_func_array(array($this, $method), $args);
 			}
 			
 			foreach($magic_methods as $replace)
 			{
-				$regex = "/^(".$replace.")([A-Z]\w*)/";
+				$regex = "/^(".$replace.")_([a-zA-Z]\w*)/";
 				
 		    	if(preg_match($regex, $method))
 		    	{	
@@ -96,7 +96,7 @@ if(!class_exists('BaseClass'))
 	    			}		    		
 			    }
 		    }
-		    
+		    	
 		    if(!isset($property))
 		    {
 				return;    
