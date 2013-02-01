@@ -118,7 +118,18 @@ abstract class Base_hook extends Postmaster_base_api {
 	{
 		return $this->EE->postmaster_hook->end_script($response);
 	}
-		
+	
+	/**
+	 * Gets the name of the hook
+	 *
+	 * @access	public
+	 * @return	string
+	 */
+	public function get_hook()
+	{
+		return !empty($this->hook) ? $this->hook : $this->name;	
+	}
+	
 	/**
 	 * Gets all the installed hooks
 	 *

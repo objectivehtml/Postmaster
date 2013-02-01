@@ -153,6 +153,30 @@ class Postmaster_model extends CI_Model {
 		$this->db->insert('postmaster_notifications', $hook);
 	}
 	
+	public function delete_hook($hook)
+	{
+		$hook = $this->get_hook($hook);
+		
+		if($hook->num_rows() == 0)
+		{
+			return;
+		}
+		
+		$name = $hook->row('installed_hook');
+		
+		if($hook->num_rows() == 1)
+		{
+			$this->db->delete('extensions', array(
+				'class' => 'Postmaster_mcp',
+				'hook'  => $name
+			));	
+		}
+		
+		$this->db->delete('postmaster_hooks', array(
+			'id' => $hook->row('id')
+		));
+	}
+	
 	public function get_installed_hooks($hook, $json_decode = TRUE)
 	{		
 		$this->db->order_by('priority', 'asc');
