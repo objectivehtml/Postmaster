@@ -173,13 +173,14 @@ class Postmaster_model extends CI_Model {
 			return;
 		}
 		
-		$name = $hook->row('installed_hook');
+		$name = $hook->row('actual_hook_name');
 		
 		if($hook->num_rows() == 1)
 		{
 			$this->db->delete('extensions', array(
-				'class' => 'Postmaster_mcp',
-				'hook'  => $name
+				'class'  => 'Postmaster_ext',
+				'method' => 'trigger_hook',
+				'hook'   => $name
 			));	
 		}
 		
