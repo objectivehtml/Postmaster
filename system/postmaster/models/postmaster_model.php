@@ -141,14 +141,20 @@ class Postmaster_model extends CI_Model {
 			'enabled'  => 'y'
 		);
 		
-		$this->db->insert('extensions', $extension);
+		$existing_ext = $this->db->get_where('extensions', $extension);
+		
+		if($existing_ext->num_rows() == 0)
+		{
+			$this->db->insert('extensions', $extension);
+		}
 		
 		if(!isset($hook['site_id']))
 		{
-			$hook['site_id']	  = config_item('site_id');
+			$hook['site_id'] = config_item('site_id');
 		}
 		
-		$hook['extension_id'] = $this->db->insert_id();
+		$hook['actual_hook_name'] = $obj->get_hook();
+		$hook['extension_id']     = $this->db->insert_id();
 		
 		$this->db->insert('postmaster_hooks', $hook);
 	}
@@ -179,6 +185,13 @@ class Postmaster_model extends CI_Model {
 		
 		$this->db->delete('postmaster_hooks', array(
 			'id' => $hook->row('id')
+		));
+	}
+	
+	public function get_actual_installed_hooks($hook)
+	{
+		return $this->db->get_where('postmaster_hooks', array(
+			'actual_hook_name' => $hook
 		));
 	}
 	
@@ -219,6 +232,8 @@ class Postmaster_model extends CI_Model {
 			'version'  => POSTMASTER_VERSION,
 			'enabled'  => 'y'
 		);
+		
+		$hook['actual_hook_name'] = $obj->get_hook();
 		
 		$this->db->where('extension_id', $saved_hook->row('extension_id'));
 		$this->db->update('extensions', $extension);

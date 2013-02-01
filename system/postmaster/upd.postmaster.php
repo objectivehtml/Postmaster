@@ -154,6 +154,10 @@ class Postmaster_upd {
 				'type'       => 'varchar',
 				'constraint' => 250
 			),
+			'actual_hook_name'  => array(
+				'type'       => 'varchar',
+				'constraint' => 250
+			),
 			'priority'  => array(
 				'type'       => 'varchar',
 				'constraint' => 250
@@ -637,6 +641,24 @@ class Postmaster_upd {
 		
 		$this->EE->load->library('postmaster_installer');
 		$this->EE->postmaster_installer->update($current);
+		
+		$hooks = $this->EE->postmaster_model->get_hooks();
+		
+		if($hooks->num_rows() > 0)
+		{
+			$this->EE->load->library('postmaster_hook');
+			$this->EE->postmaster_hook->set_base_path(PATH_THIRD . 'postmaster/hooks/');
+		
+			foreach($hooks->result_array() as $hook)
+			{
+				$obj = $this->EE->postmaster_hook->get_hook(!empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook']);
+				
+				$this->EE->db->where('id', $hook['id']);
+				$this->EE->db->update('postmaster_hooks', array(
+					'actual_hook_name' => $obj->get_hook()
+				));
+			}
+		}
 		
 	    return TRUE;
 	}
