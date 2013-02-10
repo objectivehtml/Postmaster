@@ -116,7 +116,9 @@ class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 			'email'      => $this->param('email', FALSE, FALSE, TRUE),
 			'id'	 	 => $this->param('list', FALSE, FALSE, TRUE),
 			'email_type' => $this->param('email_type', 'html'),
-			'name' 		 => $this->param('name', $this->param('email'))
+			'name' 		 => $this->param('name', $this->param('email')),
+			'first_name' => $this->param('first_name', $this->param('fname')),
+			'last_name'  => $this->param('last_name', $this->param('lname')),
 		);
 		
 		foreach($this->EE->TMPL->tagparams as $index => $value)
@@ -180,7 +182,9 @@ class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 						'api_key'    => $api_key,
 						'email'      => $this->post('email', FALSE),
 						'id'	 	 => $this->post($prefix.'list', TRUE),
-						'email_type' => $this->post('email_type', FALSE, 'html')
+						'email_type' => $this->post('email_type', FALSE, 'html'),
+						'first_name' => $this->post('first_name', FALSE),
+						'last_name'  => $this->post('last_name', FALSE)
 					);
 					
 					$reserved = array('XID', 'site_url', 'required', 'secure_return', 'ajax_response', 'base_form_submit', 'return', 'rule', 'email');

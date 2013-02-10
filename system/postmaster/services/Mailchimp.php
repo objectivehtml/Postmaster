@@ -242,6 +242,16 @@ MailChimp helps you design email newsletters, share them on social networks, int
 			'send_welcome'      => (bool) $this->param($data['post'], 'send_welcome', FALSE),	
 		);
 		
+		if(isset($data['first_name']) && $data['first_name'])
+		{
+			$params['fname'] = $data['first_name'];
+		}
+		
+		if(isset($data['last_name']) && $data['last_name'])
+		{
+			$params['lname'] = $data['last_name'];
+		}
+		
 		$unset = array('double_optin', 'update_existing', 'replace_interests', 'send_welcome');
 		
 		foreach($unset as $var)
