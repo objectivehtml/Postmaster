@@ -183,8 +183,8 @@ class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 						'email'      => $this->post('email', FALSE),
 						'id'	 	 => $this->post($prefix.'list', TRUE),
 						'email_type' => $this->post('email_type', FALSE, 'html'),
-						'first_name' => $this->post('first_name', FALSE),
-						'last_name'  => $this->post('last_name', FALSE)
+						'first_name' => $this->post('first_name', FALSE, $this->post('fname', FALSE)),
+						'last_name'  => $this->post('last_name', FALSE, $this->post('lname', FALSE))
 					);
 					
 					$reserved = array('XID', 'site_url', 'required', 'secure_return', 'ajax_response', 'base_form_submit', 'return', 'rule', 'email');

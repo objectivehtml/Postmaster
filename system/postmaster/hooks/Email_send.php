@@ -14,23 +14,30 @@ class Email_send_postmaster_hook extends Base_hook {
 	{
 		$parse_vars = array(
 			'headers' 		=> array(
-				$vars[0]['headers']
+				$vars['headers']
 			),
-			'header_str'    => $vars[0]['header_str'],
-			'header_string' => $vars[0]['header_str'],
-			'recipients'    => $vars[0]['recipients'],
-			'from_email'	=> $vars[0]['headers']['From'],
-			'from_name'	    => $vars[0]['headers']['From'],
-			'to_email'      => $vars[0]['recipients'],
-			'to_name' 		=> $vars[0]['recipients'],
-			'reply_to'		=> isset($vars[0]['headers']['Reply-To']) ? $vars[0]['headers']['Reply-To'] : NULL,
-			'cc' 			=> implode(',', $vars[0]['cc_array']),
-			'bcc' 			=> implode(',', $vars[0]['bcc_array']),
-			'subject'       => $vars[0]['subject'],
-			'message'		=> $vars[0]['finalbody'],
-			'finalbody'		=> $vars[0]['finalbody'],
+			'header_str'    => $vars['header_str'],
+			'header_string' => $vars['header_str'],
+			'recipients'    => $vars['recipients'],
+			'from_email'	=> $vars['headers']['From'],
+			'from_name'	    => $vars['headers']['From'],
+			'to_email'      => $vars['recipients'],
+			'to_name' 		=> $vars['recipients'],
+			'reply_to'		=> isset($vars['headers']['Reply-To']) ? $vars['headers']['Reply-To'] : NULL,
+			'cc' 			=> implode(',', $vars['cc_array']),
+			'bcc' 			=> implode(',', $vars['bcc_array']),
+			'subject'       => $vars['subject'],
+			'message'		=> $vars['finalbody'],
+			'finalbody'		=> $vars['finalbody'],
 		);
 		
-		return parent::send($parse_vars, TRUE);
+		$return = parent::send($parse_vars, TRUE);
+		
+		if($return->response->status == 'success')
+		{
+			$return->return_data = TRUE;
+		}
+		
+		return $return;
 	}
 }
