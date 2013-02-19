@@ -143,7 +143,6 @@ abstract class Base_hook extends Postmaster_base_api {
 		return $this->EE->postmaster_model->get_installed_hooks($hook);
 	}
 	
-	
 	/**
 	 * Method properly perpairs a hook to be parsed, then sent.
 	 *
@@ -171,7 +170,9 @@ abstract class Base_hook extends Postmaster_base_api {
 		$hook			  = (array) $this->hook;
 		$settings		  = $hook['settings'];
 		$name             = !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'];		
+		
 		$parsed_hook      = $this->parse($hook, $vars, $member_data, $entry_data);
+		$parsed_hook      = $this->post_parse($parsed_hook);	
 			
 		$hook['settings'] = (object) $settings;		
 		$end_script 	  = isset($hook['settings']->$name->end_script) ? (bool) $hook['settings']->$name->end_script : FALSE;

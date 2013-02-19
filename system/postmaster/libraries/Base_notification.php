@@ -117,6 +117,7 @@ abstract class Base_notification extends Postmaster_base_api {
 		$notification = (array) $this->notification;
 		$settings	  = $notification['settings'];
 		$parsed_array = $this->parse($notification, $vars, $member_data, $entry_data);
+		$parsed_array = $this->post_parse($parsed_array);	
 			
 		$notification['settings'] = (object) $settings;		
 		

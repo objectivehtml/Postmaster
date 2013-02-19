@@ -225,7 +225,21 @@ abstract class Postmaster_base_api extends Base_class {
 	{
 		return;
 	}
+		
 				
+	/**
+	 * This method is triggered after the variables have been parsed.
+	 *
+	 * @access	public
+	 * @param	array 	An associative array of parsed values
+	 * @return	array
+	 */
+	
+	public function post_parse($parsed_vars = array())
+	{
+		return $parsed_vars;
+	}
+	
 	
 	/**
 	 * Send boilerplate for each send method.
