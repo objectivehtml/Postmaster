@@ -31,7 +31,7 @@ class Email_send_postmaster_hook extends Base_hook {
 			'finalbody'		=> $vars['finalbody'],
 		);
 		
-		$return = parent::send($parse_vars, TRUE);
+		$return = $this->send($parse_vars, TRUE);
 		
 		if($return->response->status == 'success')
 		{
@@ -39,5 +39,15 @@ class Email_send_postmaster_hook extends Base_hook {
 		}
 		
 		return $return;
+	}
+	
+	public function post_parse($parsed_hook)
+	{
+		if($this->hook['service'] != 'ExpressionEngine')
+		{
+			$parsed_hook['message'] = preg_replace('/'.LD.'\/?unwrap'.RD.'/u', '', $parsed_hook['message']);	
+		}
+		
+		return $parsed_hook;		
 	}
 }
