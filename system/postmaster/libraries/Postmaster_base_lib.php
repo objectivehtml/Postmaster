@@ -146,7 +146,7 @@ abstract class Postmaster_base_lib extends Base_class {
 	 * @return	int
 	 */
 	
-	public function objects()
+	public function total_objects()
 	{
 		$this->objects = $this->get_objects();
 		
