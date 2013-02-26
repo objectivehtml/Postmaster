@@ -14,6 +14,8 @@ class Template_Hook extends Template_Base {
 	{
 		parent::__construct($params);
 		
+		$this->parser_url = $this->parser_url . '&prefix=hook';
+		
 		$this->EE->load->driver('Interface_builder');
 		
 		$this->EE->load->library('postmaster_hook', array(

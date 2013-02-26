@@ -10,6 +10,8 @@ class Template_Notification extends Template_Base {
 	{
 		parent::__construct($params);
 		
+		$this->parser_url = $this->parser_url . '&prefix=notice';
+		
 		$this->EE->load->driver('Interface_builder');
 		$this->EE->load->library('postmaster_notification', array(
 			'base_path' => PATH_THIRD.'postmaster/notifications/'

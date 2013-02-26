@@ -169,7 +169,7 @@ abstract class Postmaster_base_api extends Base_class {
 	 	
 	 		
 	/**
-	 * Parse the hook object
+	 * Parse the object
 	 *
 	 * @access	public
 	 * @param	string 	The hook name
@@ -181,6 +181,11 @@ abstract class Postmaster_base_api extends Base_class {
 	public function parse($array, $vars = array(), $member_data = FALSE, $entry_data = array())
 	{
 		unset($array['settings']);
+		
+		$vars = array_merge(array(
+			'logged_in_member_id' => $this->EE->session->userdata('member_id'),
+			'logged_in_group_id'  => $this->EE->session->userdata('group_id'),
+		), $vars);
 		
 		$vars = $this->EE->channel_data->utility->add_prefix($this->var_prefix, $vars);
 		

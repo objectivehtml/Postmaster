@@ -239,6 +239,8 @@ class Postmaster_lib {
 		}
 		
 		$parse_vars[$prefix.$delimeter.'safecracker'] = isset($this->EE->safecracker) ? TRUE : FALSE;
+		$parse_vars[$prefix.$delimeter.'logged_in_group_id'] = $this->EE->session->userdata('group_id');
+		$parse_vars[$prefix.$delimeter.'logged_in_member_id'] = $this->EE->session->userdata('member_id');
 		
 		$parse_vars = array_merge($parse_vars, $this->EE->postmaster_model->get_member($member_id, 'member'));
 		
