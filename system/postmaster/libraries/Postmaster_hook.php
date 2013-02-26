@@ -179,22 +179,17 @@ class Postmaster_hook extends Postmaster_base_lib {
 		
 		$return = array();
 		
-		foreach($actual_hooks->result() as $index => $hook)
+		foreach($actual_hooks->result_array() as $index => $hook)
 		{
-			$hook_obj = $this->get_hook($hook->installed_hook);
+			$hook_obj = $this->get_hook($hook['installed_hook']);
 			
 			call_user_func_array(array($hook_obj, 'pre_process'), $args);
 			
-			$responses = array();
-			
-			foreach($this->EE->postmaster_model->get_installed_hooks($hook->installed_hook) as $hook)
-			{
-				$hook_name = !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'];
+			$hook_name = !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'];
 				
-				$hook_obj->set_hook($hook);
+			$hook_obj->set_hook($hook);
 				
-				$responses[] = call_user_func_array(array($hook_obj, 'trigger'), $args);
-			}
+			$responses[] = call_user_func_array(array($hook_obj, 'trigger'), $args);
 			
 			$hook_obj->set_responses($responses);
 			
