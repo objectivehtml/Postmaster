@@ -283,8 +283,6 @@ class Postmaster_mcp {
 		
 		$parcel_object = $this->EE->postmaster_lib->parse($parcel, $member_id, array(), ($this->get('prefix') ? $this->get('prefix') : 'parcel'));
 		
-		var_dump($parcel_object);exit();
-				
 		if(empty($parcel_object->message)) {
 			$parcel_object->message = '
 				<h2>Postmaster</h2>
