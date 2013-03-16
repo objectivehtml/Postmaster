@@ -553,9 +553,9 @@ class Postmaster_lib {
 		$valid  = FALSE;
 		$member = $this->EE->channel_data->get_member($subject)->row();
 
-		foreach($valid_members as $member)
+		foreach($valid_members as $valid_member)
 		{
-			if($member->group_id == $member->group_id)
+			if($valid_member->group_id == $member->group_id)
 			{
 				$valid = TRUE;
 			}
@@ -572,6 +572,7 @@ class Postmaster_lib {
 
 		return $valid;
 	}
+	
 	
 	
 	/**
