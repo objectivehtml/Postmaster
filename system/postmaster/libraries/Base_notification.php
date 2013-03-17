@@ -16,14 +16,6 @@ require_once 'Postmaster_base_api.php';
 abstract class Base_notification extends Postmaster_base_api {
 		
 	/**
-	 * Hook Title
-	 * 
-	 * @var string
-	 */
-	 		 	
-	protected $title;
-		
-	/**
 	 * Variable prefix
 	 * 
 	 * @var string
@@ -49,15 +41,6 @@ abstract class Base_notification extends Postmaster_base_api {
 	 			
 	protected $filename = 'notification';
 	
-	
-	/**
-	 * Default Settings Array
-	 * 
-	 * @var string
-	 */
-	 		 
-	protected $default_settings = array();
-		
 	
 	/**
 	 * The saved notification
@@ -137,18 +120,5 @@ abstract class Base_notification extends Postmaster_base_api {
 		}
 		
 		return $response;	
-	}
-			
-	
-	public function get_settings($settings = FALSE)
-	{
-		if(!$settings)
-		{
-			$settings = $this->settings;
-		}
-		
-		$default_settings = $this->default_settings();
-		
-		return isset($settings->{$this->service}) ? (object) array_merge((array) $default_settings, (array) $settings->{$this->service}) : $default_settings;
 	}
 }

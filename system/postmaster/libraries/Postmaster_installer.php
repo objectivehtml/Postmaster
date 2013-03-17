@@ -31,9 +31,9 @@ class Postmaster_installer {
 		return $this->run('update', $version);
 	}	
 	
-	public function uninstall($version)
+	public function uninstall()
 	{
-		return $this->run('uninstall', $version);
+		return $this->run('uninstall');
 	}	
 	
 	private function run($method, $version = FALSE)
@@ -44,7 +44,10 @@ class Postmaster_installer {
 		
 		foreach(array_merge($services, $hooks, $notifications) as $obj)
 		{
-			$obj->$method($version);
+			if(is_object($obj))
+			{
+				$obj->$method($version);
+			}
 		}
 	}
 }

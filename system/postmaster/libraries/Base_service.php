@@ -52,6 +52,13 @@ abstract class Base_service extends Postmaster_base_api {
 
 
 	/**
+	 * Email Service Response
+	 */
+	 
+	protected $response;
+
+
+	/**
 	 * Fields to parse
 	 * 
 	 * @var string

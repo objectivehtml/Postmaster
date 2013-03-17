@@ -273,7 +273,12 @@ class Postmaster_lib {
 		{
 			if($ignore_date || $send_date <= $this->EE->localize->now)
 			{
-				$response = $service->send($parsed_object, $parcel, TRUE);
+				$service->pre_process();
+				
+				$response = $service->send($parsed_object, $parcel);
+				
+				$service->set_response($response);				
+				$service->post_process();
 				
 				if($response->status == 'success')
 				{

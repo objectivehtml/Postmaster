@@ -114,7 +114,7 @@ class Mandrill_postmaster_service extends Base_service {
 	{
 		parent::__construct();		
 	}
-
+	
 	public function send($parsed_object, $parcel)
 	{
 		$settings = $this->get_settings($parcel->settings);
