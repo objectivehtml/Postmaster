@@ -31,13 +31,18 @@ class Postmaster_installer {
 		return $this->run('update', $version);
 	}	
 	
+	public function uninstall($version)
+	{
+		return $this->run('uninstall', $version);
+	}	
+	
 	private function run($method, $version = FALSE)
 	{
 		$services      = $this->EE->postmaster_service->get_services();
 		$hooks         = $this->EE->postmaster_hook->get_hooks();		
 		$notifications = $this->EE->postmaster_notification->get_notifications();	
 		
-		foreach(array_merge($hooks, $notifications) as $obj)
+		foreach(array_merge($services, $hooks, $notifications) as $obj)
 		{
 			$obj->$method($version);
 		}

@@ -104,7 +104,7 @@ class Postmaster_hook extends Postmaster_base_lib {
 	 */
 	
 	public function get_hook($index = FALSE)
-	{		
+	{	
 		return parent::get_object($index);
 	}
 	
@@ -182,6 +182,7 @@ class Postmaster_hook extends Postmaster_base_lib {
 		foreach($actual_hooks->result_array() as $index => $hook)
 		{
 			$hook_obj = $this->get_hook($hook['installed_hook']);
+			$hook_obj->set_settings(json_decode($hook['settings']));
 			
 			call_user_func_array(array($hook_obj, 'pre_process'), $args);
 			

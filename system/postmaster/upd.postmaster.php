@@ -667,6 +667,9 @@ class Postmaster_upd {
 	{
 		$this->EE->load->dbforge();
 		
+		$this->EE->load->library('postmaster_installer');
+		$this->EE->postmaster_installer->uninstall();
+		
 		$this->EE->db->delete('modules', array('module_name' => $this->mod_name));
 		$this->EE->db->delete('extensions', array('class' => $this->ext_name));		
 		$this->EE->db->delete('actions', array('class' => $this->mod_name));

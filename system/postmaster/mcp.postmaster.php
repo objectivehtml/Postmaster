@@ -164,6 +164,8 @@ class Postmaster_mcp {
 			'template' => new Template_Notification($saved_data)
 		);
 		
+		$notification = $vars['template']->notifications(TRUE);
+		
 		$title = 'New Notification';
 		
 		if($this->EE->input->get('id'))
@@ -177,7 +179,7 @@ class Postmaster_mcp {
 			'&larr; Back to Home'  => $this->cp_url('index'),
 			'Text Editor Settings' => $this->cp_url('editor_settings'),
 		));
-		
+				
 		return $this->EE->load->view('notification', $vars, TRUE);
 	}
 	
@@ -322,6 +324,16 @@ class Postmaster_mcp {
 		$obj->set_notification($notification);
 		
 		$this->EE->postmaster_notification->trigger($obj);
+	}
+	
+	public function delete_notification_action()
+	{
+		$id  = $this->get('id');
+		$url = $this->cp_url('index');
+
+		$this->EE->postmaster_model->delete_notification($id);
+
+		$this->EE->functions->redirect($url);
 	}
 	
 	public function delete_hook_action()

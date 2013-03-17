@@ -196,7 +196,7 @@
 						<select name="notification" class="onchange" data-group=".notification-panel">
 							<option value="">--</option>
 							<?php foreach($template->notifications(TRUE) as $notification): ?>
-								<option value="<?php echo $notification->name?>" <?php echo $notification->name == $template->notification ? 'selected="selected"' : NULL?>><?php echo $notification->title?></option>
+								<option value="<?php echo $notification->get_name()?>" <?php echo $notification->get_name() == $template->notification ? 'selected="selected"' : NULL?>><?php echo $notification->get_title()?></option>
 							<?php endforeach; ?>
 						</select>
 					</li>
@@ -205,21 +205,21 @@
 			</div>
 			
 			<div class="notification-settings clear">
-				<?php foreach($template->notifications(TRUE) as $notification): ?>
+			<?php foreach($template->notifications(TRUE) as $notification): ?>
+			
+				<?php if($notification->display_settings($template->settings)): ?>
+					<div class="margin-top notification-panel" id="<?php echo $notification->get_name()?>_panel">
+						<h3><?php echo $notification->get_title()?> Settings</h3>
+						<?php echo $notification->display_settings($template->settings); ?>
+					</div>
+				<?php else: ?>
+					<div class="margin-top notification-panel" id="<?php echo $notification->get_name()?>_panel">
+						<h3><?php echo $notification->get_title()?> Settings</h3>
+						<p>There are no settings for <?php echo $notification->get_title()?> notifications.</p>
+					</div>
+				<?php endif; ?>
 				
-					<?php if($notification->display_settings($template->settings)): ?>
-						<div class="margin-top notification-panel" id="<?php echo $notification->get_name()?>_panel">
-							<h3><?php echo $notification->get_title()?> Settings</h3>
-							<?php echo $notification->display_settings($template->settings); ?>
-						</div>
-					<?php else: ?>
-						<div class="margin-top notification-panel" id="<?php echo $notification->get_name()?>_panel">
-							<h3><?php echo $notification->get_title()?> Settings</h3>
-							<p>There are no settings for <?php echo $notification->get_title()?> notifications.</p>
-						</div>
-					<?php endif; ?>
-				<?php endforeach; ?>
-				
+			<?php endforeach; ?>				
 			</div>
 			
 		</div>
