@@ -42,6 +42,7 @@ Added new actual_hook_name to the data schema
 ###### Developer Notes
 
 - Refactored API again to be more consistent. Services now extends Base_service instead of Postmaster_core. Postmaster_core is a core class in which all base classes are extended.
+- Any service or hook you have created should be updated to extend Postmaster_base_class if it extends Postmaster_core.
 - All API's have an install, update, and uninstall routines that are triggered when the respected method are triggered within Postmaster
 - All API's have a pre_process, post_process, trigger, and send
 - All API's should extend Postmaster_base_class, not Postmaster_core
