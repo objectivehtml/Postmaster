@@ -249,7 +249,7 @@ class Postmaster_model extends CI_Model {
 		$this->db->update('postmaster_notifications', $notification);
 	}
 	
-	public function delete_notifcation($id)
+	public function delete_notification($id)
 	{
 		$this->db->where('id', $id);
 		$this->db->delete('postmaster_notifications');

@@ -1,63 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once 'Base_class.php';
+require_once 'Postmaster_core.php';
 
-abstract class Postmaster_base_api extends Base_class {
-		
-	/**
-	 * API Class Title
-	 * 
-	 * @var string
-	 */
-	 		 	
-	protected $title;
-	
-		
-	/**
-	 * Variable prefix
-	 * 
-	 * @var string
-	 */
-	 		 
-	protected $var_prefix;
-	
-	
-	/**
-	 * Class suffix
-	 * 
-	 * @var string
-	 */
-	 		 
-	protected $class_suffix;
-	
-	
-	/**
-	 * The API Class's filename
-	 * 
-	 * @var string
-	 */
-	 			
-	protected $filename;
-	
-	
-	/**
-	 * Default Settings Array
-	 * 
-	 * @var string
-	 */
-	 		 
-	protected $default_settings = array();
-	
-	
-	/**
-	 * Settings Array
-	 * 
-	 * @var string
-	 */
-	 		 
-	protected $settings = array();
-	
-	
+abstract class Postmaster_base_api extends Postmaster_core {
+
 	/**
 	 * Email Service
 	 * 
@@ -65,15 +11,6 @@ abstract class Postmaster_base_api extends Base_class {
 	 */
 	 		 
 	protected $service;
-	
-	
-	/**
-	 * Default Settings Field Schema
-	 * 
-	 * @var string
-	 */
-	 		 	 
-	protected $fields = array();
 	
 	
 	/**
@@ -98,6 +35,14 @@ abstract class Postmaster_base_api extends Base_class {
 	);
 	
 	
+	/**
+	 * Constructor
+	 *
+	 * @access	public
+	 * @param	array	An associative array to set class properties
+	 * @return	void
+	 */
+	 
 	public function __construct($params = array())
 	{
 		parent::__construct($params);
@@ -115,7 +60,6 @@ abstract class Postmaster_base_api extends Base_class {
 		$this->IB->set_prefix('setting');
 		$this->IB->set_use_array(TRUE);
 	}
-	
 	
 	/**
 	 * Display the settings table
@@ -141,32 +85,6 @@ abstract class Postmaster_base_api extends Base_class {
 		return $this->IB->table($this->fields, $settings, postmaster_table_attr());
 	}
 	
-	
-	/**
-	 * Instal
-	 *
-	 * @access	public
-	 * @return	string
-	 */
-	 
-	 public function install()
-	 {
-		return;
-	 }
-		 	
-	
-	/**
-	 * Update
-	 *
-	 * @access	public
-	 * @return	string
-	 */
-	 
-	 public function update()
-	 {
-		 return;
-	 }
-	 	
 	 		
 	/**
 	 * Parse the object
@@ -247,19 +165,6 @@ abstract class Postmaster_base_api extends Base_class {
 	
 	
 	/**
-	 * Send boilerplate for each send method.
-	 *
-	 * @access	public
-	 * @param	array	An array of custom variables to parse
-	 * @param	mixed 	An array of member data. If FALSE, default is used
-	 * @param	mixed 	An array of entry data. If empty, not fields are parsed
-	 * @return	
-	 */
-	 
-	abstract function send();
-	
-	
-	/**
 	 * Triggers the email to be sent
 	 *
 	 * @access	public
@@ -274,5 +179,4 @@ abstract class Postmaster_base_api extends Base_class {
 	{
 		return $this->send();
 	}
-	
 }

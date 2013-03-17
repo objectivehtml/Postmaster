@@ -169,6 +169,12 @@ abstract class Base_hook extends Postmaster_base_api {
 		
 		$hook			  = (array) $this->hook;
 		$settings		  = $hook['settings'];
+		
+		if(is_string($settings))
+		{
+			$settings = json_decode($settings);
+		}
+		
 		$name             = !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'];		
 		
 		$parsed_hook      = $this->parse($hook, $vars, $member_data, $entry_data);

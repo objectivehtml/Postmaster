@@ -196,6 +196,6 @@
 
 <div class="delete dialog">
 
-	<p>Are you use you want to delete this parcel?</p>
+	<p>Are you use you want to delete this record?</p>
 
 </div>
