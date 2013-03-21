@@ -328,9 +328,9 @@ MailChimp helps you design email newsletters, share them on social networks, int
 
 	public function send_campaign($api_key, $cid)
 	{
-		$url = $this->api_url($api_key, 'campaignSendNow', array('cid' => $cid));
+		$url = $this->api_url($api_key, 'campaignSendNow');
 		
-		return $this->get($url); 
+		return json_decode($this->curl->simple_post($url, array('cid' => $cid))); 
 	}
 
 	public function get_lists($api_key, $ajax = FALSE)
