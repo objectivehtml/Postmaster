@@ -49,7 +49,7 @@ class Postageapp_postmaster_service extends Base_service {
 
 	public function send($parsed_object, $parcel)
 	{		
-		$settings = $this->get_settings($parcel->settings);
+		$settings = $this->get_settings();
 
 		$post = array(
 			'api_key' => $settings->api_key,

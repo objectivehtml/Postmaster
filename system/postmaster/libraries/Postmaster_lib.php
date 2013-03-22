@@ -266,7 +266,10 @@ class Postmaster_lib {
 		$parsed_object = $this->convert_array($parsed_object);
 		$parcel        = $this->convert_array($parcel);
 		
-		$service   = $this->load_service($parcel->service);
+		$service = $this->load_service($parcel->service);
+		
+		$service->set_settings($parcel->settings);
+		
 		$send_date = $this->get_send_date($parsed_object);
 
 		if($this->validate_emails($parsed_object->to_email))

@@ -67,7 +67,7 @@ class Mailgun_postmaster_service extends Base_service {
 
 	public function send($parsed_object, $parcel)
 	{
-		$settings = $this->get_settings($parcel->settings);
+		$settings = $this->get_settings();
 
 		$post = array(
 			'to'       => trim($parsed_object->to_name.' <'.$parsed_object->to_email.'>'),
