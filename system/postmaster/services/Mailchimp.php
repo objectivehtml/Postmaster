@@ -113,7 +113,7 @@ MailChimp helps you design email newsletters, share them on social networks, int
 	
 	public function display_settings($settings, $parcel)
 	{
-		$html = $this->build_table($settings, $this->fields);
+		$html = $this->build_table($settings);
 
 		$html .= '
 		<h3>Mailing Lists</h3>

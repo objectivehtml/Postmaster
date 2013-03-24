@@ -96,12 +96,7 @@ abstract class Base_service extends Postmaster_base_api {
 		$this->curl = new Curl();
 		$this->uid  = new Uuid();
 		$this->lib  = $this->EE->postmaster_lib;
-		$this->now  = $this->EE->localize->now;
-				
-		$this->EE->interface_builder->set_var_name($this->name);
-		$this->EE->interface_builder->set_use_array(TRUE);
-		
-		$this->IB	=& $this->EE->interface_builder;		
+		$this->now  = $this->EE->localize->now;	
 	}
 	
 	

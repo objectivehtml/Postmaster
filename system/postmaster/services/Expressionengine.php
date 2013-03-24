@@ -221,6 +221,6 @@ class ExpressionEngine_postmaster_service extends Base_service {
 
 	public function display_settings($settings, $parcel)
 	{	
-		return $this->build_table($settings, $this->fields);
+		return $this->build_table($settings);
 	}
 }

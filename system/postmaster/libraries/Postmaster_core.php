@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once PATH_THIRD.'postmaster/libraries/Base_class.php';
+require_once PATH_THIRD.'postmaster/libraries/InterfaceBuilder/InterfaceBuilder.php';
 
 abstract class Postmaster_core extends Base_class {
 	

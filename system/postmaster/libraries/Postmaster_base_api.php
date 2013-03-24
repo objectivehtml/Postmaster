@@ -49,16 +49,9 @@ abstract class Postmaster_base_api extends Postmaster_core {
 				
 		$this->EE =& get_instance();
 		
-		$this->EE->load->driver('interface_builder');
-		
 		$this->name         = strtolower(str_replace($this->class_suffix, '', get_class($this)));
 		$this->filename     = ucfirst($this->name).'.php';
-		$this->IB           = $this->EE->interface_builder;
-		$this->channel_data = $this->EE->channel_data;	
-								
-		$this->IB->set_var_name($this->name);
-		$this->IB->set_prefix('setting');
-		$this->IB->set_use_array(TRUE);
+		$this->channel_data = $this->EE->channel_data;
 	}
 	
 	/**
@@ -145,8 +138,13 @@ abstract class Postmaster_base_api extends Postmaster_core {
 	 * @return	string
 	 */
 	 
-	public function build_table($settings)
+	public function build_table($settings, $fields = FALSE)
 	{	
+		if($fields)
+		{
+			$this->fields = $fields;	
+		}
+		
 		if(count($this->fields) == 0)
 		{		
 			return NULL;
@@ -154,11 +152,12 @@ abstract class Postmaster_base_api extends Postmaster_core {
 		
 		$settings = $this->get_settings($settings);
 		
-		$this->IB->set_var_name($this->name);
-		$this->IB->set_prefix('setting');
-		$this->IB->set_use_array(TRUE);
+		$params = array(
+			'varName'   => 'setting',
+			'dataArray' => TRUE
+		);
 		
-		return $this->IB->table($this->fields, $settings, postmaster_table_attr());
+		return InterfaceBuilder::table($this->fields, $settings, $params, postmaster_table_attr());
 	}	
 		
 	/**

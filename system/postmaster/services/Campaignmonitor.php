@@ -295,7 +295,7 @@ class CampaignMonitor_postmaster_service extends Base_service {
 			$this->fields['client_id']['options'] = $options;
 		}
 
-		$html = $this->build_table($full_settings, $this->fields);
+		$html = $this->build_table($full_settings);
 
 		$html .= '
 		<h3>Mailing Lists</h3>

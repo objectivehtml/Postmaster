@@ -436,6 +436,18 @@ class Postmaster_model extends CI_Model {
 		return $this->get('hooks', $params, $all_sites);
 	}
 	
+	public function get_task($id)
+	{
+		$this->db->where('id', $id);
+		
+		return $this->db->get('postmaster_tasks');
+	}
+	
+	public function get_tasks($params = array(), $all_sites = FALSE)
+	{
+		return $this->get('tasks', $params, $all_sites);
+	}
+	
 	public function get_notification($id)
 	{
 		$this->db->where('id', $id);
