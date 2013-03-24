@@ -153,7 +153,7 @@ abstract class Postmaster_base_api extends Postmaster_core {
 		$settings = $this->get_settings($settings);
 		
 		$params = array(
-			'varName'   => 'setting',
+			'varName'   => 'setting['.$this->name.']',
 			'dataArray' => TRUE
 		);
 		
