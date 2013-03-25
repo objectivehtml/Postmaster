@@ -13,6 +13,7 @@
 
 require_once 'libraries/Email_Parcel.php';
 require_once 'libraries/Template_Hook.php';
+require_once 'libraries/Template_Task.php';
 require_once 'libraries/Template_Notification.php';
 require_once 'config/postmaster_config.php';
 
@@ -99,6 +100,17 @@ class Postmaster_mcp {
 			$hooks[$index] = (object) $hooks[$index];
 		}
 		
+		$tasks = $this->EE->postmaster_model->get_tasks()->result_array();
+		
+		foreach($tasks as $index => $value)
+		{
+			$tasks[$index]['edit_url']      = $this->cp_url('task').'&id='.$value['id'];
+			$tasks[$index]['delete_url']    = $this->cp_url('delete_task_action').'&id='.$value['id'];
+			$tasks[$index]['duplicate_url'] = $this->cp_url('duplicate_task_action').'&id='.$value['id'];
+			
+			$tasks[$index] = (object) $tasks[$index];
+		}
+		
 		$notifications = $this->EE->postmaster_model->get_notifications()->result_array();
 		
 		foreach($notifications as $index => $value)
@@ -116,9 +128,11 @@ class Postmaster_mcp {
 			'themes'  	=> $this->themes,
 			'parcels' 	=> $this->EE->postmaster_model->get_parcels(),
 			'hooks'     => $hooks,
+			'tasks'     => $tasks,
 			'notifications'     => $notifications,
 			'create_parcel_url' => $this->cp_url('create_template'),
 			'add_hook_url' => $this->cp_url('hook'),
+			'add_task_url' => $this->cp_url('task'),
 			'edit_hook_action' => $this->current_url('ACT', $this->EE->channel_data->get_action_id(__CLASS__, 'edit_hook_action')),
 			'add_notification_url' => $this->cp_url('notification'),
 			'edit_hook_action' => $this->current_url('ACT', $this->EE->channel_data->get_action_id(__CLASS__, 'edit_notification_action')),
@@ -222,6 +236,46 @@ class Postmaster_mcp {
 		));
 		
 		return $this->EE->load->view('hook', $vars, TRUE);
+	}
+	
+	public function task()
+	{
+		$this->EE->theme_loader->javascript('postmaster');
+		$this->EE->theme_loader->javascript('qtip');
+		$this->EE->theme_loader->css('qtip');
+
+    	$saved_data = array();
+    	
+    	if($task_id = $this->EE->input->get('id'))
+    	{
+	    	$saved_data = $this->EE->postmaster_model->get_task($task_id)->row_array();
+	    	$saved_data['settings'] = json_decode($saved_data['settings']);
+    	}
+    	
+    	$this->EE->load->library('postmaster_task', array(
+			'base_path' => PATH_THIRD.'postmaster/tasks/'
+		));
+		
+		$vars = array(
+			'ib_path'  => $this->EE->theme_loader->theme_url().'postmaster/javascript/InterfaceBuilder.js',
+			'template' => new Template_Task($saved_data)
+		);
+		
+		$title = 'New Task';
+		
+		if($this->EE->input->get('id'))
+		{
+			$title = 'Edit Task';	
+		}
+		
+		$this->EE->cp->set_variable('cp_page_title', $title);
+		
+		$this->EE->cp->set_right_nav(array(
+			'&larr; Back to Home'  => $this->cp_url('index'),
+			'Text Editor Settings' => $this->cp_url('editor_settings'),
+		));
+		
+		return $this->EE->load->view('task', $vars, TRUE);
 	}
 	
 	public function doctag()

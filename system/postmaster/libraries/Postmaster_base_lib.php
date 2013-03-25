@@ -84,11 +84,14 @@ abstract class Postmaster_base_lib extends Base_class {
 		{
 			foreach($this->objects as $x => $obj)
 			{
-				$object = rtrim(get_class($obj), $this->class_suffix);
-								
-				if($index == $obj->get_name() || $index == $obj->get_title())
+				if(is_object($obj))
 				{
-					return $this->objects[$x];
+					$object = rtrim(get_class($obj), $this->class_suffix);
+						
+					if($index == $obj->get_name() || $index == $obj->get_title())
+					{
+						return $this->objects[$x];
+					}
 				}
 			}
 		}
@@ -108,9 +111,12 @@ abstract class Postmaster_base_lib extends Base_class {
 	{
 		$this->EE->load->helper('directory');
 		
-		$objects = array(
-			$this->load($this->default_object)
-		);
+		$default_object = $this->load($this->default_object);
+		
+		if(is_object($default_object))
+		{
+			$objects = array($default_object);
+		}
 		
 		foreach(directory_map($this->base_path) as $file)
 		{
@@ -118,7 +124,10 @@ abstract class Postmaster_base_lib extends Base_class {
 			{
 				if($object = $this->load($file))
 				{
-					$objects[] = $object;
+					if(is_object($object))
+					{
+						$objects[] = $object;
+					}
 				}
 			}
 		}

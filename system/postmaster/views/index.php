@@ -131,6 +131,43 @@
 	</tbody>
 </table>
 
+<a href="<?php echo $add_task_url?>" class="action button"><span class="icon-plus"></span> New Task</a>
+
+<h2><a href="#tasks" class="help">Tasks <span>(?)</span></a></h2>
+
+<table class="mainTable" cellpadding="0" cellspacing="0">
+	<thead>
+		<tr>
+			<th style="width:30%">Title</th>
+			<th style="width:30%">Task</th>
+			<th style="width:20%">Service</th>
+			<th style="width:5%;max-width:112px;min-width:112px">Actions</th>
+		</tr>
+	</thead>
+	<tbody>
+		<?php if(count($tasks) == 0): ?>
+		<tr>
+			<td colspan="4">
+				<p class="empty">You have not setup any tasks yet.</p>
+			</td>
+		</tr>
+		<?php endif; ?>
+		
+		<?php foreach($tasks as $task): ?>
+		<tr>
+			<td class="title"><?php echo $hook->title?></td>
+			<td><?php echo !empty($task->installed_hook) ? $task->installed_hook : $task->user_defined_hook ?></td>
+			<td><?php echo !empty($task->service) ? $task->service : $task->service ?></td>			
+			<td class="actions">
+				<a href="<?php echo $task->edit_url?>" title="Edit" class="button tooltip"><span class="icon-edit"></span></a>
+				<a href="<?php echo $task->duplicate_url?>" title="Duplicate" class="button tooltip"><span class="icon-copy"></span></a>
+				<a href="<?php echo $task->delete_url?>" title="Delete" class="button delete tooltip"><span class="icon-trash"></span></a>			
+			</td>
+		</tr>
+		<?php endforeach; ?>
+	</tbody>
+</table>
+
 <h2><a href="#delegates" class="help">Utilities <span>(?)</span></a></h2>
 
 <table class="mainTable" cellpadding="0" cellspacing="0">
@@ -192,6 +229,19 @@
 	<h2>What is a Hook?</h2>
 
 	<p>Hooks allow developers to extend add-ons in ways that would otherwise require a hack. Hooks can override default functionality with something more custom and desirable. Postmaster allows developer to take advantage of developer hooks to send email within virtually any application.</p>
+</div>
+
+<div class="delete dialog">
+
+	<p>Are you use you want to delete this record?</p>
+
+</div>
+
+
+<div id="tasks" class="help-text">
+	<h2>What is a Tasks?</h2>
+
+	<p>Tasks allow developers to trigger specific actions at specific times. Tasks can be triggered using hooks or with a simple HTTP request. The major difference with Tasks is they aren't related to sending emails. For example, registering an email to a MailChimp list when they register would be a perfect example of a Task.</p>
 </div>
 
 <div class="delete dialog">

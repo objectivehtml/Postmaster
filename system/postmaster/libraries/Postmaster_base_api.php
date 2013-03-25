@@ -154,7 +154,8 @@ abstract class Postmaster_base_api extends Postmaster_core {
 		
 		$params = array(
 			'varName'   => 'setting['.$this->name.']',
-			'dataArray' => TRUE
+			'dataArray' => TRUE,
+			'debug' 	=> $this->name == 'Mailgun' ? TRUE : FALSE
 		);
 		
 		return InterfaceBuilder::table($this->fields, $settings, $params, postmaster_table_attr());

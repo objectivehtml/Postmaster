@@ -29,9 +29,7 @@ class Postmaster_task extends Postmaster_base_lib {
 	 * @var string
 	 */
 	 
-	protected $reserved_files = array(
-		'Postmaster_base_task'
-	);
+	protected $reserved_files = array();
 	
 		
 	/**
@@ -40,7 +38,7 @@ class Postmaster_task extends Postmaster_base_lib {
 	 * @var string
 	 */
 	 
-	protected $default_task = 'Postmaster_base_task';
+	protected $default_task = '';
 	
 		
 	/**
