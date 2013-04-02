@@ -15,6 +15,8 @@ require_once PATH_THIRD.'postmaster/libraries/Postmaster_base_api.php';
 
 abstract class Base_task extends Postmaster_base_api {
 	
+	protected $task;
+	
 	/**
 	 * Constructor
 	 *
@@ -30,6 +32,11 @@ abstract class Base_task extends Postmaster_base_api {
 		
 		$this->lib  = $this->EE->postmaster_lib;
 		$this->now  = $this->EE->localize->now;	
+	}
+	
+	public function get_task()
+	{
+		return !empty($this->task) ? $this->task : $this->name;
 	}
 }
 

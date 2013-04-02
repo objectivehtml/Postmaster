@@ -6,7 +6,7 @@ class Template_Task extends Template_Base {
 
 	public $priority = 1;
 	
-	public $installed_hook = '';
+	public $task = '';
 	
 	public $user_defined_hook;
 		

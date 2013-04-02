@@ -29,27 +29,35 @@
 				<p>The Task Title is a value you can use to give each task you install some meaning or context. This field has no programatic purpose, and is strictly for you to use to know what is what.</p>
 				
 			</div>
+			
 		</div>
 
+		<div class="container margin-top">
+		
+			<h3><a href="#help-task" class="help"><label for="task">Task <span>(?)</span></label></a></h3>
+							
+			<select name="installed_hook" class="onchange" data-group=".hook-panel" data-default="postmaster_base_hook">
+				<option value="">--</option>
+			<?php foreach($template->tasks() as $task): ?>
+				<option value="<?php echo $task->get_name()?>" <?php if($task->get_name() == $template->task): ?>selected="selected"<? endif; ?>><?php echo $task->get_title()?></option>
+			<?php endforeach; ?>
+			</select>
+			
+		</div>
+		
 	</fieldset>
 	
 	<fieldset class="column group editor">
 			
-		<div class="margin-top hooks group">
+		<h2>Task Settings</h2>		
 			
-			<h2>Trigger</h2>
+		<div class="margin-top hooks group">
 							
 			<div class="columns">
 				
 				<ul class="column third">
 					<li>
-						<h3><a href="#installed" class="help">Installed Hooks <span>(?)</span></a></h3>			
-						<select name="installed_hook" class="onchange" data-group=".hook-panel" data-default="postmaster_base_hook">
-							<option value="">--</option>
-						<?php foreach($template->tasks() as $task): ?>
-							<option value="<?php echo $task->get_name()?>" <?php if($task->get_name() == $template->installed_hook): ?>selected="selected"<? endif; ?>><?php echo $task->get_title()?></option>
-						<?php endforeach; ?>
-						</select>
+						<h3><a href="#installed" class="help">Installed Hooks <span>(?)</span></a></h3>	
 					</li>
 				</ul>
 				
