@@ -239,7 +239,7 @@
 						<select name="installed_hook" class="onchange" data-group=".hook-panel" data-default="postmaster_base_hook">
 							<option value="">--</option>
 						<?php foreach($template->hooks() as $hook): ?>
-							<option value="<?php echo $hook->get_name()?>" <?php if($hook->get_name() == $template->installed_hook): ?>selected="selected"<? endif; ?>><?php echo $hook->get_title()?></option>
+							<option value="<?php echo $hook->get_name()?>" <?php if($hook->get_name() == $template->installed_hook): ?>selected="selected"<?php endif; ?>><?php echo $hook->get_title()?></option>
 						<?php endforeach; ?>
 						</select>
 					</li>
@@ -257,7 +257,7 @@
 						
 						<select name="priority">
 						<?php foreach($template->priorities() as $priority): ?>
-							<option value="<?php echo $priority?>" <?php if($priority== $template->priority): ?>selected="selected"<? endif; ?>><?php echo $priority?></option>
+							<option value="<?php echo $priority?>" <?php if($priority== $template->priority): ?>selected="selected"<?php endif; ?>><?php echo $priority?></option>
 						<?php endforeach; ?>
 						</select>
 				</div>
