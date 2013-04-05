@@ -420,7 +420,7 @@ class CampaignMonitor_postmaster_service extends Base_service {
 
 	public function list_rows($api_key, $client_id, $ajax = FALSE)
 	{	
-		$settings = $this->settings;
+		$settings = $this->get_settings();
 		$data 	  = $this->get_lists($api_key, $client_id);
 
 		$html = NULL;
