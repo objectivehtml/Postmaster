@@ -18,6 +18,8 @@
 - (Bug Fix) Removed some rogue PHP short tags
 - (Bug Fix) Fixed issue with MailChimp not sending campaigns
 - (Bug Fix) Updated version number to 1.3.1
+- (Bug Fix) Fixed an issue caused by files being started with a capital letter.
+- (Bug Fix) Fixed issues with the CartThrob on Authorize hook throwing errors if no subscription was present.
 
 #### 1.3.0
 ##### 03/17/2013
