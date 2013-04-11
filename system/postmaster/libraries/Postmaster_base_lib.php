@@ -168,7 +168,7 @@ abstract class Postmaster_base_lib extends Base_class {
 		{	
 			$file = preg_replace('/.php$/', '', $file);
 			
-			require_once $this->base_path . $file . '.php';
+			require_once $this->base_path . ucfirst($file) . '.php';
 			
 			$class = $file;
 			
