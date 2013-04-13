@@ -40,7 +40,7 @@ class Template_Notification extends Template_Base {
 	{
 		$return = array();
 		
-		foreach($this->EE->postmaster_notification->get_notifications() as $notification)
+		foreach($this->EE->postmaster_notification->get_notifications($this->settings) as $notification)
 		{
 			if(!$reserved && !in_array($notification->get_filename(), $this->EE->postmaster_notification->get_reserved_files()) || $reserved)
 			{

@@ -109,11 +109,11 @@ class Cartthrob_abandoned_cart_postmaster_notification extends Base_notification
 				'attributes' => postmaster_table_attr()
 			)
 		);
-		
+				
 		return InterfaceBuilder::field('email_intervals', $field, $settings, array(
 			'dataArray' => TRUE,
-			'varName'   => 'setting'
-		))->display_field($settings);
+			'varName'   => 'setting[cartthrob_abandoned_cart]'
+		))->display_field();
 	}
 	
 	public function send()

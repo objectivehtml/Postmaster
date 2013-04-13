@@ -390,46 +390,49 @@ class Postmaster_lib {
 			$entry_data = isset($data['revision_post']) ? $data['revision_post'] : $data;
 
 			//$this->log_action('Entry '.$entry_id.' validation has started. There are '.count($parcels).' parcels to validate.');
-
-			if($parcel->channel_id == $data['channel_id'])
+			
+			if($this->validate_enabled($parcel->enabled))
 			{
-				$entry_data['category'] = isset($entry_data['category']) ? $entry_data['category'] : array();
-
-				if($this->validate_trigger($parcel->trigger))
+				if($parcel->channel_id == $data['channel_id'])
 				{
-					if($this->validate_categories($entry_data['category'], $parcel->categories))
-					{		
-						if($this->validate_member($meta['author_id'], $parcel->member_groups))
+					$entry_data['category'] = isset($entry_data['category']) ? $entry_data['category'] : array();
+	
+					if($this->validate_trigger($parcel->trigger))
+					{
+						if($this->validate_categories($entry_data['category'], $parcel->categories))
 						{		
-							if($this->validate_status($meta['status'], $parcel->statuses))
-							{	
-								$entry  = $this->EE->channel_data->get_channel_entry($entry_id)->row();
-								$parcel = $this->append($parcel, 'entry', $entry);							
-								
-								$this->append($parcel, 'safecracker', (isset($this->EE->safecracker) ? TRUE : FALSE));
-								
-								$member_id = FALSE;
-								
-								if(isset($parcel->entry->author_id))
-								{
-									$member_id = $parcel->entry->author_id;
-								}
-								
-								$parsed_object = $this->parse($parcel, $member_id);
-								$parsed_object->settings = $parcels[$index]->settings;
-
-								if($this->validate_conditionals($parsed_object->extra_conditionals))
+							if($this->validate_member($meta['author_id'], $parcel->member_groups))
+							{		
+								if($this->validate_status($meta['status'], $parcel->statuses))
 								{	
-									$this->send($parsed_object, $parcel);
+									$entry  = $this->EE->channel_data->get_channel_entry($entry_id)->row();
+									$parcel = $this->append($parcel, 'entry', $entry);							
+									
+									$this->append($parcel, 'safecracker', (isset($this->EE->safecracker) ? TRUE : FALSE));
+									
+									$member_id = FALSE;
+									
+									if(isset($parcel->entry->author_id))
+									{
+										$member_id = $parcel->entry->author_id;
+									}
+									
+									$parsed_object = $this->parse($parcel, $member_id);
+									$parsed_object->settings = $parcels[$index]->settings;
+	
+									if($this->validate_conditionals($parsed_object->extra_conditionals))
+									{	
+										$this->send($parsed_object, $parcel);
+									}
 								}
 							}
 						}
 					}
 				}
-			}
-			else
-			{				
-				$this->log_action('The "'.$parcel->title.'" parcel does not have a valid channel_id, which is "'.$data['channel_id'].'"');
+				else
+				{				
+					$this->log_action('The "'.$parcel->title.'" parcel does not have a valid channel_id, which is "'.$data['channel_id'].'"');
+				}
 			}
 		}
 	}
@@ -443,7 +446,7 @@ class Postmaster_lib {
 	 * @return	bool
 	 */
 	 
-	public function validate_conditionals($extra_conditionals)
+	public function validate_conditionals($extra_conditionals, $type = 'parcel')
 	{
 		$extra_conditionals = trim(strtoupper($extra_conditionals));
 
@@ -454,7 +457,7 @@ class Postmaster_lib {
 		}
 		else
 		{
-			$this->log_action('The parcel does not have valid extra conditions.');
+			$this->log_action('The '.$type.' does not have valid extra conditions.');
 			return FALSE;
 		}
 	}
@@ -467,7 +470,7 @@ class Postmaster_lib {
 	 * @return	bool
 	 */
 	 
-	public function validate_categories($subject, $valid_categories)
+	public function validate_categories($subject, $valid_categories, $type = 'parcel')
 	{
 		$valid = 0;
 
@@ -487,7 +490,7 @@ class Postmaster_lib {
 		else
 		{		
 			$valid = FALSE;
-			$this->log_action('The parcel does not have a valid category.');
+			$this->log_action('The '.$type.' does not have a valid category.');
 		}
 
 		return $valid;
@@ -548,6 +551,29 @@ class Postmaster_lib {
 
 
 	/**
+	 * Validate a parsed conditional string 
+	 *
+	 * @access	public
+	 * @param	string 	A parsed string
+	 * @return	bool
+	 */
+	 
+	public function validate_enabled($enabled, $type = 'parcel')
+	{
+		$enabled = (int) trim($enabled);
+
+		if($enabled != 0)
+		{				
+			return TRUE;
+		}
+		else
+		{
+			$this->log_action('The email did not send because the '.$type.' is not enabled.');
+			return FALSE;
+		}
+	}
+	
+	/**
 	 * Validate an member against the valid groups
 	 *
 	 * @access	public
@@ -556,7 +582,7 @@ class Postmaster_lib {
 	 * @return	bool
 	 */
 	 
-	public function validate_member($subject, $valid_members)
+	public function validate_member($subject, $valid_members, $type = 'parcel')
 	{
 		$valid  = FALSE;
 		$member = $this->EE->channel_data->get_member($subject)->row();
@@ -575,7 +601,7 @@ class Postmaster_lib {
 		}
 		else
 		{
-			$this->log_action('The parcel does not have a valid author, which has a member_id of '.$subject.'.');
+			$this->log_action('The '.$type.' does not have a valid author, which has a member_id of '.$subject.'.');
 		}
 
 		return $valid;
@@ -592,7 +618,7 @@ class Postmaster_lib {
 	 * @return	bool
 	 */
 	 
-	public function validate_status($subject, $statuses)
+	public function validate_status($subject, $statuses, $type = 'parcel')
 	{
 		$valid = FALSE;
 
@@ -616,7 +642,7 @@ class Postmaster_lib {
 		}
 		else
 		{
-			$this->log_action('The parcel does not have a valid status, which is "'.$subject.'".');
+			$this->log_action('The '.$type.' does not have a valid status, which is "'.$subject.'".');
 		}
 		
 		return $valid;

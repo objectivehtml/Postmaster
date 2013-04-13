@@ -67,9 +67,9 @@ abstract class Postmaster_base_lib extends Base_class {
 	 * @return	mixed
 	 */
 	
-	public function get_object($index = FALSE)
+	public function get_object($index = FALSE, $params = FALSE)
 	{		
-		$this->objects = $this->get_objects();
+		$this->objects = $this->get_objects($params);
 		
 		if($index && is_int($index))
 		{
@@ -107,11 +107,11 @@ abstract class Postmaster_base_lib extends Base_class {
 	 * @return	array
 	 */
 	
-	public function get_objects()
+	public function get_objects($params = FALSE)
 	{
 		$this->EE->load->helper('directory');
 		
-		$default_object = $this->load($this->default_object);
+		$default_object = $this->load($this->default_object, $params);
 		
 		if(is_object($default_object))
 		{
@@ -122,7 +122,7 @@ abstract class Postmaster_base_lib extends Base_class {
 		{
 			if(!in_array($file, $this->reserved_files))
 			{
-				if($object = $this->load($file))
+				if($object = $this->load($file, $params))
 				{
 					if(is_object($object))
 					{

@@ -6,8 +6,9 @@
 	<thead>
 		<tr>
 			<th style="width:30%">Title</th>
-			<th style="width:20%">Channel</th>
-			<th style="width:20%">Triggers</th>
+			<th style="width:10%">Enabled</th>
+			<th style="width:15%">Channel</th>
+			<th style="width:15%">Triggers</th>
 			<th style="width:20%">Service</th>
 			<th style="width:5%;max-width:112px;min-width:112px">Actions</th>
 		</tr>
@@ -15,7 +16,7 @@
 	<tbody>
 		<?php if(count($parcels) == 0): ?>
 		<tr>
-			<td colspan="7">
+			<td colspan="8">
 				<p class="empty">You have not created any e-mail parcels yet.</p>
 			</td>
 		</tr>
@@ -25,6 +26,9 @@
 		<tr>
 			<td class="title">
 				<?php echo $parcel->title;?>
+			</td>
+			<td class="enabled">
+				<?php echo $parcel->enabled != 0 ? 'Enabled' : 'Disabled'; ?>
 			</td>
 			<td class="channel-name">
 				<?php echo $parcel->channel_title;?>
@@ -65,8 +69,9 @@
 	<thead>
 		<tr>
 			<th style="width:30%">Title</th>
-			<th style="width:30%">Hook</th>
-			<th style="width:20%">Service</th>
+			<th style="width:10%">Enabled</th>
+			<th style="width:25%">Hook</th>
+			<th style="width:15%">Service</th>
 			<th style="width:5%;max-width:112px;min-width:112px">Actions</th>
 		</tr>
 	</thead>
@@ -82,6 +87,7 @@
 		<?php foreach($hooks as $hook): ?>
 		<tr>
 			<td class="title"><?php echo $hook->title?></td>
+			<td class="enabled"><?php echo $hook->enabled != 0 ? 'Enabled' : 'Disabled'; ?></td>
 			<td><?php echo !empty($hook->installed_hook) ? $hook->installed_hook : $hook->user_defined_hook ?></td>
 			<td><?php echo !empty($hook->service) ? $hook->service : $hook->service ?></td>			
 			<td class="actions">
@@ -102,8 +108,9 @@
 	<thead>
 		<tr>
 			<th style="width:30%">Title</th>
-			<th style="width:30%">Notification</th>
-			<th style="width:20%">Ping</th>
+			<th style="width:10%">Enabled</th>
+			<th style="width:25%">Notification</th>
+			<th style="width:15%">Ping</th>
 			<th style="width:5%;max-width:112px;min-width:112px">Actions</th>
 		</tr>
 	</thead>
@@ -119,6 +126,7 @@
 		<?php foreach($notifications as $notication): ?>
 		<tr>
 			<td class="title"><?php echo $notication->title?></td>
+			<td class="enabled"><?php echo $notication->enabled != 0 ? 'Enabled' : 'Disabled';?></td>
 			<td class="notification"><?php echo $notication->notification?></td>
 			<td><a href="<?php echo $notication->ping_url?>"><?php echo $notication->ping_url?></a></td>			
 			<td class="actions">
@@ -139,15 +147,16 @@
 	<thead>
 		<tr>
 			<th style="width:30%">Title</th>
-			<th style="width:30%">Task</th>
-			<th style="width:20%">Service</th>
+			<th style="width:10%">Enabled</th>
+			<th style="width:25%">Task</th>
+			<th style="width:15%">Service</th>
 			<th style="width:5%;max-width:112px;min-width:112px">Actions</th>
 		</tr>
 	</thead>
 	<tbody>
 		<?php if(count($tasks) == 0): ?>
 		<tr>
-			<td colspan="4">
+			<td colspan="5">
 				<p class="empty">You have not setup any tasks yet.</p>
 			</td>
 		</tr>
@@ -155,7 +164,8 @@
 		
 		<?php foreach($tasks as $task): ?>
 		<tr>
-			<td class="title"><?php echo $hook->title?></td>
+			<td class="title"><?php echo $task->title?></td>
+			<td class="title"><?php echo $task->enabled != 0 ? 'Enabled' : 'Disabled'; ?></td>
 			<td><?php echo !empty($task->installed_hook) ? $task->installed_hook : $task->user_defined_hook ?></td>
 			<td><?php echo !empty($task->service) ? $task->service : $task->service ?></td>			
 			<td class="actions">

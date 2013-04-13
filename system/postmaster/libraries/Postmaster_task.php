@@ -130,9 +130,9 @@ class Postmaster_task extends Postmaster_base_lib {
 	 * @return	mixed
 	 */
 	
-	public function get_task($index = FALSE)
-	{	
-		return parent::get_object($index);
+	public function get_task($index = FALSE, $settings = FALSE)
+	{		
+		return parent::get_object($index, $settings);
 	}
 	
 	
@@ -143,9 +143,11 @@ class Postmaster_task extends Postmaster_base_lib {
 	 * @return	array
 	 */
 	
-	public function get_tasks()
+	public function get_tasks($settings = FALSE)
 	{	
-		return parent::get_objects();
+		return parent::get_objects(array(
+			'settings' => $settings
+		));
 	}	
 		
 	
@@ -179,22 +181,25 @@ class Postmaster_task extends Postmaster_base_lib {
 		
 		foreach($actual_hooks->result_array() as $index => $hook)
 		{
-			$hook_obj = $this->get_hook($hook['installed_hook']);
-			$hook_obj->set_settings(json_decode($hook['settings']));
-			
-			call_user_func_array(array($hook_obj, 'pre_process'), $args);
-			
-			$hook_name = !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'];
+			if($this->EE->postmaster_lib->is_enabled($hook['enabled']))
+			{
+				$hook_obj = $this->get_hook($hook['installed_hook']);
+				$hook_obj->set_settings(json_decode($hook['settings']));
 				
-			$hook_obj->set_hook($hook);
+				call_user_func_array(array($hook_obj, 'pre_process'), $args);
 				
-			$responses[] = call_user_func_array(array($hook_obj, 'trigger'), $args);
-			
-			$hook_obj->set_responses($responses);
-			
-			call_user_func_array(array($hook_obj, 'post_process'), $args);
-			
-			$return = array_merge($return, $hook_obj->get_responses());
+				$hook_name = !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'];
+					
+				$hook_obj->set_hook($hook);
+					
+				$responses[] = call_user_func_array(array($hook_obj, 'trigger'), $args);
+				
+				$hook_obj->set_responses($responses);
+				
+				call_user_func_array(array($hook_obj, 'post_process'), $args);
+				
+				$return = array_merge($return, $hook_obj->get_responses());
+			}
 		}
 		
 		return $return;
