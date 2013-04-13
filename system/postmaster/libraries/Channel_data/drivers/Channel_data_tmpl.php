@@ -67,8 +67,7 @@ class Channel_data_tmpl extends Channel_data_lib {
 		
 		$this->EE->TMPL = $obj;
 		
-		$this->EE->TMPL->template = $tagdata ? $tagdata : $TMPL->tagdata;	
-		$this->EE->TMPL->template = $this->EE->TMPL->parse_globals($this->EE->TMPL->template);
+		$this->EE->TMPL->template = $tagdata ? $tagdata : $TMPL->tagdata;
 		
 		return $TMPL;
 	}
@@ -179,6 +178,8 @@ class Channel_data_tmpl extends Channel_data_lib {
 		$this->EE->TMPL->template = $this->parse_fieldtypes($entry_data, $channels, $channel_fields, $this->EE->TMPL->template, $prefix, $index);	
 		
 		$this->EE->TMPL->parse($this->EE->TMPL->template);
+		
+		$this->EE->TMPL->template = $this->EE->TMPL->parse_globals($this->EE->TMPL->template);
 		
 		$return = $this->EE->TMPL->template;
 		
