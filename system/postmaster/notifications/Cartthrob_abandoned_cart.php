@@ -80,13 +80,9 @@ class Cartthrob_abandoned_cart_postmaster_notification extends Base_notification
 	
 	public function display_settings($data = array())
 	{
-		$settings = isset($data->{$this->name}) ? $data->{$this->name} : $this->get_default_settings();
+		$settings = $this->get_settings();
 		
-		$this->IB->set_var_name($this->name);
-		$this->IB->set_prefix('setting');
-		$this->IB->set_use_array(TRUE);
-	
-		$field =  array(
+		$field = array(
 			'label' => 'Email Intervals',
 			'id'	=> 'email_intervals',
 			'type'	=> 'matrix',
@@ -114,9 +110,10 @@ class Cartthrob_abandoned_cart_postmaster_notification extends Base_notification
 			)
 		);
 		
-		$field = $this->IB->load('email_intervals', $this->IB->convert_array($field));
-		
-		return $field->display_field(isset($settings->email_intervals) ? $settings->email_intervals : NULL);
+		return InterfaceBuilder::field('email_intervals', $field, $settings, array(
+			'dataArray' => TRUE,
+			'varName'   => 'setting'
+		))->display_field($settings);
 	}
 	
 	public function send()

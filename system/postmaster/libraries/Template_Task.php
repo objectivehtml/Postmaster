@@ -10,6 +10,8 @@ class Template_Task extends Template_Base {
 	
 	public $user_defined_hook;
 		
+	public $enabled = 1;
+	
 	public function __construct($params = array())
 	{
 		parent::__construct($params);
@@ -42,6 +44,11 @@ class Template_Task extends Template_Base {
 		}
 		
 		return $return;
+	}
+	
+	public function is_enabled()
+	{
+		return $this->enabled != 0 ? TRUE : FALSE;
 	}
 	
 	public function priorities()

@@ -60,6 +60,8 @@ class Matrix_IBFieldType extends InterfaceBuilderField {
 
 				foreach($this->settings['columns'] as $column)
 				{
+		var_dump($column);exit();
+		
 					$this->data[$index] = (array) $this->data[$index];
 
 					$html[] = '<td><input type="text" name="'.$this->name.'['.$index.']['.$column['name'].']" value="'.(isset($this->data[$index][$column['name']]) ? $this->data[$index][$column['name']] : NULL).'" class="ib-cell" /></td>';

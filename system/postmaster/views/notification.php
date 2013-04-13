@@ -32,6 +32,23 @@
 		</div>
 		
 		<div class="container margin-top">
+			<h3><a href="#help-enabled" class="help"><label for="enabled">Enabled?</label> <span>(?)</span></a></h3>
+			
+			<select name="enabled" id="enabled">
+				<option value="1" <?php echo $template->is_enabled() ? 'selected="selected"' : ''; ?>>Enabled</option>
+				<option value="0" <?php echo !$template->is_enabled() ? 'selected="selected"' : ''; ?>>Disabled</option>
+			</select>
+			
+			<div id="help-enabled" class="help-text">
+				
+				<h2>Is the Notification Enabled?</h2>
+
+				<p>The Enabled property is a value you can use to prevent the parcel from sending without having to change the data or delete it.</p>
+				
+			</div>
+		</div>
+		
+		<div class="container margin-top">
 			<h3><a href="#send-receive" class="help">Send / Receive <span>(?)</span></a></h3>
 					
 			<div id="send-receive" class="help-text">

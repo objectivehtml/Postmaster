@@ -125,6 +125,11 @@ class Postmaster_upd {
 			'send_every'  => array(
 				'type' => 'varchar',
 				'constraint' => 100
+			),
+			'enabled'  => array(
+				'type'       => 'int',
+				'constraint' => 1,
+				'default'    => 1
 			)
 		),
 		'postmaster_hooks' 	=> array(
@@ -209,6 +214,11 @@ class Postmaster_upd {
 			'extra_conditionals' => array(
 				'type'	=> 'text'
 			),
+			'enabled'  => array(
+				'type'       => 'int',
+				'constraint' => 1,
+				'default'    => 1
+			)
 		),
 
 		'postmaster_notifications' 	=> array(
@@ -277,6 +287,11 @@ class Postmaster_upd {
 			'extra_conditionals' => array(
 				'type'	=> 'text'
 			),
+			'enabled'  => array(
+				'type'       => 'int',
+				'constraint' => 1,
+				'default'    => 1
+			)
 		),
 		'postmaster_queue' 	=> array(
 			'id'	=> array(

@@ -5,7 +5,9 @@ require_once 'Template_Base.php';
 class Template_Notification extends Template_Base {
 
 	public $notification;
-		
+	
+	public $enabled;
+	
 	public function __construct($params = array())
 	{
 		parent::__construct($params);
@@ -27,6 +29,11 @@ class Template_Notification extends Template_Base {
 		$this->action = $this->current_url('ACT', $this->EE->channel_data->get_action_id('Postmaster_mcp', $method));
 		$this->button = 'Save Notification';
 		$this->IB	  = $this->EE->interface_builder;
+	}
+	
+	public function is_enabled()
+	{
+		return $this->enabled != 0 ? TRUE : FALSE;
 	}
 	
 	public function notifications($reserved = FALSE)

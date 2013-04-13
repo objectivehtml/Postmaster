@@ -44,7 +44,8 @@ class Email_Parcel {
 			$post_date_relative,
 			$send_every,
 			$parser_url,
-			$trigger;
+			$trigger,
+			$enabled = TRUE;
 
 	public 	$channels, $channel_array;
 
@@ -241,7 +242,12 @@ class Email_Parcel {
 		
 		return $member_groups->result();
 	}
-
+	
+	public function is_enabled()
+	{
+		return $this->enabled != 0 ? TRUE : FALSE;
+	}
+	
 	private function cp_url($method = 'index', $useAmp = FALSE)
 	{
 		return $this->EE->postmaster_lib->cp_url($method, $useAmp);

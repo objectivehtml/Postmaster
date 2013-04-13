@@ -630,6 +630,7 @@ class Postmaster_mcp {
 			'send_every'         => $this->post('send_every', TRUE),
 			'extra_conditionals' => $this->post('extra_conditionals'),
 			'service'            => $this->post('service', TRUE),
+			'enabled' 			 => $this->post('enabled') == '1' ? 1 : 0,
 			'settings'           => json_encode($this->post('setting', TRUE))
 		);
 		
@@ -684,6 +685,7 @@ class Postmaster_mcp {
 			'send_every'         => $this->post('send_every', TRUE),
 			'extra_conditionals' => $this->post('extra_conditionals'),
 			'service'            => $this->post('service', TRUE),
+			'enabled' 			 => $this->post('enabled') == '1' ? 1 : 0,
 			'settings'           => json_encode($this->post('setting', TRUE))
 		);
 		
@@ -743,6 +745,7 @@ class Postmaster_mcp {
 			'send_every'         => $this->post('send_every'),
 			'service'            => $this->post('service'),
 			'extra_conditionals' => $this->post('extra_conditionals'),
+			'enabled' 			 => $this->post('enabled') == '1' ? 1 : 0,
 			'settings'           => json_encode($this->post('setting'))
 		);
 
