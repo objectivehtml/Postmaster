@@ -110,8 +110,13 @@ abstract class Postmaster_base_api extends Postmaster_core {
 	 * @return	array
 	 */
 	 
-	public function get_settings($settings)
+	public function get_settings($settings = FALSE)
 	{
+		if(!$settings)
+		{
+			$settings = $this->settings;
+		}
+		
 		$default_settings = $this->default_settings();
 		
 		return isset($settings->{$this->name}) ? (object) array_merge((array) $default_settings, (array) $settings->{$this->name}) : $default_settings;

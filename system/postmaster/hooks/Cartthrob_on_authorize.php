@@ -25,9 +25,9 @@ class Cartthrob_on_authorize_postmaster_hook extends Base_hook {
 			$meta = array(
 				array(
 					'subscription_options' => array(
-						$item['meta']['subscription_options']
+						isset($item['meta']['subscription_options']) ? $item['meta']['subscription_options'] : array()
 					),
-					'subscription' => $item['meta']['subscription']
+					'subscription' => isset($item['meta']['subscription']) ? $item['meta']['subscription'] : FALSE
 				)
 			);
 			

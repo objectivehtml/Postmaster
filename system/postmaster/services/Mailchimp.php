@@ -77,7 +77,7 @@ MailChimp helps you design email newsletters, share them on social networks, int
 
 	public function send($parsed_object, $parcel)
 	{
-		$settings = $this->get_settings($parcel->settings);
+		$settings = $this->get_settings();
 
 		foreach($settings->list_id as $list_id)
 		{
@@ -126,7 +126,6 @@ MailChimp helps you design email newsletters, share them on social networks, int
 
 	public function display_mailing_lists($settings, $parcel)
 	{
-		
 		$settings = $this->get_settings($settings);
 
 		$url = $this->call_url('get_lists');
@@ -328,9 +327,9 @@ MailChimp helps you design email newsletters, share them on social networks, int
 
 	public function send_campaign($api_key, $cid)
 	{
-		$url = $this->api_url($api_key, 'campaignSendNow', array('cid' => $cid));
+		$url = $this->api_url($api_key, 'campaignSendNow');
 		
-		return $this->get($url); 
+		return json_decode($this->curl->simple_post($url, array('cid' => $cid))); 
 	}
 
 	public function get_lists($api_key, $ajax = FALSE)

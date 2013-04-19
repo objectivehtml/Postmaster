@@ -194,7 +194,7 @@ class CampaignMonitor_postmaster_service extends Base_service {
 	
 	public function send($parsed_object, $parcel)
 	{
-		$settings = $this->get_settings($parcel->settings);
+		$settings = $this->get_settings();
 		
 		$html_url = $this->EE->postmaster_lib->current_url('ACT', $this->EE->channel_data->get_action_id('Postmaster_mcp', 'template')).'&entry_id='.$parcel->entry->entry_id.'&parcel_id='.$parcel->id;
 
@@ -420,7 +420,7 @@ class CampaignMonitor_postmaster_service extends Base_service {
 
 	public function list_rows($api_key, $client_id, $ajax = FALSE)
 	{	
-		$settings = $this->settings;
+		$settings = $this->get_settings();
 		$data 	  = $this->get_lists($api_key, $client_id);
 
 		$html = NULL;
