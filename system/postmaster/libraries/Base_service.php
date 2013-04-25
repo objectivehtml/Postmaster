@@ -195,7 +195,7 @@ abstract class Base_service extends Postmaster_base_api {
 	 
 	public function show_error($error)
 	{
-		$this->EE->output->show_user_error('general', '<b>'.$this->name.'</b> - '.$error);
+		show_error('<b>'.$this->name.' Service</b> - '.$error);
 	}
 }
 
