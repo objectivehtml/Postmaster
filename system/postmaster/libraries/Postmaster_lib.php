@@ -165,8 +165,9 @@ class Postmaster_lib {
 	{
 		$parsed_object = $this->convert_array($parsed_object);
 		$send_date     = $parsed_object->post_date_specific;
-		$send_date     = !empty($send_date) ? $this->EE->localize->set_localized_time(strtotime($send_date)) : $this->EE->localize->now;
-
+		
+		$send_date     = !empty($send_date) ? strtotime($send_date) : time();
+		
 		if(!empty($parsed_object->post_date_relative))
 		{
 			$send_date = strtotime($parsed_object->post_date_relative, $send_date);
@@ -244,8 +245,16 @@ class Postmaster_lib {
 		
 		$parse_vars = array_merge($parse_vars, $this->EE->postmaster_model->get_member($member_id, 'member'));
 		
-		$entry  = $parcel_copy->entry;
-		unset($parcel_copy->entry);
+		if(isset($parcel_copy->entry))
+		{
+			$entry = $parcel_copy->entry;
+			unset($parcel_copy->entry);
+		}
+		
+		if(!isset($entry_vars))
+		{
+			$entry_vars = array();
+		}
 		
 		return $this->convert_array($this->EE->channel_data->tmpl->parse_array($parcel_copy, $parse_vars, $entry_vars, $channels, $channel_fields, $prefix.$delimeter));
 	}
@@ -270,11 +279,11 @@ class Postmaster_lib {
 		
 		$service->set_settings($parcel->settings);
 		
-		$send_date = $this->get_send_date($parsed_object);
-
+		$date = $this->get_send_date($parsed_object);
+		
 		if($this->validate_emails($parsed_object->to_email))
 		{
-			if($ignore_date || $send_date <= $this->EE->localize->now)
+			if($ignore_date || $date <= time())
 			{
 				$service->pre_process();
 				
@@ -296,19 +305,33 @@ class Postmaster_lib {
 
 				if(!empty($parsed_object->send_every))
 				{
-					$gmt_date = $this->EE->localize->set_localized_time(strtotime($parsed_object->send_every, $this->EE->localize->now));
-					
-					$this->log_action('The email to "'.$parsed_object->to_email.'" is set to be sent every "'.$parsed_object->send_every.'". The next time it will be sent will be '.date('Y-m-d H:i', $send_date).'.');
+					$date = strtotime($parsed_object->send_every, $this->EE->localize->now);					
+					$this->log_action('The email to "'.$parsed_object->to_email.'" is set to be sent every "'.$parsed_object->send_every.'". The next time it will be sent will be '.$date.'.');
 				
-					$this->model->add_to_queue($parsed_object, $parcel, $gmt_date);
+					if(isset($parcel->parcel_id))
+					{
+						$this->model->add_parcel_to_queue($parsed_object, $parcel, $date);
+					}
+					else
+					{
+						$this->model->add_hook_to_queue($parsed_object, $parcel, $date);
+					}
 				}
 				
 				return $response;
 			}
 			else
 			{
-				$this->log_action('The email to "'.$parsed_object->to_email.'" has been added to the queue and is set to be sent at '.date('Y-m-d H:i', $send_date).'.');
-				$this->model->add_to_queue($parsed_object, $parcel);
+				$this->log_action('The email to "'.$parsed_object->to_email.'" has been added to the queue and is set to be sent at '.date('Y-m-d H:i', $date).'.');
+
+				if(isset($parcel->parcel_id))
+				{
+					$this->model->add_parcel_to_queue($parsed_object, $parcel, $date);
+				}
+				else
+				{
+					$this->model->add_hook_to_queue($parsed_object, $parcel, $date);
+				}
 			}
 		}
 		else
@@ -317,9 +340,20 @@ class Postmaster_lib {
 			$this->model->unsubscribe($parsed_object->to_email);
 		}
 		
+		exit('added to queue');
+		
 		return FALSE;
 	}
 	
+	public function strtotime($str)
+	{
+		if(preg_match('/^\d*$/', $str))
+		{
+			return $str;
+		}
+		
+		return strtotime($str);
+	}
 	
 	/**
 	 * Send email from queue
@@ -331,8 +365,17 @@ class Postmaster_lib {
 	
 	public function send_from_queue($row)
 	{
-		$parcel           = $this->model->get_parcel($row->parcel_id);
-		$parcel->entry    = $this->model->get_entry($row->entry_id);
+		if(!empty($row->parcel_id))
+		{
+			$parcel = $this->model->get_parcel($row->parcel_id);
+			$parcel->entry = $this->model->get_entry($row->entry_id);
+		}
+		
+		if(!empty($row->hook_id))
+		{
+			$parcel = $this->model->get_hook($row->hook_id)->row();
+		}
+		
 		$parcel->settings = json_decode($parcel->settings);
 
 		$parsed_object = $this->parse($parcel);

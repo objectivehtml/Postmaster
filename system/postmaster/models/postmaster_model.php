@@ -33,7 +33,7 @@ class Postmaster_model extends CI_Model {
 		}
 	}
 
-	public function add_to_queue($parsed_object, $parcel, $date = FALSE)
+	public function add_parcel_to_queue($parsed_object, $parcel, $date = FALSE)
 	{
 		$where = array(
 			'parcel_id'     => $parcel->id
@@ -47,39 +47,51 @@ class Postmaster_model extends CI_Model {
 			}
 		}
 		
-		if(isset($parsed_object->hook_id))
-		{
-			$where['hook_id'] = $parsed_object->hook_id;
-		}
-		
 		$this->db->where($where);
 
 		$existing = $this->db->get('postmaster_queue');
 
 		if($existing->num_rows() == 0)
 		{
-			if(!$date)
-			{
-				$date = $this->postmaster_lib->get_send_date($parsed_object);
-			}
-
-			$data = array_merge($where, array(
-				'gmt_date'      => $this->localize->now,
-				'gmt_send_date' => $date,
-				'service'       => $parcel->service,
-				'to_name'       => $parsed_object->to_name,
-				'to_email'      => $parsed_object->to_email,
-				'from_name'     => $parsed_object->from_name,
-				'from_email'    => $parsed_object->from_email,
-				'cc'            => $parsed_object->cc,
-				'bcc'           => $parsed_object->bcc,
-				'subject'       => $parsed_object->subject,
-				'message'       => $parsed_object->message,
-				'send_every'    => $parsed_object->send_every
-			));
-
-			$this->db->insert('postmaster_queue', $data);
+			$this->add_to_queue($parsed_object, $parcel, $date, $where);
 		}
+	}
+	
+	public function add_hook_to_queue($parsed_object, $hook, $date = FALSE)
+	{
+		$data['hook_id']   = $hook->id;
+		$data['author_id'] = $this->session->userdata('author_id');
+		
+		$this->add_to_queue($parsed_object, $hook, $date, $data);
+	}
+	
+	public function add_to_queue($parsed_object, $parcel, $date = FALSE, $data = array())
+	{
+		if(!$date)
+		{
+			$date = $this->postmaster_lib->get_send_date($parsed_object);
+		}
+		
+		$data = array_merge($data, array(
+			'gmt_date'      => time(),
+			'gmt_send_date' => $this->postmaster_lib->strtotime($date),
+			'date'     	    => date('Y-m-d H:i:s', time()),
+			'send_date'     => date('Y-m-d H:i:s', $this->postmaster_lib->strtotime($date)),
+			'service'       => $parcel->service,
+			'to_name'       => $parsed_object->to_name,
+			'to_email'      => $parsed_object->to_email,
+			'from_name'     => $parsed_object->from_name,
+			'from_email'    => $parsed_object->from_email,
+			'cc'            => $parsed_object->cc,
+			'bcc'           => $parsed_object->bcc,
+			'subject'       => $parsed_object->subject,
+			'message'       => $parsed_object->message,
+			'send_every'    => $parsed_object->send_every
+		));
+		
+		//var_dump($data);exit();
+
+		$this->db->insert('postmaster_queue', $data);
 	}
 	
 	public function blacklist($email)
@@ -351,14 +363,14 @@ class Postmaster_model extends CI_Model {
 	{
 		if($start == 'now')
 		{
-			$start = $this->localize->now;
+			$start = time();
 		}
-
-		$this->db->where('gmt_send_date <=', $start);
+		
+		$this->db->where('send_date <=', date('Y-m-d H:i:a', $this->postmaster_lib->strtotime($start)));
 
 		if($end)
 		{
-			$this->db->where('gmt_send_date >=', $end);
+			$this->db->where('send_date >=', date('Y-m-d H:i:a', $this->postmaster_lib->strtotime($end)));
 		}
 
 		return $this->db->get('postmaster_queue');
@@ -368,7 +380,7 @@ class Postmaster_model extends CI_Model {
 	{
 		$entry = $this->channel_data->get_channel_entry($entry_id);
 		
-		if($entry->num_rows() == 1)
+		if($entry && $entry->num_rows() == 1)
 		{
 			return $entry->row();
 		}

@@ -309,9 +309,15 @@ class Postmaster_upd {
 				'type'			=> 'int',
 				'constraint' 	=> 100
 			),
+			'date' => array(
+				'type'			=> 'timestamp'
+			),
 			'gmt_send_date' => array(
 				'type'			=> 'int',
 				'constraint' 	=> 100
+			),
+			'send_date' => array(
+				'type'			=> 'timestamp'
 			),
 			'service'  => array(
 				'type'       => 'varchar',
@@ -373,6 +379,9 @@ class Postmaster_upd {
 				'type'			=> 'int',
 				'constraint' 	=> 100
 			),
+			'date' => array(
+				'type'			=> 'timestamp'
+			),
 			'service'  => array(
 				'type'       => 'varchar',
 				'constraint' => 250
@@ -419,6 +428,9 @@ class Postmaster_upd {
 			'gmt_date' => array(
 				'type'			=> 'int',
 				'constraint' 	=> 100
+			),
+			'date' => array(
+				'type'			=> 'timestamp'
 			),
 			'ip_address' => array(
 				'type'			=> 'varchar',
