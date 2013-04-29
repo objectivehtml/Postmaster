@@ -10,6 +10,7 @@
  */
 
 #### 1.3.3
+##### 04/29/2013
 - (Feature) Added new route_hook() method that will be called anytime the route_hook hook is triggered. This allows developers to execute methods in any class by routing it to the defined methods. For a working example, refer to the Cartthrob Abandoned Cart Notification. This feature really belongs in 1.4, and therefor will not be documented until the 1.4 release. However, this was required for a fix in the CartThrob Abandoned Cart notification (and the new API didn't break anything for backwards compatibility).
 - (Bug Fix) Fixed an issue with the email history clearing on checkout (which is what required the API update to work properly).
 - (Bug Fix) Refactored install code to be more reusable for other Postmaster components.
@@ -18,7 +19,6 @@
 - (Bug Fix) Eliminated dependency on the UNIX timestamps in the db in favor the MySQL timestamp datatype.
 - (Bug Fix) Various API consistency updates and code cleanup
 
-##### 04/29/2013
 
 #### 1.3.2
 ##### 04/25/2013
