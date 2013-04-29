@@ -306,6 +306,11 @@ class Postmaster_model extends CI_Model {
 		));
 	}
 	
+	public function duplicate_notification($id)
+	{
+		$this->duplicate('postmaster_notifications', $id);
+	}
+	
 	public function duplicate($table, $id, $id_field = 'id')
 	{		
 		$entry = $this->channel_data->get($table, array(
