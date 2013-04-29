@@ -759,9 +759,9 @@ class Postmaster_mcp {
 		require_once APPPATH.'libraries/Template.php';
 
 		$this->EE->TMPL = new EE_Template();
-
+		
 		$queue = $this->EE->postmaster_model->get_email_queue();
-
+		
 		foreach($queue->result() as $row)
 		{
 			$this->EE->postmaster_lib->send_from_queue($row);

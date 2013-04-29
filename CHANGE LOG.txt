@@ -5,19 +5,28 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
- * @version		1.3.1
- * @build		20130402
+ * @version		1.3.2
+ * @build		20130425
  */
 
-#### 1.3.1
-##### 04/02/2013
+#### 1.3.2
+##### 04/25/2013
 
+- (Bug Fix) Fixed all known 2.6.0 compatibility issues. Please report any 2.6.0 issues as you see them.
+
+#### 1.3.1
+##### 04/19/2013
+
+- (Bug Fix) Fixed parse order issue involving global nested variables.
+- (Bug Fix) Fixed an issue caused by files being started with a capital letter.
+- (Bug Fix) Fixed issues with the CartThrob on Authorize hook throwing errors if no subscription was present.
 - (Bug Fix) Fixed an issue with the CampaignMonitor service causing PHP notices.
 - (Bug Fix) Fixed an issue with the get_settings() method in the services.
 - (Bug Fix) Refactored get_settings() in the Postmaster_base_api
 - (Bug Fix) Removed some rogue PHP short tags
 - (Bug Fix) Fixed issue with MailChimp not sending campaigns
 - (Bug Fix) Updated version number to 1.3.1
+- (Bug Fix) Postmaster will no longer break if an API file does not start with a capital letter.
 
 #### 1.3.0
 ##### 03/17/2013

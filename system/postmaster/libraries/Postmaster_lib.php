@@ -165,8 +165,9 @@ class Postmaster_lib {
 	{
 		$parsed_object = $this->convert_array($parsed_object);
 		$send_date     = $parsed_object->post_date_specific;
-		$send_date     = !empty($send_date) ? $this->EE->localize->set_localized_time(strtotime($send_date)) : $this->EE->localize->now;
-
+		
+		$send_date     = !empty($send_date) ? strtotime($send_date) : time();
+		
 		if(!empty($parsed_object->post_date_relative))
 		{
 			$send_date = strtotime($parsed_object->post_date_relative, $send_date);
@@ -244,12 +245,71 @@ class Postmaster_lib {
 		
 		$parse_vars = array_merge($parse_vars, $this->EE->postmaster_model->get_member($member_id, 'member'));
 		
-		$entry  = $parcel_copy->entry;
-		unset($parcel_copy->entry);
+		if(isset($parcel_copy->entry))
+		{
+			$entry = $parcel_copy->entry;
+			unset($parcel_copy->entry);
+		}
+		
+		if(!isset($entry_vars))
+		{
+			$entry_vars = array();
+		}
 		
 		return $this->convert_array($this->EE->channel_data->tmpl->parse_array($parcel_copy, $parse_vars, $entry_vars, $channels, $channel_fields, $prefix.$delimeter));
 	}
 	
+	
+	public function route($hook, $args)
+	{
+		$this->EE->load->model('postmaster_routes_model');
+		
+		$routes = $this->EE->postmaster_routes_model->get_routes_by_hook($hook);	
+		$return = array();
+		
+		foreach($routes->result_array() as $route)
+		{
+			$path = PATH_THIRD . 'postmaster/' . $route['file'];
+			
+			if(file_exists($path))
+			{				
+				$response = call_user_func_array(array($this->EE->postmaster_routes_model->load($route['class'], $path), $route['method']), $args);
+				
+				if(is_null($response))
+				{
+					$response = 'Undefined';
+				}
+				
+				if(!is_object($response))
+				{
+					$response = (object) array(
+						'return_data' => $response,
+						'end_script'  => FALSE
+					);
+				}
+				else
+				{
+					$response = (array) $response;
+					
+					if(!isset($response['return_data']))
+					{
+						$response['return_data'] = 'Undefined';
+					}
+					
+					if(!isset($response['end_script']))
+					{
+						$response['end_script'] = FALSE;
+					}
+					
+					$response = (object) $response;
+				}
+				
+				$return[] = $response;
+			}
+		}
+		
+		return $return;
+	}
 	
 	/**
 	 * Send a parsed object with the specified email service
@@ -270,11 +330,11 @@ class Postmaster_lib {
 		
 		$service->set_settings($parcel->settings);
 		
-		$send_date = $this->get_send_date($parsed_object);
-
+		$date = $this->get_send_date($parsed_object);
+		
 		if($this->validate_emails($parsed_object->to_email))
 		{
-			if($ignore_date || $send_date <= $this->EE->localize->now)
+			if($ignore_date || $date <= time())
 			{
 				$service->pre_process();
 				
@@ -296,19 +356,33 @@ class Postmaster_lib {
 
 				if(!empty($parsed_object->send_every))
 				{
-					$gmt_date = $this->EE->localize->set_localized_time(strtotime($parsed_object->send_every, $this->EE->localize->now));
+					$date = strtotime($parsed_object->send_every, $this->EE->localize->now);					
+					$this->log_action('The email to "'.$parsed_object->to_email.'" is set to be sent every "'.$parsed_object->send_every.'". The next time it will be sent will be '.$date.'.');
 					
-					$this->log_action('The email to "'.$parsed_object->to_email.'" is set to be sent every "'.$parsed_object->send_every.'". The next time it will be sent will be '.date('Y-m-d H:i', $send_date).'.');
-				
-					$this->model->add_to_queue($parsed_object, $parcel, $gmt_date);
+					if(isset($parcel->entry))
+					{
+						$this->model->add_parcel_to_queue($parsed_object, $parcel, $date);
+					}
+					else
+					{
+						$this->model->add_hook_to_queue($parsed_object, $parcel, $date);
+					}
 				}
 				
 				return $response;
 			}
 			else
 			{
-				$this->log_action('The email to "'.$parsed_object->to_email.'" has been added to the queue and is set to be sent at '.date('Y-m-d H:i', $send_date).'.');
-				$this->model->add_to_queue($parsed_object, $parcel);
+				$this->log_action('The email to "'.$parsed_object->to_email.'" has been added to the queue and is set to be sent at '.date('Y-m-d H:i', $date).'.');
+
+				if(isset($parcel->parcel_id))
+				{
+					$this->model->add_parcel_to_queue($parsed_object, $parcel, $date);
+				}
+				else
+				{
+					$this->model->add_hook_to_queue($parsed_object, $parcel, $date);
+				}
 			}
 		}
 		else
@@ -320,6 +394,15 @@ class Postmaster_lib {
 		return FALSE;
 	}
 	
+	public function strtotime($str)
+	{
+		if(preg_match('/^\d*$/', $str))
+		{
+			return $str;
+		}
+		
+		return strtotime($str);
+	}
 	
 	/**
 	 * Send email from queue
@@ -331,8 +414,17 @@ class Postmaster_lib {
 	
 	public function send_from_queue($row)
 	{
-		$parcel           = $this->model->get_parcel($row->parcel_id);
-		$parcel->entry    = $this->model->get_entry($row->entry_id);
+		if(!empty($row->parcel_id))
+		{
+			$parcel = $this->model->get_parcel($row->parcel_id);
+			$parcel->entry = $this->model->get_entry($row->entry_id);
+		}
+		
+		if(!empty($row->hook_id))
+		{
+			$parcel = $this->model->get_hook($row->hook_id)->row();
+		}
+		
 		$parcel->settings = json_decode($parcel->settings);
 
 		$parsed_object = $this->parse($parcel);

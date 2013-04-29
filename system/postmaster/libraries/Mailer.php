@@ -22,7 +22,10 @@ class Mailer {
 		
 		$this->EE->load->library('email');
 
-		$this->EE->email->clear();
+		if(version_compare(APP_VER, '2.6.0', '<'))
+		{
+			$this->EE->email->clear();
+		}
 
 		$config = array();
 
@@ -33,9 +36,9 @@ class Mailer {
 				$config[$setting] = $value;
 			}
 		}
-		
-		$this->EE->email->initialize($config);
 
+		$this->EE->email->initialize($config);
+			
 		$this->EE->email->to($parcel->to_email, $parcel->to_name);
 		$this->EE->email->from($parcel->from_email, $parcel->from_name);
 		
@@ -48,7 +51,7 @@ class Mailer {
 		{
 			$this->EE->email->bcc($parcel->bcc);
 		}
-
+		
 		$this->EE->email->subject($parcel->subject);
 		$this->EE->email->message($parcel->message);
 

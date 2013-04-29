@@ -10,11 +10,11 @@
  * @subpackage	Libraries
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
- * @link 		http://www.objectivehtml.com
- * @version		1.0
- * @build		20120207
+ * @link 		http://www.objectivehtml.com/google-maps
+ * @version		1.1.0
+ * @build		20130425
  */
-
+ 
 if(!class_exists('Data_forge'))
 {
 	class Data_forge {
@@ -71,6 +71,7 @@ if(!class_exists('Data_forge'))
 			$fields = $this->EE->db->query('SHOW COLUMNS FROM `'.$this->EE->db->dbprefix.$table)->result();
 			
 			$field_data = array();
+			$matches	= array();
 		
 			foreach($fields as $field)
 			{
@@ -159,7 +160,7 @@ if(!class_exists('Data_forge'))
 			
 			foreach($fields as $field_name => $field)
 			{
-				$column_data		  = array($field_name => $field);
+				$column_data = array($field_name => $field);
 				
 				if(!isset($existing_fields[$field_name]))
 				{
@@ -167,10 +168,11 @@ if(!class_exists('Data_forge'))
 				}	
 				else
 				{
-
-					if(count(array_diff($field, $existing_fields[$field_name])) > 0)
+					$diff = array_diff($field, $existing_fields[$field_name]);
+					
+					if(count($diff) > 0)
 					{
-						$column_data['name'] = $field;
+						$column_data[$field_name]['name'] = '`'.$field_name.'`';
 						
 						$this->modify_column($table, $column_data);
 					}
@@ -191,7 +193,6 @@ if(!class_exists('Data_forge'))
 					$this->create_table($table, $fields);
 				}
 			}
-		}
-			
+		}	
 	}
 }

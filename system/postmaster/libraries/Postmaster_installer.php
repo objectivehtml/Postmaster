@@ -21,6 +21,85 @@ class Postmaster_installer {
 		));
 	}
 	
+	public function version_update($version)
+	{		
+		// Version Specific Update Routines
+		
+		if(version_compare($version, '1.1.99.4', '<'))
+		{
+			if(!class_exists('Postmaster_lib'))
+			{				
+				require_once(PATH_THIRD.'postmaster/libraries/Postmaster_lib.php');
+			}
+			
+			$this->EE->postmaster_lib = new Postmaster_lib();
+			$this->EE->postmaster_model->assign_site_id();
+		}
+		
+		if(version_compare($version, '1.3.2.1', '<'))
+		{
+			$this->EE->db->where('date', '0000-00-00 00:00:00');
+			
+			$update_queue = $this->EE->db->get('postmaster_queue');
+			
+			foreach($update_queue->result() as $row)
+			{
+				$data['date']      = date('Y-m-d H:i:s', $row->gmt_date);
+				$data['send_date'] = date('Y-m-d H:i:s', $row->gmt_send_date);
+				
+				$this->EE->db->where('id', $row->id);
+				$this->EE->db->update('postmaster_queue', $data);
+			}
+		}
+	}
+	
+	public function install_action($class, $method)
+	{
+		$action = array(
+			'class'  => $class,
+			'method' => $method
+		);
+		
+		$this->EE->db->where(array(
+			'class'  => $action['class'],
+			'method' => $action['method']
+		));
+		
+		$existing = $this->EE->db->get('actions');
+
+		if($existing->num_rows() == 0)
+		{
+			$this->EE->db->insert('actions', $action);
+		}
+	}
+	
+	public function install_hook($class, $method, $hook, $priority = 10, $settings = '')
+	{
+		$this->EE->db->where(array(
+			'class'  => $class,
+			'method' => $method,
+			'hook' 	 => $hook
+		));
+		
+		$existing = $this->EE->db->get('extensions');
+
+		if($existing->num_rows() == 0)
+		{
+			$this->EE->db->insert(
+				'extensions',
+				array(
+					'class' 	=> $class,
+					'method' 	=> $method,
+					'hook' 		=> $hook,
+					'settings' 	=> $settings,
+					'priority' 	=> $priority,
+					'version' 	=> POSTMASTER_VERSION,
+					'enabled' 	=> 'y',
+				)
+			);
+		}
+	}
+	
 	public function install()
 	{
 		return $this->run('install');
