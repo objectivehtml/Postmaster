@@ -420,6 +420,16 @@ class Postmaster_mcp {
 		$this->EE->functions->redirect($url);
 	}
 
+	public function duplicate_notification_action()
+	{
+		$id  = $this->get('id');
+		$url = $this->cp_url('index');
+
+		$this->EE->postmaster_model->duplicate_notification($id);
+
+		$this->EE->functions->redirect($url);
+	}
+
 	public function duplicate_parcel_action()
 	{
 		$id  = $this->get('id');
