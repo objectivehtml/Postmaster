@@ -260,6 +260,57 @@ class Postmaster_lib {
 	}
 	
 	
+	public function route($hook, $args)
+	{
+		$this->EE->load->model('postmaster_routes_model');
+		
+		$routes = $this->EE->postmaster_routes_model->get_routes_by_hook($hook);	
+		$return = array();
+		
+		foreach($routes->result_array() as $route)
+		{
+			$path = PATH_THIRD . 'postmaster/' . $route['file'];
+			
+			if(file_exists($path))
+			{				
+				$response = call_user_func_array(array($this->EE->postmaster_routes_model->load($route['class'], $path), $route['method']), $args);
+				
+				if(is_null($response))
+				{
+					$response = 'Undefined';
+				}
+				
+				if(!is_object($response))
+				{
+					$response = (object) array(
+						'return_data' => $response,
+						'end_script'  => FALSE
+					);
+				}
+				else
+				{
+					$response = (array) $response;
+					
+					if(!isset($response['return_data']))
+					{
+						$response['return_data'] = 'Undefined';
+					}
+					
+					if(!isset($response['end_script']))
+					{
+						$response['end_script'] = FALSE;
+					}
+					
+					$response = (object) $response;
+				}
+				
+				$return[] = $response;
+			}
+		}
+		
+		return $return;
+	}
+	
 	/**
 	 * Send a parsed object with the specified email service
 	 *
@@ -307,8 +358,8 @@ class Postmaster_lib {
 				{
 					$date = strtotime($parsed_object->send_every, $this->EE->localize->now);					
 					$this->log_action('The email to "'.$parsed_object->to_email.'" is set to be sent every "'.$parsed_object->send_every.'". The next time it will be sent will be '.$date.'.');
-				
-					if(isset($parcel->parcel_id))
+					
+					if(isset($parcel->entry))
 					{
 						$this->model->add_parcel_to_queue($parsed_object, $parcel, $date);
 					}
@@ -339,8 +390,6 @@ class Postmaster_lib {
 			$this->log_action('"'.$parsed_object->to_email.'" is not a valid email. It has been removed from the queue.');		
 			$this->model->unsubscribe($parsed_object->to_email);
 		}
-		
-		exit('added to queue');
 		
 		return FALSE;
 	}

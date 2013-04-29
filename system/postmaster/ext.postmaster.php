@@ -37,14 +37,29 @@ class Postmaster_ext {
 		return '';
 	}
 	
+	public function route_hook()
+	{
+		$this->EE->load->library('postmaster_lib');
+		$this->EE->load->library('postmaster_hook');		
+		
+		$hook     = $this->EE->extensions->in_progress;		
+		$response = $this->EE->postmaster_lib->route($hook, func_get_args());		
+		$return   = $this->EE->postmaster_hook->return_data($response);
+		
+		$this->EE->extenions->end_script = $this->EE->postmaster_hook->end_script($return);
+		
+		if($return != 'Undefined')
+		{
+			return $return;
+		}
+	}
+	
 	public function trigger_hook()
 	{
 		$this->EE->load->library('postmaster_lib');
 		
-		$hook      = $this->EE->extensions->in_progress;
-		$args	   = func_get_args();
-		
-		$responses = $this->EE->postmaster_lib->trigger_hook($hook, $args);
+		$hook      = $this->EE->extensions->in_progress;		
+		$responses = $this->EE->postmaster_lib->trigger_hook($hook, func_get_args());
 		$return    = $this->EE->postmaster_hook->return_data($responses);
 		
 		$this->EE->extensions->end_script = $this->EE->postmaster_hook->end_script($responses);
@@ -57,14 +72,6 @@ class Postmaster_ext {
 		return NULL;
 	}
 		
-	/**
-	 * Plugin Name
-	 *
-	 * Plugin description
-	 *
-	 * @access	public
-	 * @return	string
-	 */
 	public function entry_submission_start($channel_id, $autosave)
 	{ 	
 	

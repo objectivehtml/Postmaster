@@ -2,6 +2,11 @@
 
 require_once PATH_THIRD . 'postmaster/libraries/Postmaster_time.php';
 
+if(!class_exists('Base_notification'))
+{
+	require_once PATH_THIRD . 'postmaster/libraries/Base_notification.php';
+}
+
 class Cartthrob_abandoned_cart_postmaster_notification extends Base_notification {
 	
 	
@@ -161,10 +166,11 @@ class Cartthrob_abandoned_cart_postmaster_notification extends Base_notification
 				foreach($intervals as $index => $interval)
 				{
 					$time = new Postmaster_time($this->EE->localize->now, $interval);
+				
 					$interval_string = json_encode($interval);
 					
 					$items = $this->EE->cartthrob->cart->items();
-									
+					
 					if(count($items) > 0 && $time->has_time_past($entry->timestamp) && !in_array($interval_string, $sent))
 					{	
 						$parse_vars = array();
@@ -183,9 +189,12 @@ class Cartthrob_abandoned_cart_postmaster_notification extends Base_notification
 								'meta'		   => array($item->meta())
 							);
 							
-							$parse_vars['items'][$index]['meta'][0]['subscription_options'] = array(
-								$parse_vars['items'][$index]['meta'][0]['subscription_options']
-							);
+							if(isset($parse_vars['items'][$index]['meta'][0]['subscription_options']))
+							{
+								$parse_vars['items'][$index]['meta'][0]['subscription_options'] = array(
+									$parse_vars['items'][$index]['meta'][0]['subscription_options']
+								);
+							}
 						}
 						
 						$parse_vars['customer_info'] = array(
@@ -212,19 +221,18 @@ class Cartthrob_abandoned_cart_postmaster_notification extends Base_notification
 						$response = parent::send($parse_vars);
 										
 						$sent[] = $interval_string;
+						$data   = array(
+							'emails_sent' => json_encode($sent)	
+						);
 						
-						if(!$this->existing_entry($entry->id))
+						if(!$this->_existing_entry($entry->id))
 						{	
-							$this->insert_entry($entry->id, array(
-								'emails_sent' => json_encode($sent)	
-							));
+							$this->_insert_entry($entry->id, $data);
 
 						}
 						else
 						{
-							$this->update_entry($entry->id, array(
-								'emails_sent' => json_encode($sent)	
-							));
+							$this->_update_entry($entry->id, $data);
 						}
 						
 						break;
@@ -235,7 +243,19 @@ class Cartthrob_abandoned_cart_postmaster_notification extends Base_notification
 		
 		return $response;
 	}
+		
+	/**
+	 * Clear the email history for the current cart_id
+	 *
+	 * @access	public
+	 * @return	void
+	 */
 	
+	public function clear_cart_emails()
+	{
+		$this->EE->db->where('cart_id', $this->EE->cartthrob->cart->id());
+		$this->EE->db->delete('postmaster_cartthrob_emails');
+	}
 	
 	/**
 	 * Install
@@ -260,6 +280,14 @@ class Cartthrob_abandoned_cart_postmaster_notification extends Base_notification
 	public function update($current)
 	{		
 		$this->EE->data_forge->update_tables($this->tables);
+		
+		$this->EE->load->model('postmaster_routes_model');
+		
+		$class = 'Cartthrob_abandoned_cart_postmaster_notification';
+		$file  = 'notifications/Cartthrob_abandoned_cart.php';
+		
+		$this->EE->postmaster_installer->install_hook('Postmaster_ext', 'route_hook', 'cartthrob_on_authorize', 1);
+		$this->EE->postmaster_routes_model->create($class, 'clear_cart_emails', 'cartthrob_on_authorize', $file);
 	}
 	
 	/**
@@ -271,7 +299,7 @@ class Cartthrob_abandoned_cart_postmaster_notification extends Base_notification
 	 * @return	void
 	 */
 	
-	private function update_entry($id, $data = array())
+	private function _update_entry($id, $data = array())
 	{
 		$this->EE->db->where('cart_id', $id);
 		$this->EE->db->update('postmaster_cartthrob_emails', $data);
@@ -287,7 +315,7 @@ class Cartthrob_abandoned_cart_postmaster_notification extends Base_notification
 	 * @return	void
 	 */
 	
-	private function insert_entry($id, $data = array())
+	private function _insert_entry($id, $data = array())
 	{
 		$data['cart_id'] = $id;
 		
@@ -304,7 +332,7 @@ class Cartthrob_abandoned_cart_postmaster_notification extends Base_notification
 	 * @return	void
 	 */
 	
-	private function existing_entry($id)
+	private function _existing_entry($id)
 	{
 		$this->EE->db->where('cart_id', $id);
 		
@@ -317,35 +345,4 @@ class Cartthrob_abandoned_cart_postmaster_notification extends Base_notification
 		
 		return $data;
 	}
-	
-	
-	/**
-	 * Unserialize data, and always return an array
-	 * 
-	 * @param	mixed $data
-	 * @param	mixed $base64_decode = FALSE
-	 * @return	array
-	 */
-	/*
-	private function _unserialize($data, $base64_decode = FALSE)
-	{
-		$data = $this->EE->encrypt->decode($data);
-		
-		if (is_array($data))
-		{
-			return $data;
-		}
-		
-		if ($base64_decode)
-		{
-			$data = base64_decode($data);
-		}
-		
-		if (FALSE === ($data = @unserialize($data)))
-		{
-			return array();
-		}
-		
-		return $data;
-	}*/
 }

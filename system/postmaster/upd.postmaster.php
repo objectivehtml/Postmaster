@@ -441,6 +441,30 @@ class Postmaster_upd {
 				'constraint' 	=> 250
 			)
 		),
+		'postmaster_routes' 	=> array(
+			'id'	=> array(
+				'type'				=> 'int',
+				'constraint'		=> 100,
+				'primary_key'		=> TRUE,
+				'auto_increment'	=> TRUE
+			),
+			'class' => array(
+				'type'			=> 'varchar',
+				'constraint' 	=> 100
+			),
+			'method' => array(
+				'type'			=> 'varchar',
+				'constraint' 	=> 100
+			),
+			'hook'   => array(
+				'type'			=> 'varchar',
+				'constraint' 	=> 100
+			),
+			'file'   => array(
+				'type'			=> 'varchar',
+				'constraint' 	=> 100
+			)
+		),
 	);
 	
 	private $actions = array(
@@ -527,6 +551,10 @@ class Postmaster_upd {
 		array(
 		    'class'     => 'Postmaster_mcp',
 		    'method'    => 'notification_action'
+		),
+		array(
+		    'class'     => 'Postmaster_ext',
+		    'method'    => 'route_hook'
 		)
 	);
 	
@@ -596,62 +624,23 @@ class Postmaster_upd {
 		$this->EE->data_forge = new Data_forge();
 		$this->EE->data_forge->update_tables($this->tables);
 
+		$this->EE->load->library('postmaster_installer');
+		
 		foreach($this->actions as $action)
 		{
-			$this->EE->db->where(array(
-				'class'  => $action['class'],
-				'method' => $action['method']
-			));
-			
-			$existing = $this->EE->db->get('actions');
-
-			if($existing->num_rows() == 0)
-			{
-				$this->EE->db->insert('actions', $action);
-			}
+			$this->EE->postmaster_installer->install_action($action['class'], $action['method']);
 		}
 		
 		foreach($this->hooks as $row)
 		{
-			$this->EE->db->where(array(
-				'class'  => $this->ext_name,
-				'method'  => $row[0],
-				'hook' => $row[1]
-			));
+			$hook     = !isset($row[1]) ? $row[0] : $row[1];
+			$priority = !isset($row[3]) ? 10 : $row[3];
+			$settings = !isset($row[2]) ? '' : $row[2];
 			
-			$existing = $this->EE->db->get('extensions');
-
-			if($existing->num_rows() == 0)
-			{
-				$this->EE->db->insert(
-					'extensions',
-					array(
-						'class' 	=> $this->ext_name,
-						'method' 	=> $row[0],
-						'hook' 		=> ( ! isset($row[1])) ? $row[0] : $row[1],
-						'settings' 	=> ( ! isset($row[2])) ? '' : $row[2],
-						'priority' 	=> ( ! isset($row[3])) ? 10 : $row[3],
-						'version' 	=> $this->version,
-						'enabled' 	=> 'y',
-					)
-				);
-			}
+			$this->EE->postmaster_installer->install_hook($this->ext_name, $row[0], $hook, $priority, $settings);
 		}
 		
-		// Version Specific Update Routines
-		
-		if(version_compare($current, '1.1.99.4', '<'))
-		{
-			if(!class_exists('Postmaster_lib'))
-			{				
-				require_once(PATH_THIRD.'postmaster/libraries/Postmaster_lib.php');
-			}
-			
-			$this->EE->postmaster_lib = new Postmaster_lib();
-			$this->EE->postmaster_model->assign_site_id();
-		}
-		
-		$this->EE->load->library('postmaster_installer');
+		$this->EE->postmaster_installer->version_update($current);
 		$this->EE->postmaster_installer->update($current);
 		
 		$hooks = $this->EE->postmaster_model->get_hooks();
