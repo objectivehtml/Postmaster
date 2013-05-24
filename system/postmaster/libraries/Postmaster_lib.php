@@ -652,7 +652,7 @@ class Postmaster_lib {
 	{
 		$valid  = FALSE;
 		$member = $this->EE->channel_data->get_member($subject)->row();
-
+		
 		foreach($valid_members as $valid_member)
 		{
 			if($valid_member->group_id == $member->group_id)
@@ -697,7 +697,9 @@ class Postmaster_lib {
 		}
 
 		// If no status is defined and entry has no status, return TRUE
-		if(count($statuses) == 0 && empty($subject))
+		// Added 1.3.3 - Ignore statuses for Zoo Visitor.
+		
+		if(count($statuses) == 0 && empty($subject) || isset($_POST['zoo_visitor_action']))
 		{
 			$valid = TRUE;
 		}
