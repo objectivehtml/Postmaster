@@ -5,9 +5,16 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
- * @version		1.3.3
- * @build		20130429
+ * @version		1.3.4
+ * @build		20130522
  */
+
+#### 1.3.4
+##### 05/22/2013
+
+- (Bug Fix) Fixed some issues preventing system emails from sending.
+- (Bug Fix) Fixed an issue with Zoo Visitor not sending emails.
+- (Bug Fix) Fixed an issue with the base delegate being instantiated twice.
 
 #### 1.3.3
 ##### 04/29/2013
