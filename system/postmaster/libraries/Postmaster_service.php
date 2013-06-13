@@ -60,6 +60,8 @@ class Postmaster_service extends Postmaster_base_lib {
 	
 	public function __construct($data = array())
 	{
+		$this->base_path = PATH_THIRD . 'postmaster/services/';
+		
 		parent::__construct($data);
 	}
 	

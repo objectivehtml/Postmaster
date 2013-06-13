@@ -74,7 +74,7 @@ class CampaignMonitor_postmaster_service extends Base_service {
 			'orderdirectory' => $data['sort']
 		));
 		
-		$subscribers = $this->get($url, $data['api_key']);
+		$subscribers = $this->_get($url, $data['api_key']);
 		
 		//var_dump($subscribers);exit();
 		foreach($subscribers->Results as $index => $subscriber)
@@ -381,7 +381,7 @@ class CampaignMonitor_postmaster_service extends Base_service {
 	{
 		$url = $this->api_url('clients');
 
-		return $this->get($url, $api_key);
+		return $this->_get($url, $api_key);
 	}
 
 	public function client_options($api_key, $ajax = FALSE)
@@ -408,7 +408,7 @@ class CampaignMonitor_postmaster_service extends Base_service {
 		{
 			$url  = $this->api_url('clients', $client_id, 'lists');
 			
-			$data = $this->get($url, $api_key);			
+			$data = $this->_get($url, $api_key);			
 		}
 		else
 		{
@@ -452,7 +452,7 @@ class CampaignMonitor_postmaster_service extends Base_service {
 		return $this->url . $method . ( $id ? '/' . $id : NULL) . ($endpoint ? '/' . $endpoint : NULL) . '.json?' . http_build_query($params);
 	}
 
-	public function get($url, $api_key)
+	public function _get($url, $api_key)
 	{
 		$this->curl->create($url);
 		$this->curl->http_login($api_key, '');

@@ -326,7 +326,7 @@
 			
 			<select name="service" id="service" class="onchange" data-group=".service-panel">		
 			<?php foreach($template->services() as $service): ?>
-				<option value="<?php echo $service->name ?>" <?php if($template->service == $service->name): ?>selected="selected"<?php endif; ?>><?php echo $service->name ?></option>
+				<option value="<?php echo $service->get_name() ?>" <?php if($template->service == $service->get_name()): ?>selected="selected"<?php endif; ?>><?php echo $service->get_title() ?></option>
 			<?php endforeach; ?>
 			</select>
 
@@ -334,11 +334,11 @@
 			<div class="service-panels">
 			
 				<?php foreach($template->services() as $service): ?>
-				<div class="service-panel" id="<?php echo $service->name ?>_panel">
+				<div class="service-panel" id="<?php echo $service->get_name() ?>_panel">
 	
-					<h3><?php echo $service->name ?> Settings</h3>
+					<h3><?php echo $service->get_title() ?> Settings</h3>
 	
-					<?php echo $service->description ?>
+					<?php echo $service->get_description() ?>
 	
 					<?php echo $service->display_settings($template->settings, $template) ?>
 	

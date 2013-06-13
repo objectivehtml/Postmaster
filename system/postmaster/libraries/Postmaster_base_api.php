@@ -154,7 +154,7 @@ abstract class Postmaster_base_api extends Postmaster_core {
 		
 		$settings = $this->get_settings($settings);
 		
-		$this->IB->set_var_name($this->name);
+		$this->IB->set_var_name($this->get_name());
 		$this->IB->set_prefix('setting');
 		$this->IB->set_use_array(TRUE);
 		
