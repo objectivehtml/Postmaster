@@ -53,35 +53,7 @@ abstract class Postmaster_base_api extends Postmaster_core {
 		$this->filename     = ucfirst($this->name).'.php';
 		$this->channel_data = $this->EE->channel_data;
 	}
-	
-	/**
-	 * Display the settings table
-	 *
-	 * @access	public
-	 * @param	array 	The InterfaceBuilder schema array 
-	 * @return	string
-	 */
-	 
-	 /*		
-	public function display_settings($data = array())
-	{
-		if(count($this->fields) == 0)
-		{		
-			return FALSE;
-		}
 		
-		$settings = isset($data->{$this->name}) ? $data->{$this->name} : $this->get_default_settings();
-		
-		$this->IB->set_var_name($this->name);
-		$this->IB->set_prefix('setting');
-		$this->IB->set_use_array(TRUE);
-				
-		return $this->IB->table($this->fields, $settings, postmaster_table_attr());
-	}
-	*/
-	 	
-	
-	
 	/**
 	 * Get the default settings
 	 *
@@ -152,10 +124,9 @@ abstract class Postmaster_base_api extends Postmaster_core {
 		
 		$settings = $this->get_settings($settings);
 		
-		$params = array(
-			'varName'   => 'setting['.$this->name.']',
-			'dataArray' => TRUE,
-			'debug' 	=> $this->name == 'Mailgun' ? TRUE : FALSE
+		$params   = array(
+			'varName'   => 'setting['.$this->get_name().']',
+			'dataArray' => TRUE
 		);
 		
 		return InterfaceBuilder::table($this->fields, $settings, $params, postmaster_table_attr());

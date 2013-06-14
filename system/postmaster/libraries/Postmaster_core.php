@@ -121,4 +121,36 @@ abstract class Postmaster_core extends Base_class {
 	{
 		return;
 	}
+	
+	
+	/**
+	 * Get object title
+	 *
+	 * @access	public
+	 * @return	string
+	 */
+	 	
+	public function get_title()
+	{
+		return !empty($this->title) ? $this->title : $this->name;
+	}
+	
+
+	/**
+	 * Trim an array
+	 *
+	 * @access	public
+	 * @param	array    	The array to be trimmed
+	 * @return	array
+	 */
+	 
+	public function trim_array($array, $prefix = '', $suffix = '')
+	{
+		foreach($array as $index => $value)
+		{
+			$array[$index] = $prefix . trim($value) . $suffix;
+		}
+		
+		return $array;
+	}
 }

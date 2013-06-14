@@ -179,7 +179,6 @@ abstract class Base_service extends Postmaster_base_api {
 		exit(json_encode($data));
 	}
 
-	
 	/**
 	 * Show a system error
 	 *

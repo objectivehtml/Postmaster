@@ -119,7 +119,10 @@ class Email_Parcel {
 
 		foreach($this->services() as $service)
 		{
-			$settings[$service->name] = $service->default_settings();
+			if(is_object($service))
+			{
+				$settings[$service->name] = $service->default_settings();
+			}
 		}
 
 		return (object) $settings;
@@ -132,24 +135,9 @@ class Email_Parcel {
 
 	public function services()
 	{
-		$this->EE->load->helper('directory');
-
-		$path     = PATH_THIRD.'/postmaster/services/';
-		$files    = directory_map($path);
-		$services = array();
-
-		if(is_array($files))
-		{
-			foreach($files as $index => $filename)
-			{
-				require_once $path . $filename;
-	
-				$class = str_replace('.php', '', $filename).'_postmaster_service';
-				$services[] = new $class();
-			}
-		}
-
-		return $services;
+		$this->EE->load->library('postmaster_service');
+		
+		return $this->EE->postmaster_service->get_services();
 	}
 
 	public function fields()
