@@ -181,6 +181,11 @@ class Postmaster_task extends Postmaster_base_lib {
 		
 		foreach($actual_hooks->result_array() as $index => $hook)
 		{
+			if(!isset($hook['enabled']))
+			{
+				$hook['enabled'] = TRUE;	
+			}
+			
 			if($this->EE->postmaster_lib->is_enabled($hook['enabled']))
 			{
 				$hook_obj = $this->get_hook($hook['installed_hook']);

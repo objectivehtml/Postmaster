@@ -53,6 +53,7 @@ abstract class Postmaster_base_api extends Postmaster_core {
 		$this->filename     = ucfirst($this->name).'.php';
 		$this->channel_data = $this->EE->channel_data;
 	}
+	
 		
 	/**
 	 * Get the default settings
@@ -67,6 +68,20 @@ abstract class Postmaster_base_api extends Postmaster_core {
 	}
 	
 	
+	/**
+	 * Return a failed response
+	 *
+	 * @access	public
+	 * @param	array	An array of properties to set  
+	 * @return	object
+	 */
+	
+	public function failed_response($params = array())
+	{
+		return $this->EE->postmaster_lib->failed_response($params);
+	}
+	 
+	 
 	/**
 	 * Get the individual service settings array from the global settings
 	 *

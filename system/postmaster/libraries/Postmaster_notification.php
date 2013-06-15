@@ -122,7 +122,14 @@ class Postmaster_notification extends Postmaster_base_lib {
 	 
 	public function trigger($notification_obj, $args = array())
 	{
-		if($this->EE->postmaster_lib->validate_enabled($notification_obj->enabled, 'hook'))
+		$enabled = TRUE;
+		
+		if(isset($notification_obj->enabled))
+		{
+			$enabled = $notification_obj->enabled;
+		}
+	
+		if($this->EE->postmaster_lib->validate_enabled($enabled, 'hook'))
 		{	
 			call_user_func_array(array($notification_obj, 'pre_process'), $args);
 			

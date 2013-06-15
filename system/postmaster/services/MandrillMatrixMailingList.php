@@ -40,6 +40,14 @@ class MandrillMatrixMailingList_postmaster_service extends Mandrill_postmaster_s
 			'email_col' => array(
 				'label' => 'Email Column'
 			),
+			'match_col' => array(
+				'label' => 'Match Column',
+				'description' => 'If you you want send the email based on a value of a column matching a specific value, enter the name of that column here.'
+			),
+			'match_val' => array(
+				'label' => 'Match Value',
+				'description' => 'This is the value you want to match in the column specified above.'
+			),
 		);
 		
 		$this->fields = array_merge($new_fields, $orig_fields);
@@ -54,9 +62,14 @@ class MandrillMatrixMailingList_postmaster_service extends Mandrill_postmaster_s
 		$cols        = $this->EE->channel_data->get('matrix_cols');
 		$cols		 = $this->EE->channel_data->utility->reindex('col_name', $cols->result());
 		
+		$match_col = $settings->match_col;
+		$match_val = $settings->match_val;
+			
 		$select = array();
 		
-		foreach(array('first_name', 'last_name', 'email') as $name)
+		$select_fields = array('first_name', 'last_name', 'email');
+		
+		foreach($select_fields as $name)
 		{
 			$column = $settings->{$name.'_col'};
 			
@@ -64,6 +77,11 @@ class MandrillMatrixMailingList_postmaster_service extends Mandrill_postmaster_s
 			{
 				$select[] = 'col_id_'.$cols[$column]->col_id . ' as \''.$column.'\'';
 			}
+		}
+		
+		if(isset($cols[$match_col]))
+		{
+			$select[] = 'col_id_'.$cols[$match_col]->col_id . ' as \''.$cols[$match_col]->col_name.'\'';
 		}
 		
 		$matrix_data = $this->EE->channel_data->get('matrix_data', array(
@@ -94,8 +112,15 @@ class MandrillMatrixMailingList_postmaster_service extends Mandrill_postmaster_s
 			
 			$parsed_object->to_name  = $name;
 			$parsed_object->to_email = $email;
-			
-			$response = parent::send($parsed_object, $parcel);
+						
+			if(!isset($row->$match_col) || isset($row->$match_col) && !empty($row->$match_col))
+			{
+				$response = parent::send($parsed_object, $parcel);
+			}
+			else
+			{
+				$response = $this->failed_response();
+			}
 		}
 		
 		return $response;
