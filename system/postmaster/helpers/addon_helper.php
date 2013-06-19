@@ -6,8 +6,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/
- * @version		1.0.0
- * @build		20120914
+ * @version		1.0.1
+ * @build		20130619
  */
 
 /**
@@ -84,10 +84,6 @@ if(!function_exists('page_url'))
 		{
 			$uri = '/' . implode('/', $segments);
 		}
-		else
-		{
-			$uri = isset($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : NULL;	
-		}
 		
 		if(count($_GET) > 0 && $append_get)
 		{
@@ -144,6 +140,7 @@ if(!function_exists('base_page'))
 		
 		$segments = rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']), '/');
 		$base_url = rtrim($http . $_SERVER['HTTP_HOST'] . $segments . '/' . config_item('site_index'), '/');
+		$base_url = str_replace(array('http://', 'https://'), '', $base_url);
 		
 		if(!$use_config)
 		{
