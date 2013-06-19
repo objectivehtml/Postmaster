@@ -62,8 +62,8 @@ class MandrillMatrixMailingList_postmaster_service extends Mandrill_postmaster_s
 		$cols        = $this->EE->channel_data->get('matrix_cols');
 		$cols		 = $this->EE->channel_data->utility->reindex('col_name', $cols->result());
 		
-		$match_col = $settings->match_col;
-		$match_val = $settings->match_val;
+		$match_col = isset($settings->match_col) ? $settings->match_col : '';
+		$match_val = isset($settings->match_val) ? $settings->match_val : '';
 			
 		$select = array();
 		
