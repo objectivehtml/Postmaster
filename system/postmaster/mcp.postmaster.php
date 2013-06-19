@@ -870,12 +870,7 @@ class Postmaster_mcp {
 	
 	private function current_url($append = '', $value = '')
 	{
-		$url = (!empty($_SERVER['HTTPS'])) ? 'https://'.$_SERVER['SERVER_NAME'] : 'http://'.$_SERVER['SERVER_NAME'];
-		
-		if(!empty($append))
-			$url .= '?'.$append.'='.$value;
-		
-		return $url;
+		return $this->EE->postmaster_lib->current_url($append, $value);
 	}
 	
 }

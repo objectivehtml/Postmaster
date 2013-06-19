@@ -829,17 +829,10 @@ class Postmaster_lib {
 	 */
 	 
 	public function current_url($append = '', $value = '')
-	{
-		$http = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 'https://' : 'http://';
+	{	
+		$this->EE->load->helper('addon_helper');
 		
-		$port = $_SERVER['SERVER_PORT'] == '80' || $_SERVER['SERVER_PORT'] == '443' ? NULL : ':' . $_SERVER['SERVER_PORT'];
-		
-		if(!isset($_SERVER['SCRIPT_URI']))
-		{				
-			 $_SERVER['SCRIPT_URI'] = $http . $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'];
-		}
-		
-		$base_url = $http . $_SERVER['HTTP_HOST'] . '/' . config_item('site_index');
+		$base_url = base_url();
 		
 		if(!empty($append))
 		{
