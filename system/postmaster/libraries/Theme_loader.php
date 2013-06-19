@@ -12,8 +12,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2011, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/channel_data
- * @version		1.4.0
- * @build		20130425
+ * @version		1.4.2
+ * @build		201300521
  */
  
 if(!class_exists('Theme_loader'))
@@ -183,7 +183,7 @@ if(!class_exists('Theme_loader'))
 		 * @return	string
 		 */
 		
-		public function javascript($file, $callback = FALSE)
+		public function javascript($file, $callback = FALSE, $debug = FALSE)
 		{
 			$file = $this->prep_url($this->js_directory, $file, $this->js_ext);
 			
@@ -202,10 +202,10 @@ if(!class_exists('Theme_loader'))
 				}
 				else
 				{
-					$file   = $file.(preg_match('/\?/', $file) ? '&' : '?').'_v_='.time();
-					$script = '<script type="text/javascript" src="'.$file.'"></script>';
+					$new_file = $file.(preg_match('/\?/', $file) ? '&' : '?').(!$this->is_valid_url($file) ? '_v_='.time() : '');
+					$script   = '<script type="text/javascript" src="'.$new_file.'"></script>';
 					
-					if(method_exists($this->EE->cp, 'add_to_foot'))
+					if(!$this->is_valid_url($file) && method_exists($this->EE->cp, 'add_to_foot'))
 					{	
 						$this->EE->cp->add_to_foot($script);
 					}
