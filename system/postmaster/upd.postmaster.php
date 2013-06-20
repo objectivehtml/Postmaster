@@ -293,6 +293,7 @@ class Postmaster_upd {
 				'default'    => 1
 			)
 		),
+		
 		'postmaster_queue' 	=> array(
 			'id'	=> array(
 				'type'				=> 'int',
@@ -478,6 +479,47 @@ class Postmaster_upd {
 			'file'   => array(
 				'type'			=> 'varchar',
 				'constraint' 	=> 100
+			)
+		),
+		
+		'postmaster_tasks' 	=> array(
+			'id'	=> array(
+				'type'				=> 'int',
+				'constraint'		=> 100,
+				'primary_key'		=> TRUE,
+				'auto_increment'	=> TRUE
+			),
+			'site_id' => array(
+				'type'			=> 'int',
+				'constraint' 	=> 100
+			),
+			'title'  => array(
+				'type'       => 'varchar',
+				'constraint' => 250
+			),
+			'installed_hook'  => array(
+				'type'       => 'varchar',
+				'constraint' => 250
+			),
+			'user_defined_hook'  => array(
+				'type'       => 'varchar',
+				'constraint' => 250
+			),
+			'actual_hook_name' => array(
+				'type'       => 'varchar',
+				'constraint' => 250
+			),
+			'priority' => array(
+				'type'       => 'int',
+				'constraint' => 10
+			),
+			'settings' => array(
+				'type'	=> 'longtext'
+			),
+			'enabled'  => array(
+				'type'       => 'int',
+				'constraint' => 1,
+				'default'    => 1
 			)
 		),
 	);
