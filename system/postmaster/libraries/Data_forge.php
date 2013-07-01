@@ -6,13 +6,13 @@
  * A helper classes to make life easy when it comes to updating add-on
  * data tables.
  *
- * @package		Google Maps for ExpressionEngine
+ * @package		Postmaster
  * @subpackage	Libraries
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
- * @link 		http://www.objectivehtml.com/google-maps
- * @version		1.1.0
- * @build		20130425
+ * @link 		http://www.objectivehtml.com/postmaster
+ * @version		1.1.1
+ * @build		20130623
  */
  
 if(!class_exists('Data_forge'))
@@ -81,7 +81,7 @@ if(!class_exists('Data_forge'))
 				{
 					$meta['unsigned'] = TRUE;
 					
-					$field->Type = $match[1];
+					$field->Type = $matches[1];
 				}
 					
 				if(preg_match('/^(.*)\((\d+)\)$/', $field->Type, $matches))
