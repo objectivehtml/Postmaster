@@ -57,6 +57,15 @@ abstract class Base_service extends Postmaster_base_api {
 	 
 	protected $response;
 
+	
+	/**
+	 * Variable prefix
+	 * 
+	 * @var string
+	 */
+	 		 
+	protected $var_prefix = 'parcel';
+	
 
 	/**
 	 * Fields to parse
@@ -73,6 +82,8 @@ abstract class Base_service extends Postmaster_base_api {
 		'bcc',
 		'subject',
 		'message',
+		'html_message', // New in v1.4
+		'plain_message', // New in v1.4
 		'post_date_specific',
 		'post_date_relative',
 		'send_every',
@@ -216,6 +227,8 @@ if(!class_exists('Postmaster_Service_Response'))
 				$subject,
 				$status,
 				$message,
+				$html_message, // New in v1.4
+				$plain_message, // New in v1.4
 				$parcel;
 	
 		public function __construct($data = array())
