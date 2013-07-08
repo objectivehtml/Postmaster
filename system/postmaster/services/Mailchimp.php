@@ -304,6 +304,19 @@ MailChimp helps you design email newsletters, share them on social networks, int
 	{
 		$settings = $parcel->settings->{$this->name};
 
+		$plain_message = strip_tags($parsed_object->message);
+		$html_message  = $parsed_object->message;
+
+		if(isset($parsed_object->html_message) && !empty($parsed_object->html_message))
+		{
+			$html_message = $parsed_object->html_message;
+		}
+
+		if(isset($parsed_object->plain_message) && !empty($parsed_object->plain_message))
+		{
+			$plain_message = $parsed_object->plain_message;
+		}
+
 		$params = array(
 			'type'    => 'regular',
 			'options' => array(
@@ -315,8 +328,8 @@ MailChimp helps you design email newsletters, share them on social networks, int
 				'title'		 => $parcel->entry->title
 			),
 			'content' => array(
-				'html' => $parsed_object->message,
-				'text' => strip_tags($parsed_object->message)
+				'html' => $html_message,
+				'text' => $plain_message
 			)
 		);
 

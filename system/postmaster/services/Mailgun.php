@@ -69,11 +69,25 @@ class Mailgun_postmaster_service extends Base_service {
 	{
 		$settings = $this->get_settings();
 
+		$plain_message = strip_tags($parsed_object->message);
+		$html_message  = $parsed_object->message;
+
+		if(isset($parsed_object->html_message) && !empty($parsed_object->html_message))
+		{
+			$html_message = $parsed_object->html_message;
+		}
+
+		if(isset($parsed_object->plain_message) && !empty($parsed_object->plain_message))
+		{
+			$plain_message = $parsed_object->plain_message;
+		}
+
 		$post = array(
 			'to'       => trim($parsed_object->to_name.' <'.$parsed_object->to_email.'>'),
 			'from'     => trim($parsed_object->from_name.' <'.$parsed_object->from_email.'>'),
 			'subject'  => $parsed_object->subject,
-			'text'     => strip_tags($parsed_object->message)
+			'text'     => $plain_message,
+			'html'     => $html_message
 		);
 		
 		if(!empty($parsed_object->cc))
@@ -86,9 +100,9 @@ class Mailgun_postmaster_service extends Base_service {
 			$post['bcc'] = $parsed_object->bcc;
 		}
 		
-		if(!isset($settings->plain_text_only) || $settings->plain_text_only == 'false')
+		if(isset($settings->plain_text_only) && $settings->plain_text_only == 'true')
 		{
-			$post['html'] = $parsed_object->message;	
+			$post['html'] = $plain_message;	
 		}
 		
 		$this->curl->create($this->url.'/'.$settings->domain.'/messages');

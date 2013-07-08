@@ -51,6 +51,19 @@ class Postmark_postmaster_service extends Base_service {
 	{
 		$settings = $this->get_settings();
 
+		$plain_message = strip_tags($parsed_object->message);
+		$html_message  = $parsed_object->message;
+
+		if(isset($parsed_object->html_message) && !empty($parsed_object->html_message))
+		{
+			$html_message = $parsed_object->html_message;
+		}
+
+		if(isset($parsed_object->plain_message) && !empty($parsed_object->plain_message))
+		{
+			$plain_message = $parsed_object->plain_message;
+		}
+
 		$post = array(
 			'From'     => $parsed_object->from_email,
 			'ReplyTo'  => $parsed_object->from_email,
@@ -58,8 +71,8 @@ class Postmark_postmaster_service extends Base_service {
 			'Cc'       => $parsed_object->cc,
 			'Bcc'      => $parsed_object->bcc,
 			'Subject'  => $parsed_object->subject,
-			'HtmlBody' => $parsed_object->message,
-			'TextBody' => strip_tags($parsed_object->message),
+			'HtmlBody' => $html_message,
+			'TextBody' => $plain_message,
 		);
 
 		$this->curl->create($this->url);

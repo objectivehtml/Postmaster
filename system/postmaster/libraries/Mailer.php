@@ -39,21 +39,38 @@ class Mailer {
 
 		$this->EE->email->initialize($config);
 			
-		$this->EE->email->to($parcel->to_email, $parcel->to_name);
-		$this->EE->email->from($parcel->from_email, $parcel->from_name);
+		$this->to($parcel->to_email, $parcel->to_name);
+		$this->from($parcel->from_email, $parcel->from_name);
 		
 		if(!empty($parcel->cc))
 		{
-			$this->EE->email->cc($parcel->cc);
+			$this->cc($parcel->cc);
 		}
 		
 		if(!empty($parcel->bcc))
 		{
-			$this->EE->email->bcc($parcel->bcc);
+			$this->bcc($parcel->bcc);
 		}
 		
 		$this->EE->email->subject($parcel->subject);
-		$this->EE->email->message($parcel->message);
+
+		/* Legacy - Handle HTML & plain text emails for legacy settings */
+		if(isset($parcel->message) && !empty($parcel->message))
+		{
+			$this->message($parcel->message);
+		}
+
+		/* New in v1.4, send HTML emails via the API */
+		if(isset($parcel->html_message) && !empty($parcel->html_message))
+		{
+			$this->message($parcel->html_message);
+		}
+		
+		/* New in v1.4, send plain text emails via the API */
+		if(isset($parcel->plain_message) && !empty($parcel->plain_message))
+		{
+			$this->alt_message($parcel->plain_message);
+		}
 
 		$this->parcel = $parcel;
 	}
@@ -90,7 +107,7 @@ class Mailer {
 
 	public function alt_message($message)
 	{
-		$this->EE->email->alt_message($message);
+		$this->EE->email->set_alt_message($message);
 	}
 
 	public function send()

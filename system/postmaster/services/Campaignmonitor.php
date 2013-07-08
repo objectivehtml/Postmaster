@@ -198,7 +198,7 @@ class CampaignMonitor_postmaster_service extends Base_service {
 		
 		$html_url = $this->EE->postmaster_lib->current_url('ACT', $this->EE->channel_data->get_action_id('Postmaster_mcp', 'template')).'&entry_id='.$parcel->entry->entry_id.'&parcel_id='.$parcel->id;
 
-		$text_url = $html_url.'&strip_tags=TRUE';
+		$text_url = $html_url.'&strip_tags=TRUE&plain_message=TRUE';
 
 		$post = array(
 			'Name'      => $parcel->entry->title,

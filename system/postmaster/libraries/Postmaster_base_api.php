@@ -28,6 +28,8 @@ abstract class Postmaster_base_api extends Postmaster_core {
 		'bcc',
 		'subject',
 		'message',
+		'html_message', // New in v1.4
+		'plain_message', // New in v1.4
 		'post_date_specific',
 		'post_date_relative',
 		'send_every',

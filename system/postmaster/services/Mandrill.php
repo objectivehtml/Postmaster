@@ -139,11 +139,24 @@ class Mandrill_postmaster_service extends Base_service {
 				);
 			}	
 		}
-		
+
+		$plain_message = strip_tags($parsed_object->message);
+		$html_message  = $parsed_object->message;
+
+		if(isset($parsed_object->plain_message) && !empty($parsed_object->plain_message))
+		{
+			$plain_message = $parsed_object->plain_message;
+		}
+
+		if(isset($parsed_object->html_message) && !empty($parsed_object->html_message))
+		{
+			$html_message = $parsed_object->html_message;
+		}
+
 		$post = array(
 			'key'	   => $settings->api_key,
 			'message'  => array(
-				'text'    => strip_tags($parsed_object->message),
+				'text'    => $plain_message,
 				'subject' => $parsed_object->subject,
 				'to'      => $to,
 				'from_email'          => $parsed_object->from_email,
@@ -156,12 +169,13 @@ class Mandrill_postmaster_service extends Base_service {
 				'preserve_recipients' => $settings->preserve_recipients == 'true' ? TRUE : FALSE,
 			),
 		);
-		
-		
-		if(!isset($settings->plain_text_only) || $settings->plain_text_only == 'false')
-		{
-			$post['message']['html'] = $parsed_object->message;	
+
+		if(isset($settings->plain_text_only) && $settings->plain_text_only == 'true')
+		{	
+			$html_message = $plain_message;
 		}
+		
+		$post['message']['html'] = $html_message;
 		
 		$post['message'] = (object) $post['message'];
 		
@@ -169,7 +183,7 @@ class Mandrill_postmaster_service extends Base_service {
 		{
 			$post['bcc_address'] = $parsed_object->bcc;
 		}
-		
+
 		$response = $this->curl->simple_post($this->url, $post);
 		
 		if(!$response)
