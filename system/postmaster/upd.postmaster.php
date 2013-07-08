@@ -110,6 +110,14 @@ class Postmaster_upd {
 			'message'	=> array(
 				'type'	=> 'longtext'
 			),
+			/* New in v1.4 */
+			'html_message'	=> array(
+				'type'	=> 'longtext'
+			),
+			/* New in v1.4 */
+			'plain_message'	=> array(
+				'type'	=> 'longtext'
+			),
 			'settings' => array(
 				'type'	=> 'longtext'
 			),
@@ -194,6 +202,14 @@ class Postmaster_upd {
 			'message'	=> array(
 				'type'	=> 'longtext'
 			),
+			/* New in v1.4 */
+			'html_message'	=> array(
+				'type'	=> 'longtext'
+			),
+			/* New in v1.4 */
+			'plain_message'	=> array(
+				'type'	=> 'longtext'
+			),
 			'settings' => array(
 				'type'	=> 'longtext'
 			),
@@ -269,6 +285,14 @@ class Postmaster_upd {
 				'type'	=> 'text'
 			),
 			'message'	=> array(
+				'type'	=> 'longtext'
+			),
+			/* New in v1.4 */
+			'html_message'	=> array(
+				'type'	=> 'longtext'
+			),
+			/* New in v1.4 */
+			'plain_message'	=> array(
 				'type'	=> 'longtext'
 			),
 			'settings' => array(
@@ -363,6 +387,14 @@ class Postmaster_upd {
 			'message'	=> array(
 				'type'	=> 'longtext'
 			),
+			/* New in v1.4 */
+			'html_message'	=> array(
+				'type'	=> 'longtext'
+			),
+			/* New in v1.4 */
+			'plain_message'	=> array(
+				'type'	=> 'longtext'
+			),
 			'send_every'  => array(
 				'type' => 'varchar',
 				'constraint' => 100
@@ -424,6 +456,14 @@ class Postmaster_upd {
 				'type'	=> 'text'
 			),
 			'message'	=> array(
+				'type'	=> 'longtext'
+			),
+			/* New in v1.4 */
+			'html_message'	=> array(
+				'type'	=> 'longtext'
+			),
+			/* New in v1.4 */
+			'plain_message'	=> array(
 				'type'	=> 'longtext'
 			),
 			'status'  => array(
