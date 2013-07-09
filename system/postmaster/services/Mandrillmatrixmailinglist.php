@@ -59,7 +59,11 @@ class MandrillMatrixMailingList_postmaster_service extends Mandrill_postmaster_s
 	{
 		$settings    = $this->get_settings();
 		$field       = $this->EE->channel_data->get_field_by_name($settings->matrix_field);
-		$cols        = $this->EE->channel_data->get('matrix_cols');
+		$cols        = $this->EE->channel_data->get('matrix_cols', array(
+			'where' => array(
+				'field_id' => $field->row('field_id')
+			)
+		));
 		$cols		 = $this->EE->channel_data->utility->reindex('col_name', $cols->result());
 		
 		$match_col = isset($settings->match_col) ? $settings->match_col : '';
@@ -95,7 +99,9 @@ class MandrillMatrixMailingList_postmaster_service extends Mandrill_postmaster_s
 				'site_id'  => config_item('site_id'),
 				'entry_id' => $parcel->entry->entry_id,
 				'field_id' => $field->row('field_id')
-			)
+			),
+			'order_by' => 'row_order',
+			'sort'     => 'asc'
 		));
 		
 		foreach($matrix_data->result() as $row)
@@ -120,11 +126,11 @@ class MandrillMatrixMailingList_postmaster_service extends Mandrill_postmaster_s
 			$parsed_object->to_name  = $name;
 			$parsed_object->to_email = $email;
 
-			$parsed_object = (object) $this->parse((array) $parsed_object, (array) $row);
+			$new_object = (object) $this->parse((array) $parsed_object, (array) $row);
 
 			if(!isset($row->$match_col) || isset($row->$match_col) && !empty($row->$match_col))
 			{
-				$response = parent::send($parsed_object, $parcel);
+				$response = parent::send($new_object, $parcel);
 			}
 			else
 			{
