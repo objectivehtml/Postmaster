@@ -239,10 +239,16 @@ class Postmaster_lib {
 			
 		}
 		
-		$parse_vars[$prefix.$delimeter.'safecracker'] = isset($this->EE->safecracker) ? TRUE : FALSE;
-		$parse_vars[$prefix.$delimeter.'logged_in_group_id'] = $this->EE->session->userdata('group_id');
+		$parse_vars[$prefix.$delimeter.'safecracker'] 		  = isset($this->EE->safecracker) ? TRUE : FALSE;
+		$parse_vars[$prefix.$delimeter.'logged_in_group_id']  = $this->EE->session->userdata('group_id');
 		$parse_vars[$prefix.$delimeter.'logged_in_member_id'] = $this->EE->session->userdata('member_id');
+		$parse_vars[$prefix.$delimeter.'current_time'] 		  = $this->EE->localize->now;
 		
+		$edit_date = $entry_vars[$prefix.$delimeter.'edit_date'];
+
+		$parse_vars[$prefix.$delimeter.'edit_date'] = mktime(substr($edit_date, 8, 2), substr($edit_date, 10, 2),  substr($edit_date, 12, 2), substr($edit_date, 4, 2), substr($edit_date, 6, 2), substr($edit_date, 0, 4));//mktime();
+		$entry_vars[$prefix.$delimeter.'edit_date'] = $parse_vars[$prefix.$delimeter.'edit_date'];
+
 		$parse_vars = array_merge($parse_vars, $this->EE->postmaster_model->get_member($member_id, 'member'));
 		
 		if(isset($parcel_copy->entry))
