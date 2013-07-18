@@ -9,10 +9,20 @@ if(!class_exists('InterfaceBuilderField'))
 		 * Field data
 		 *
 		 * @access	protected
-		 * @type		
+		 * @type    mixed	
 		*/
 		
 		protected $data;
+			
+
+		/**
+		 * Field default data
+		 *
+		 * @access	protected
+		 * @type	mixed	
+		*/
+		
+		protected $default;
 			
 			
 		/**
@@ -29,7 +39,7 @@ if(!class_exists('InterfaceBuilderField'))
 		 * Field ID
 		 *
 		 * @access	protected
-		 * @type		
+		 * @type	int	
 		*/
 		
 		protected $id;
@@ -49,7 +59,7 @@ if(!class_exists('InterfaceBuilderField'))
 		 * Field Name
 		 *
 		 * @access	protected
-		 * @type		
+		 * @type	string
 		*/
 		
 		protected $name;
