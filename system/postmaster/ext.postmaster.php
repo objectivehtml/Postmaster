@@ -59,7 +59,8 @@ class Postmaster_ext {
 		$this->EE->load->library('postmaster_lib');
 		
 		$hook      = $this->EE->extensions->in_progress;		
-		$responses = $this->EE->postmaster_lib->trigger_hook($hook, func_get_args());
+		$args      = func_get_args();
+		$responses = $this->EE->postmaster_lib->trigger_hook($hook, $args);
 		$return    = $this->EE->postmaster_hook->return_data($responses);
 		
 		$this->EE->extensions->end_script = $this->EE->postmaster_hook->end_script($responses);
