@@ -22,7 +22,7 @@ if(!class_exists('InterfaceBuilderField'))
 		 * @type	mixed	
 		*/
 		
-		protected $default;
+		protected $default = '';
 			
 			
 		/**
