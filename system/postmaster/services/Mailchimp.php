@@ -88,6 +88,11 @@ MailChimp helps you design email newsletters, share them on social networks, int
 				show_error('Something has gone wrong. Your email campaign has not been created.');
 			}
 
+			if(isset($response->error) && isset($response->code))
+			{
+				show_error('Error Code: '.$response->code.' - "'.$response->error.'"');
+			}
+
 			$response = $this->send_campaign($settings->api_key, $response);
 		}
 
