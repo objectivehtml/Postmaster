@@ -104,7 +104,7 @@ abstract class Base_service extends Postmaster_base_api {
 		$this->EE->load->library('postmaster_lib');
 		$this->EE->load->driver('interface_builder');
 		
-		$this->curl = new Curl();
+		$this->curl = new Postmaster_curl();
 		$this->uid  = new Uuid();
 		$this->lib  = $this->EE->postmaster_lib;
 		$this->now  = $this->EE->localize->now;	
