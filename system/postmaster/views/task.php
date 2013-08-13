@@ -153,6 +153,7 @@
 		</div>
 		
 		<input type="hidden" name="id" value="<?php echo $template->id?>" />
+		<input type="hidden" name="site_id" value="<?php echo $template->site_id?>" />
 		<input type="hidden" name="return" value="<?php echo $template->return?>" />
 
 		<button type="submit" class="submit float-right"><?php echo $template->button?></button>

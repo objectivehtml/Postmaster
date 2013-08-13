@@ -1,6 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once 'Postmaster_core.php';
+require_once PATH_THIRD.'postmaster/libraries/Postmaster_core.php';
+require_once PATH_THIRD.'postmaster/libraries/Postmaster_curl.php';
+require_once PATH_THIRD.'postmaster/libraries/Uuid.php';
 
 abstract class Postmaster_base_api extends Postmaster_core {
 

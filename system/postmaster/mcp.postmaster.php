@@ -27,7 +27,12 @@ class Postmaster_mcp {
 		
 		$this->EE->load->library('postmaster_lib');
 		$this->EE->load->driver('interface_builder');
-		
+			
+		if($site_id = $this->EE->input->post('site_id'))
+		{
+			$this->EE->config->set_item('site_id', ($site_id ? $site_id : 1));
+		}
+
 		if(REQ == 'CP')
 		{
 			$this->EE->load->library('doctag', array('base_path' => PATH_THIRD.'postmaster/doctags/'));		

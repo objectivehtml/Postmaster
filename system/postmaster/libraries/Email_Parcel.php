@@ -45,7 +45,8 @@ class Email_Parcel {
 			$send_every,
 			$parser_url,
 			$trigger,
-			$enabled = TRUE;
+			$enabled = TRUE,
+			$site_id;
 
 	public 	$channels, $channel_array;
 
@@ -53,6 +54,7 @@ class Email_Parcel {
 	{
 		$this->EE =& get_instance();
 		
+		$this->site_id         = config_item('site_id');
 		$this->trigger 		   = array();
 		$this->channels        = $this->EE->channel_data->get_channels(array('where' => array(
 			'site_id' => $this->EE->config->item('site_id')

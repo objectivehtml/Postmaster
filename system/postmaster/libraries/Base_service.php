@@ -1,7 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once PATH_THIRD.'postmaster/libraries/Curl.php';
-require_once PATH_THIRD.'postmaster/libraries/Uuid.php';
 require_once PATH_THIRD.'postmaster/libraries/Postmaster_base_api.php';
 
 /**
