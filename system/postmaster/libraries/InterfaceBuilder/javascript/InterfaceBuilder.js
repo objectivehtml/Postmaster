@@ -8,8 +8,6 @@ var InterfaceBuilder = function() {
 	
 	IB.matrix = function(obj) {
 	
-		console.log($(obj));
-		
 		$(obj).each(function() {
 			
 			var $wrapper = $(this);

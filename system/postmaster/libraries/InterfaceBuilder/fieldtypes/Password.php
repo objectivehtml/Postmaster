@@ -11,11 +11,11 @@ class Password_IBFieldType extends InterfaceBuilderField {
 			$this->data = $data;	
 		}
 		
-		if(empty($this->data))
+		if(empty($data))
 		{
-			$this->data = $this->default;
+			$data = $this->default;
 		}
 
-		return '<input type="password" name="'.$this->name.'" value="'.$this->form_prep($this->data).'" id="'.$this->id.'" />';
+		return '<input type="password" name="'.$this->name.'" value="'.$this->form_prep($data).'" id="'.$this->id.'" />';
 	}
 }

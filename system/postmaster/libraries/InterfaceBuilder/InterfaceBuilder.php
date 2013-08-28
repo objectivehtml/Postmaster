@@ -354,7 +354,7 @@ if(!class_exists('InterfaceBuilder'))
 			$IB = new InterfaceBuilder(array_merge($properties, array(
 				'data' => $data,
 			)));
-			
+
 			$IB->addField($fieldName, $field);
 			
 			return $IB->getField($fieldName);

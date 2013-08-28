@@ -3,7 +3,7 @@
 class Matrix_IBFieldType extends InterfaceBuilderField {
 
 	public $input_type;
-	
+
 	public function displayField($data = FALSE)
 	{			
 		if($data)

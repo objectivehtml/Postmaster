@@ -9,7 +9,7 @@ if(!class_exists('InterfaceBuilderField'))
 		 * Field data
 		 *
 		 * @access	protected
-		 * @type    mixed	
+		 * @type		
 		*/
 		
 		protected $data;
@@ -23,7 +23,7 @@ if(!class_exists('InterfaceBuilderField'))
 		*/
 		
 		protected $default = '';
-			
+		
 			
 		/**
 		 * Field Description
@@ -39,7 +39,7 @@ if(!class_exists('InterfaceBuilderField'))
 		 * Field ID
 		 *
 		 * @access	protected
-		 * @type	int	
+		 * @type		
 		*/
 		
 		protected $id;
@@ -59,7 +59,7 @@ if(!class_exists('InterfaceBuilderField'))
 		 * Field Name
 		 *
 		 * @access	protected
-		 * @type	string
+		 * @type		
 		*/
 		
 		protected $name;
@@ -157,7 +157,7 @@ if(!class_exists('InterfaceBuilderField'))
 		 * @return	string	
 		*/
 		
-		abstract function displayField($data);
+		abstract function displayField($data = FALSE);
 		
 		
 		/**
