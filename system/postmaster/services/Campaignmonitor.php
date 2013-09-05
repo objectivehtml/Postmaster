@@ -106,12 +106,24 @@ class CampaignMonitor_postmaster_service extends Base_service {
 	}
 		
 	public function subscribe($data)
-	{
+	{	
 		$post = array(
 			'EmailAddress' => $data['email'],
 			'Name'         => !isset($data['name']) ? ($this->EE->input->post('name', TRUE) ? $this->EE->input->post('name', TRUE) : $data['email']) : $data['name'],
-			'CustomFields' => array()
 		);
+
+		if(isset($data['post']['custom_fields']))
+		{
+			$post['CustomFields'] = array();
+
+			foreach($data['post']['custom_fields'] as $key => $value)
+			{
+				$post['CustomFields'][] = (object) array(
+					'Key'   => $key,
+					'Value' => $value
+				);
+			}
+		}
 		
 		$url = $this->api_url('subscribers', $data['id']);
 		
@@ -221,8 +233,6 @@ class CampaignMonitor_postmaster_service extends Base_service {
 		$this->curl->create($url);
 		$this->curl->http_login($api_key, '');
 		
-		var_dump($post);exit();
-
 		$this->curl->post(json_encode($post), array(
 			CURLOPT_USERAGENT	   => 'Postmaster v'.POSTMASTER_VERSION,
 			CURLOPT_HTTPHEADER     => array(
