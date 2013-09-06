@@ -167,7 +167,7 @@ class Store_report_products_sold_postmaster_notification extends Base_notificati
 			{
 				$entry = $this->_get_entry($entry_id, $day);
 
-				if($entry->num_rows == 0)
+				if($entry->num_rows() == 0)
 				{
 					return TRUE;
 				}
@@ -210,7 +210,7 @@ class Store_report_products_sold_postmaster_notification extends Base_notificati
 	private function _get_entry($entry_id)
 	{
 		$this->EE->db->where('entry_id', $entry_id);
-		$this->EE->db->where('date', date('Y-m-d 00:00:00', time()));
+		$this->EE->db->where('date >=', date('Y-m-d 00:00:00', time()));
 		
 		return $this->EE->db->get('postmaster_store_report_products_sold');
 	}
