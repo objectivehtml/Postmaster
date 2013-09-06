@@ -68,24 +68,7 @@ abstract class Template_Base extends Base_class {
 	
 	public function services()
 	{
-		$this->EE->load->helper('directory');
-
-		$path     = PATH_THIRD.'/postmaster/services/';
-		$files    = directory_map($path);
-		$services = array();
-
-		if(is_array($files))
-		{
-			foreach($files as $index => $filename)
-			{
-				require_once $path . $filename;
-	
-				$class = str_replace('.php', '', $filename).'_postmaster_service';
-				$services[] = new $class();
-			}
-		}
-
-		return $services;
+		return $this->EE->postmaster_service->get_services($this->settings);
 	}
 	
 	protected function cp_url($method = 'index', $useAmp = FALSE)
