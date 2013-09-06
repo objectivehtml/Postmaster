@@ -23,8 +23,7 @@ class Store_report_products_sold_postmaster_notification extends Base_notificati
 				'constraint'		=> 100
 			),
 			'total'	=> array(
-				'type'				=> 'int',
-				'constraint'		=> 100
+				'type'				=> 'float'
 			),
 			'total_orders'	=> array(
 				'type'				=> 'int',
