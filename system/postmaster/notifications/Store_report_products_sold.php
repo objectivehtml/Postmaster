@@ -103,10 +103,11 @@ class Store_report_products_sold_postmaster_notification extends Base_notificati
 				$status = $settings->status;
 			}
 
-			$vars = $this->_get_entry_stats($entry->entry_id, $status);
-
 			if($this->_should_send($entry->entry_id, $settings->days_to_send))
 			{
+				$vars   = $this->_get_entry_stats($entry->entry_id, $status);
+				$member = $this->channel_data->get_member($entry->author_id)->row_array();
+
 				$this->_insert_or_update($entry->entry_id, array(
 					'entry_id'     => $entry->entry_id,
 					'date'         => date('Y-m-d 00:00:00', time()),
@@ -116,7 +117,7 @@ class Store_report_products_sold_postmaster_notification extends Base_notificati
 					'total_orders' => $vars['total_orders']
 				));
 
-				parent::send($vars, $this->EE->session->userdata, $entry);
+				parent::send($vars, $member, $entry);
 			}
 		}
 	}
