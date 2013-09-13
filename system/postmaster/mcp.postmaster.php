@@ -767,7 +767,8 @@ class Postmaster_mcp {
 			'service'            => $this->post('service'),
 			'extra_conditionals' => $this->post('extra_conditionals'),
 			'enabled' 			 => $this->post('enabled') == '1' ? 1 : 0,
-			'settings'           => json_encode($this->post('setting'))
+			'settings'           => json_encode($this->post('setting')),
+			'send_once'          => (int) $this->post('send_once')
 		);
 
 		$this->EE->postmaster_model->$method($parcel, $this->post('id'));

@@ -496,52 +496,66 @@ class Postmaster_lib {
 
 			//$this->log_action('Entry '.$entry_id.' validation has started. There are '.count($parcels).' parcels to validate.');
 			
-			if($this->validate_enabled($parcel->enabled))
+			if($this->should_send_email($parcel->send_once, $entry_id, $parcel->id))
 			{
-				if($parcel->channel_id == $data['channel_id'])
+				if($this->validate_enabled($parcel->enabled))
 				{
-					$entry_data['category'] = isset($entry_data['category']) ? $entry_data['category'] : array();
-	
-					if($this->validate_trigger($parcel->trigger))
+					if($parcel->channel_id == $data['channel_id'])
 					{
-						if($this->validate_categories($entry_data['category'], $parcel->categories))
-						{		
-							if($this->validate_member($meta['author_id'], $parcel->member_groups))
+						$entry_data['category'] = isset($entry_data['category']) ? $entry_data['category'] : array();
+		
+						if($this->validate_trigger($parcel->trigger))
+						{
+							if($this->validate_categories($entry_data['category'], $parcel->categories))
 							{		
-								if($this->validate_status($meta['status'], $parcel->statuses))
-								{	
-									$entry  = $this->EE->channel_data->get_channel_entry($entry_id)->row();
-									$parcel = $this->append($parcel, 'entry', $entry);							
-									
-									$this->append($parcel, 'safecracker', (isset($this->EE->safecracker) ? TRUE : FALSE));
-									
-									$member_id = FALSE;
-									
-									if(isset($parcel->entry->author_id))
-									{
-										$member_id = $parcel->entry->author_id;
-									}
-									
-									$parsed_object = $this->parse($parcel, $member_id);
-									$parsed_object->settings = $parcels[$index]->settings;
-	
-									if($this->validate_conditionals($parsed_object->extra_conditionals))
+								if($this->validate_member($meta['author_id'], $parcel->member_groups))
+								{		
+									if($this->validate_status($meta['status'], $parcel->statuses))
 									{	
-										$this->send($parsed_object, $parcel);
+										$entry  = $this->EE->channel_data->get_channel_entry($entry_id)->row();
+										$parcel = $this->append($parcel, 'entry', $entry);							
+										
+										$this->append($parcel, 'safecracker', (isset($this->EE->safecracker) ? TRUE : FALSE));
+										
+										$member_id = FALSE;
+										
+										if(isset($parcel->entry->author_id))
+										{
+											$member_id = $parcel->entry->author_id;
+										}
+										
+										$parsed_object = $this->parse($parcel, $member_id);
+										$parsed_object->settings = $parcels[$index]->settings;
+		
+										if($this->validate_conditionals($parsed_object->extra_conditionals))
+										{	
+											$this->send($parsed_object, $parcel);
+										}
 									}
 								}
 							}
 						}
 					}
-				}
-				else
-				{				
-					$this->log_action('The "'.$parcel->title.'" parcel does not have a valid channel_id, which is "'.$data['channel_id'].'"');
+					else
+					{				
+						$this->log_action('The "'.$parcel->title.'" parcel does not have a valid channel_id, which is "'.$data['channel_id'].'"');
+					}
 				}
 			}
 		}
 	}
 
+	public function should_send_email($send_once, $entry_id, $parcel_id)
+	{
+		$send_once = (int) $send_once;
+
+		if(!$send_once)
+		{
+			return TRUE;
+		}
+
+		return $this->EE->postmaster_model->has_sent($entry_id, $parcel_id) ? FALSE : TRUE;
+	}
 	
 	/**
 	 * Validate a parsed conditional string 

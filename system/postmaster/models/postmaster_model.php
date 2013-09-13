@@ -6,6 +6,23 @@ class Postmaster_model extends CI_Model {
 	{
 		parent::__construct();
 	}
+
+	public function has_sent($entry_id, $parcel_id )
+	{
+		$entry_id = (int) $entry_id;
+
+		if(!$entry_id)
+		{
+			return FALSE;
+		}
+
+		$this->db->where('parcel_id', $parcel_id);
+		$this->db->where('entry_id', $entry_id);
+
+		$record = $this->db->get('postmaster_mailbox');
+
+		return $record->num_rows() == 0 ? FALSE : TRUE;
+	}
 	
 	public function assign_site_id($site_id = FALSE, $parcels = TRUE, $hooks = TRUE)
 	{

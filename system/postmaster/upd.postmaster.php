@@ -138,6 +138,11 @@ class Postmaster_upd {
 				'type'       => 'int',
 				'constraint' => 1,
 				'default'    => 1
+			),
+			'send_once'  => array(
+				'type'       => 'int',
+				'constraint' => 1,
+				'default'    => 0
 			)
 		),
 		'postmaster_hooks' 	=> array(

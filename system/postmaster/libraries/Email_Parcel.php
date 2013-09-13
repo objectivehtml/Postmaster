@@ -46,7 +46,8 @@ class Email_Parcel {
 			$parser_url,
 			$trigger,
 			$enabled = TRUE,
-			$site_id;
+			$site_id,
+			$send_once = FALSE;
 
 	public 	$channels, $channel_array;
 
@@ -74,6 +75,7 @@ class Email_Parcel {
 				$this->$attr = $value;
 			}
 			
+			$this->send_once     = $this->send_once == '0' ? FALSE : TRUE;
 			$this->channel 		 = $this->EE->channel_data->get_channel($this->channel_id);
 			$this->settings      = json_decode($this->settings);
 			$this->categories    = explode('|', $this->categories);

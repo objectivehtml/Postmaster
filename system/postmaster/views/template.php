@@ -49,6 +49,23 @@
 		</div>
 		
 		<div class="container margin-top">
+			<h3><a href="#help-send-once" class="help"><label for="enabled">Send Only Once?</label> <span>(?)</span></a></h3>
+			
+			<select name="send_once" id="enabled">
+				<option value="0" <?php echo !$template->send_once ? 'selected="selected"' : ''; ?>>False</option>
+				<option value="1" <?php echo $template->send_once ? 'selected="selected"' : ''; ?>>True</option>
+			</select>
+			
+			<div id="help-send-once" class="help-text">
+				
+				<h2>Send this parcel only once?</h2>
+
+				<p>If this option is set to True, then this parcel will only send an email once for each entry (that matches the other conditions in this parcel). So once an email has been fired fomr this parcel, another email will never send again for the same entry, even if the conditions are true.</p>
+				
+			</div>
+		</div>
+		
+		<div class="container margin-top">
 			<h3><a href="#send-receive" class="help">Send / Receive <span>(?)</span></a></h3>
 					
 			<div id="send-receive" class="help-text">
