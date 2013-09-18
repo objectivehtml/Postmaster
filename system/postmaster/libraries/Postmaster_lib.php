@@ -210,6 +210,15 @@ class Postmaster_lib {
 	 
 	public function parse($parcel, $member_id = FALSE, $parse_vars = array(), $prefix = 'parcel', $delimeter = ':')
 	{
+		/* Fix 9/18/13 - Typography hack to prevent encoding URL's in emails */
+		
+		$current_method = $this->EE->input->get('M');
+		
+		if(REQ == 'CP' && $current_method)
+		{
+			$_GET['M'] = 'send_email';
+		}
+
 		$parcel_copy    = clone $parcel;
 		$channel_id     = isset($parcel->entry->channel_id) ? $parcel->entry->channel_id : 0;
 		$channels       = $this->EE->postmaster_model->get_channels();
@@ -257,7 +266,7 @@ class Postmaster_lib {
 		}
 
 		$parse_vars = array_merge($parse_vars, $this->EE->postmaster_model->get_member($member_id, 'member'));
-		
+
 		if(isset($parcel_copy->entry))
 		{
 			$entry = $parcel_copy->entry;
@@ -269,9 +278,17 @@ class Postmaster_lib {
 			$entry_vars = array();
 		}
 		
-		return $this->convert_array($this->EE->channel_data->tmpl->parse_array($parcel_copy, $parse_vars, $entry_vars, $channels, $channel_fields, $prefix.$delimeter));
-	}
-	
+		$return = $this->convert_array($this->EE->channel_data->tmpl->parse_array($parcel_copy, $parse_vars, $entry_vars, $channels, $channel_fields, $prefix.$delimeter));
+		
+		/* Fix 9/18/13 - Typography hack to prevent encoding URL's in emails */
+		
+		if(REQ == 'CP' && $current_method)
+		{
+			$_GET['M'] = $current_method;
+		}
+
+		return $return;		
+	}	
 	
 	public function route($hook, $args)
 	{
