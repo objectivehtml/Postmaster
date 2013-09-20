@@ -726,6 +726,7 @@ class Postmaster_upd {
 		$this->EE->data_forge = new Data_forge();
 		$this->EE->data_forge->update_tables($this->tables);
 
+		$this->EE->load->add_package_path(PATH_THIRD . 'postmaster');
 		$this->EE->load->library('postmaster_installer');
 		
 		foreach($this->actions as $action)
