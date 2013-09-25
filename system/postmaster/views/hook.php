@@ -15,6 +15,8 @@
 
 <form action="<?php echo $template->action?>" method="post" class="group postmaster">
 	
+	<input type="hidden" name="XID" value="<?php echo $xid?>">
+	
 	<fieldset class="column group sidebar">
 				
 		<div class="container">

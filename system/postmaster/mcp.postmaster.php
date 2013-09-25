@@ -181,6 +181,7 @@ class Postmaster_mcp {
     	}
     	
 		$vars = array(
+			'xid'      => XID_SECURE_HASH,
 			'ib_path'  => $this->EE->theme_loader->theme_url().'postmaster/javascript/InterfaceBuilder.js',
 			'template' => new Template_Notification($saved_data)
 		);
@@ -224,6 +225,7 @@ class Postmaster_mcp {
     	}
     	
 		$vars = array(
+			'xid'      => XID_SECURE_HASH,
 			'ib_path'  => $this->EE->theme_loader->theme_url().'postmaster/javascript/InterfaceBuilder.js',
 			'template' => new Template_Hook($saved_data)
 		);
@@ -264,6 +266,7 @@ class Postmaster_mcp {
 		));
 		
 		$vars = array(
+			'xid'      => XID_SECURE_HASH,
 			'ib_path'  => $this->EE->theme_loader->theme_url().'postmaster/javascript/InterfaceBuilder.js',
 			'template' => new Template_Task($saved_data)
 		);
@@ -398,7 +401,7 @@ class Postmaster_mcp {
 		));
 		
 		$id = $this->EE->input->get_post('id');
-		
+
 		if(!$id)
 		{
 			return;
@@ -525,7 +528,9 @@ class Postmaster_mcp {
 			'Create New Template' => $this->cp_url('create_template'),
 		));
 
-		$vars = array();
+		$vars = array(
+			'xid' => XID_SECURE_HASH,
+		);
 
 		$settings = $this->EE->postmaster_model->get_editor_settings();
 
@@ -586,6 +591,7 @@ class Postmaster_mcp {
 		}
 
 		$vars = array(
+			'xid'           => XID_SECURE_HASH,
 			'ib_path'	    => $this->EE->theme_loader->theme_url().'postmaster/javascript/InterfaceBuilder.js',
 			'channels'		=> json_encode($channels),
 			'fields'		=> json_encode($field_data),
@@ -634,6 +640,7 @@ class Postmaster_mcp {
 		}
 
 		$vars = array(
+			'xid'      		=> XID_SECURE_HASH,
 			'ib_path'	    => $this->EE->theme_loader->theme_url().'postmaster/javascript/InterfaceBuilder.js',
 			'channels'		=> json_encode($channels),
 			'fields'		=> json_encode($field_data),
