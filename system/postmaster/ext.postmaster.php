@@ -54,6 +54,46 @@ class Postmaster_ext {
 		}
 	}
 	
+	public function route_task_hook()
+	{
+		$this->EE->load->library('postmaster_lib');
+		$this->EE->load->library('postmaster_hook');
+		$this->EE->load->library('postmaster_task');
+		
+		$id   = $this->EE->input->get('id');
+		$hook = $this->EE->extensions->in_progress;	
+
+		$response = $this->EE->postmaster_lib->route_task($id, $hook, func_get_args());	
+
+		$return   = $this->EE->postmaster_hook->return_data($response);
+
+		$this->EE->extenions->end_script = $this->EE->postmaster_hook->end_script($return);
+		
+		if($return != 'Undefined')
+		{
+			return $return;
+		}
+	}
+
+	public function trigger_task_hook()
+	{
+		$this->EE->load->library('postmaster_lib');
+		
+		$hook      = $this->EE->extensions->in_progress;		
+		$args      = func_get_args();
+		$responses = $this->EE->postmaster_lib->trigger_task_hook($hook, $args);
+		$return    = $this->EE->postmaster_hook->return_data($responses);
+		
+		$this->EE->extensions->end_script = $this->EE->postmaster_hook->end_script($responses);
+			
+		if(!is_null($return))
+		{
+			return $return;
+		}
+		
+		return NULL;
+	}
+	
 	public function trigger_hook()
 	{
 		$this->EE->load->library('postmaster_lib');

@@ -32,55 +32,43 @@
 			
 		</div>
 
-		<div class="container margin-top">
 		
-			<h3><a href="#help-task" class="help"><label for="task">Task <span>(?)</span></label></a></h3>
-							
-			<select name="installed_hook" class="onchange" data-group=".hook-panel" data-default="postmaster_base_hook">
-				<option value="">--</option>
-			<?php foreach($template->tasks() as $task): ?>
-				<option value="<?php echo $task->get_name()?>" <?php if($task->get_name() == $template->task): ?>selected="selected"<? endif; ?>><?php echo $task->get_title()?></option>
-			<?php endforeach; ?>
+		<div class="container margin-top">
+			<h3><a href="#help-enabled" class="help"><label for="enabled">Enabled?</label> <span>(?)</span></a></h3>
+			
+			<select name="enabled" id="enabled">
+				<option value="1" <?php echo $template->is_enabled() ? 'selected="selected"' : ''; ?>>Enabled</option>
+				<option value="0" <?php echo !$template->is_enabled() ? 'selected="selected"' : ''; ?>>Disabled</option>
 			</select>
 			
+			<div id="help-enabled" class="help-text">
+				
+				<h2>Is the Task Enabled?</h2>
+
+				<p>The Enabled property is a value you can use to prevent the task from triggering without having to change the data or delete it.</p>
+				
+			</div>
 		</div>
 		
 	</fieldset>
 	
 	<fieldset class="column group editor">
 			
-		<h2>Task Settings</h2>		
-			
-		<div class="margin-top hooks group">
+		<div class="container margin-top">
+		
+			<h2><a href="#help-task" class="help"><label for="task">Task <span>(?)</span></label></a></h2>
 							
-			<div class="columns">
+			<select name="task" class="onchange" data-group=".hook-panel" data-default="postmaster_base_hook">
+				<option value="">--</option>
+			<?php foreach($template->tasks() as $task): ?>
+				<option value="<?php echo $task->get_name()?>" <?php if($task->get_name() == $template->task): ?>selected="selected"<? endif; ?>><?php echo $task->get_title()?></option>
+			<?php endforeach; ?>
+			</select>
 				
-				<ul class="column third">
-					<li>
-						<h3><a href="#installed" class="help">Installed Hooks <span>(?)</span></a></h3>	
-					</li>
-				</ul>
+			<div class="task-settings margin-top clear">
 				
-				<ul class="column third">				
-					<li>
-						<h3><a href="#user_defined" class="help">User Defined Hook <span>(?)</span></a></h3>
-						<input type="text" name="user_defined_hook" value="<?php echo $template->user_defined_hook?>" />
-					</li>
-				</ul>
-				
-				<div class="column third">
-					<h3><a href="#priority" class="help">Priority <span>(?)</span></a></h3>
-						
-						<select name="priority">
-						<?php foreach($template->priorities() as $priority): ?>
-							<option value="<?php echo $priority?>" <?php if($priority== $template->priority): ?>selected="selected"<? endif; ?>><?php echo $priority?></option>
-						<?php endforeach; ?>
-						</select>
-				</div>
+				<h2>Settings</h2>		
 			
-			</div>
-			
-			<div class="hook-settings clear">
 				<?php foreach($template->tasks(TRUE) as $task): ?>
 				
 					<?php if($task->display_settings($template->settings)): ?>
@@ -92,32 +80,10 @@
 				<?php endforeach; ?>
 				
 			</div>
-			
-			<div id="installed" class="help-text">
-				
-				<h2>Installed Hooks</h2>
-				
-				<p>Installed hooks have improved functionality, and can pass variables to the email template. EE tags, snippets, and global variables are also accepted. If you don't see the hook you need, you can use the API to build your own hook. Contact <a href="mailto:support@objectivehtml.com">support@objectivehtml.com</a> if you need custom or advanced integration.</p>
-				
-			</div>
-			
-			<div id="user_defined" class="help-text">
-				
-				<h2>User Defined Hooks</h2>
-				
-				<p>User defined hooks only have only the default functionality. No template variables are passed within user defined hooks, so only EE tags, snippets, and global variables are accepted. Any hook from first or third-parties may be used to send emails. Installed hooks will take precedence if one is defined.</p>
-				
-			</div>
-			
-			<div id="priority" class="help-text">
-				
-				<h2>Priority</h2>
-				
-				<p>Priority used to determine when the same two hooks are fired. Priority goes in order of importance from least to greatest. So 1 is the most important, and 10 being the EE default. When in doubt, select '1' to ensure Postmaster hooks get executed before everything else.</p>
-			</div>
-			
+
 		</div>
 		
+		<!--	
 		<div class="margin-top service clear">
 		
 			<h2><a href="#email_service" class="help">Email Service <span>(?)</span></a></h2>
@@ -151,6 +117,7 @@
 			</div>
 
 		</div>
+		-->
 		
 		<input type="hidden" name="id" value="<?php echo $template->id?>" />
 		<input type="hidden" name="site_id" value="<?php echo $template->site_id?>" />

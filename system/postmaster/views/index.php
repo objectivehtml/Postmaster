@@ -149,7 +149,7 @@
 			<th style="width:30%">Title</th>
 			<th style="width:10%">Enabled</th>
 			<th style="width:25%">Task</th>
-			<th style="width:15%">Service</th>
+			<th style="width:25%">Ping</th>
 			<th style="width:5%;max-width:112px;min-width:112px">Actions</th>
 		</tr>
 	</thead>
@@ -166,8 +166,8 @@
 		<tr>
 			<td class="title"><?php echo $task->title?></td>
 			<td class="title"><?php echo $task->enabled != 0 ? 'Enabled' : 'Disabled'; ?></td>
-			<td><?php echo !empty($task->installed_hook) ? $task->installed_hook : $task->user_defined_hook ?></td>
-			<td><?php echo !empty($task->service) ? $task->service : $task->service ?></td>			
+			<td><?php echo $task->task ?></td>	
+			<td><?php echo $task->ping_url ?></td>	
 			<td class="actions">
 				<a href="<?php echo $task->edit_url?>" title="Edit" class="button tooltip"><span class="icon-edit"></span></a>
 				<a href="<?php echo $task->duplicate_url?>" title="Duplicate" class="button tooltip"><span class="icon-copy"></span></a>

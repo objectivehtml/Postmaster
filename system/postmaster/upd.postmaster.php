@@ -509,6 +509,10 @@ class Postmaster_upd {
 				'primary_key'		=> TRUE,
 				'auto_increment'	=> TRUE
 			),
+			'obj_id'	=> array(
+				'type'				=> 'int',
+				'constraint'		=> 100,
+			),
 			'class' => array(
 				'type'			=> 'varchar',
 				'constraint' 	=> 100
@@ -522,6 +526,10 @@ class Postmaster_upd {
 				'constraint' 	=> 100
 			),
 			'file'   => array(
+				'type'			=> 'varchar',
+				'constraint' 	=> 100
+			),
+			'type'   => array(
 				'type'			=> 'varchar',
 				'constraint' 	=> 100
 			)
@@ -542,21 +550,9 @@ class Postmaster_upd {
 				'type'       => 'varchar',
 				'constraint' => 250
 			),
-			'installed_hook'  => array(
+			'task'  => array(
 				'type'       => 'varchar',
 				'constraint' => 250
-			),
-			'user_defined_hook'  => array(
-				'type'       => 'varchar',
-				'constraint' => 250
-			),
-			'actual_hook_name' => array(
-				'type'       => 'varchar',
-				'constraint' => 250
-			),
-			'priority' => array(
-				'type'       => 'int',
-				'constraint' => 10
 			),
 			'settings' => array(
 				'type'	=> 'longtext'
@@ -565,8 +561,13 @@ class Postmaster_upd {
 				'type'       => 'int',
 				'constraint' => 1,
 				'default'    => 1
+			),
+			'enable_cron'  => array(
+				'type'       => 'int',
+				'constraint' => 1,
+				'default'    => 0
 			)
-		),
+		)
 	);
 	
 	private $actions = array(
@@ -657,6 +658,22 @@ class Postmaster_upd {
 		array(
 		    'class'     => 'Postmaster_ext',
 		    'method'    => 'route_hook'
+		),
+		array(
+		    'class'     => 'Postmaster_mcp',
+		    'method'    => 'create_task_action'
+		),
+		array(
+		    'class'     => 'Postmaster_mcp',
+		    'method'    => 'edit_task_action'
+		),
+		array(
+		    'class'     => 'Postmaster_mcp',
+		    'method'    => 'duplicate_task_action'
+		),
+		array(
+		    'class'     => 'Postmaster_mcp',
+		    'method'    => 'task_action'
 		)
 	);
 	

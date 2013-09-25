@@ -163,6 +163,14 @@ class Postmaster_task extends Postmaster_base_lib {
 		return parent::total_objects();
 	}
 	
+
+	public function ping($task)
+	{
+		if($task->get_enable_cron())
+		{
+			$task->trigger_cron();
+		}
+	}
 	
 	/**
 	 * Triggers all the task's methods with all the proper args
@@ -175,6 +183,8 @@ class Postmaster_task extends Postmaster_base_lib {
 	 
 	public function trigger($index, $args = array())
 	{
+		var_dump($index);exit();
+
 		$actual_hooks = $this->EE->postmaster_model->get_actual_installed_hooks($index);
 		
 		$return = array();

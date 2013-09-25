@@ -288,6 +288,15 @@ class Postmaster_lib {
 		}
 
 		return $return;		
+	}
+
+	public function route_task($task_id, $hook, $args)
+	{
+		$this->EE->load->model('postmaster_routes_model');
+
+		$routes = $this->EE->postmaster_routes_model->get_routes_by_task($task_id, $hook);	
+
+		return $this->_route($routes, $args);
 	}	
 	
 	public function route($hook, $args)
@@ -295,12 +304,18 @@ class Postmaster_lib {
 		$this->EE->load->model('postmaster_routes_model');
 		
 		$routes = $this->EE->postmaster_routes_model->get_routes_by_hook($hook);	
+		
+		return $this->_route($routes, $args);
+	}
+
+	private function _route($routes, $args)
+	{
 		$return = array();
 		
 		foreach($routes->result_array() as $route)
 		{
 			$path = PATH_THIRD . 'postmaster/' . $route['file'];
-			
+
 			if(file_exists($path))
 			{				
 				$response = call_user_func_array(array($this->EE->postmaster_routes_model->load($route['class'], $path), $route['method']), $args);
@@ -337,7 +352,7 @@ class Postmaster_lib {
 				$return[] = $response;
 			}
 		}
-		
+
 		return $return;
 	}
 	
@@ -482,6 +497,28 @@ class Postmaster_lib {
 		if(!empty($hook))
 		{
 			return $this->EE->postmaster_hook->trigger($hook, $args);
+		}			
+	}
+
+
+	/**
+	 * Convenience method to trigger the specific task hook.
+	 *
+	 * @access	public
+	 * @param	string 	The name of the hook to call
+	 * @param 	array	An array of arguments used to call the hook
+	 * @return	
+	 */
+	 
+	public function trigger_task_hook($hook, $args)
+	{
+		$this->EE->load->library('postmaster_task', array(
+			'base_path' => PATH_THIRD.'postmaster/tasks/'
+		));
+		
+		if(!empty($hook))
+		{
+			return $this->EE->postmaster_task->trigger($hook, $args);
 		}			
 	}
 	

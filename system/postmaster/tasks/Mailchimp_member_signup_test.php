@@ -1,10 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Mailchimp_member_signup_postmaster_task extends Base_task {
+class Mailchimp_member_signup_test_postmaster_task extends Base_task {
 	
-	protected $name  = 'mailchimp_member_signup';
+	protected $name  = 'mailchimp_member_signup_test';
 
-	protected $title = 'Mailchimp Member Signup';
+	protected $title = 'Mailchimp Member Signup (Test)';
 
 	protected $enable_cron = TRUE;
 
@@ -17,11 +17,6 @@ class Mailchimp_member_signup_postmaster_task extends Base_task {
 		array(
 			'method' 	=> 'your_hook_method_2',
 			'hook'   	=> 'some_hook_name_2',
-			'priority'	=> 10
-		),
-		array(
-			'method' 	=> 'your_hook_method',
-			'hook'   	=> 'some_hook_name',
 			'priority'	=> 10
 		)
 	);
@@ -40,6 +35,16 @@ class Mailchimp_member_signup_postmaster_task extends Base_task {
 	public function __construct()
 	{
 		parent::__construct();
+	}
+
+	public function your_hook_method()
+	{
+		//exit('1');
+	}
+
+	public function your_hook_method_2()
+	{
+		//exit('2');
 	}
 
 	public function trigger_cron()

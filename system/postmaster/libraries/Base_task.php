@@ -17,6 +17,18 @@ abstract class Base_task extends Postmaster_base_api {
 	
 	protected $task;
 	
+	protected $enable_cron = FALSE;
+	
+	protected $hooks = array(
+		/*
+		array(
+			'method' 	=> 'your_hook_method',
+			'hook'   	=> 'some_hook_name',
+			'priority'	=> 10
+		)
+		*/
+	);
+
 	/**
 	 * Constructor
 	 *
@@ -37,6 +49,23 @@ abstract class Base_task extends Postmaster_base_api {
 	public function get_task()
 	{
 		return !empty($this->task) ? $this->task : $this->name;
+	}
+
+	public function display_settings($settings = array())
+	{
+		$return = parent::display_settings($settings);
+
+		if(empty($return))
+		{
+			$return = 'There are no settings for this task';
+		}
+
+		return $return;
+	}
+
+	public function trigger_cron()
+	{
+		return;
 	}
 }
 

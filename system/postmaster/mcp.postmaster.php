@@ -112,6 +112,8 @@ class Postmaster_mcp {
 			$tasks[$index]['edit_url']      = $this->cp_url('task').'&id='.$value['id'];
 			$tasks[$index]['delete_url']    = $this->cp_url('delete_task_action').'&id='.$value['id'];
 			$tasks[$index]['duplicate_url'] = $this->cp_url('duplicate_task_action').'&id='.$value['id'];
+			$tasks[$index]['ping_url'] 	    = (int) $value['enable_cron'] == 1 ? $this->current_url('ACT', $this->EE->channel_data->get_action_id(__CLASS__, 'task_action')).'&id='.$value['id'] : 'N/A';
+			
 			
 			$tasks[$index] = (object) $tasks[$index];
 		}
@@ -375,14 +377,65 @@ class Postmaster_mcp {
 		}
 		
 		$notification = $notification->row();
+		
+		if((int) $notification->enabled == 0)
+		{
+			return;
+		}
+
 		$notification->settings = json_decode($notification->settings);
 		
-		// var_dump($notification->settings);exit();
-
 		$obj = $this->EE->postmaster_notification->load($notification->notification, $notification);
 		$obj->set_notification($notification);
 		
 		$this->EE->postmaster_notification->trigger($obj);
+	}
+	
+	public function task_action()
+	{
+		$this->EE->load->library('postmaster_task', array(
+			'base_path' => PATH_THIRD.'postmaster/tasks/'
+		));
+		
+		$id = $this->EE->input->get_post('id');
+		
+		if(!$id)
+		{
+			return;
+		}
+		
+		$task = $this->EE->postmaster_model->get_task($id);
+
+		if($task->num_rows() == 0)
+		{
+			return;
+		}
+		
+		$task = $task->row();
+
+		if((int) $task->enabled == 0)
+		{
+			return;
+		}
+
+		$task->settings = json_decode($task->settings);
+		
+		// var_dump($notification->settings);exit();
+
+		$obj = $this->EE->postmaster_task->load($task->task, $task);
+		$obj->set_task($task);
+		
+		$this->EE->postmaster_task->ping($obj);
+	}
+	
+	public function delete_task_action()
+	{
+		$id  = $this->get('id');
+		$url = $this->cp_url('index');
+
+		$this->EE->postmaster_model->delete_task($id);
+
+		$this->EE->functions->redirect($url);
 	}
 	
 	public function delete_notification_action()
@@ -421,6 +474,16 @@ class Postmaster_mcp {
 		$url = $this->cp_url('index');
 
 		$this->EE->postmaster_model->duplicate_hook($id);
+
+		$this->EE->functions->redirect($url);
+	}
+
+	public function duplicate_task_action()
+	{
+		$id  = $this->get('id');
+		$url = $this->cp_url('index');
+
+		$this->EE->postmaster_model->duplicate_task($id);
 
 		$this->EE->functions->redirect($url);
 	}
@@ -708,6 +771,48 @@ class Postmaster_mcp {
 			'settings'           => json_encode($this->post('setting', TRUE))
 		);
 		
+		if($this->EE->input->post('id'))
+		{
+			$this->EE->postmaster_model->$method($this->EE->input->post('id'), $parcel);
+		}
+		else
+		{
+			$this->EE->postmaster_model->$method($parcel);
+		}
+		
+		$this->EE->functions->redirect($this->post('return'));
+	}
+
+	public function create_task_action()
+	{
+		return $this->_task_action('create');
+	}
+	
+	public function edit_task_action()
+	{
+		return $this->_task_action('edit');
+	}
+	
+	private function _task_action($method)
+	{
+		if($method == 'add')
+		{
+			$method = 'create';
+		}
+		
+		$method .= '_task';
+		
+		$this->EE->load->library('postmaster_lib');
+		
+		$parcel = array(
+			'site_id'            => config_item('site_id'),
+			'title'              => $this->post('title', TRUE),
+			'task'               => $this->post('task', TRUE),
+			//'service'            => $this->post('service', TRUE),
+			'enabled' 			 => $this->post('enabled') == '1' ? 1 : 0,
+			'settings'           => json_encode($this->post('setting', TRUE))
+		);
+
 		if($this->EE->input->post('id'))
 		{
 			$this->EE->postmaster_model->$method($this->EE->input->post('id'), $parcel);
