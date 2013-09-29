@@ -115,7 +115,7 @@ abstract class Postmaster_base_api extends Postmaster_core {
 	 * @return	
 	 */
 	 
-	public function display_settings($settings, $parcel = FALSE)
+	public function display_settings($settings)
 	{
 		return $this->build_table($settings);
 	}

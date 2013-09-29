@@ -29,6 +29,8 @@ abstract class Base_task extends Postmaster_base_api {
 		*/
 	);
 
+	protected $fields = array();
+
 	/**
 	 * Constructor
 	 *
@@ -43,8 +45,11 @@ abstract class Base_task extends Postmaster_base_api {
 		$this->EE->load->library('postmaster_lib');
 		
 		$this->lib  = $this->EE->postmaster_lib;
-		$this->now  = $this->EE->localize->now;	
+		$this->now  = $this->EE->localize->now;
+
+		parent::__construct();
 	}
+
 	
 	public function get_task()
 	{

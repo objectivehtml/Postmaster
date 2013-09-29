@@ -19,6 +19,10 @@ class Postmaster_installer {
 		$this->EE->load->library('postmaster_service', array(
 			'base_path' => PATH_THIRD . 'postmaster/services/'
 		));
+
+		$this->EE->load->library('postmaster_tasks', array(
+			'base_path' => PATH_THIRD . 'postmaster/services/'
+		));
 	}
 	
 	public function version_update($version)
@@ -119,9 +123,10 @@ class Postmaster_installer {
 	{
 		$services      = $this->EE->postmaster_service->get_services();
 		$hooks         = $this->EE->postmaster_hook->get_hooks();		
-		$notifications = $this->EE->postmaster_notification->get_notifications();	
+		$notifications = $this->EE->postmaster_notification->get_notifications();
+		$tasks 		   = $this->EE->postmaster_notification->get_tasks();	
 		
-		foreach(array_merge($services, $hooks, $notifications) as $obj)
+		foreach(array_merge($services, $hooks, $notifications, $tasks) as $obj)
 		{
 			if(is_object($obj))
 			{

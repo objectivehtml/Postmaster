@@ -2,8 +2,6 @@
 
 class Mailchimp_member_signup_postmaster_task extends Base_task {
 	
-	protected $name  = 'mailchimp_member_signup';
-
 	protected $title = 'Mailchimp Member Signup';
 
 	protected $enable_cron = TRUE;
@@ -42,16 +40,19 @@ class Mailchimp_member_signup_postmaster_task extends Base_task {
 		parent::__construct();
 	}
 
+	public function your_hook_method()
+	{
+		// Do something for the 'some_hook_name' hook
+	}
+
+	public function your_hook_method_2()
+	{
+		
+		// Do something for the 'some_hook_name_2' hook
+	}
+
 	public function trigger_cron()
 	{
-		if ($this->EE->extensions->active_hook('some_hook_name') === TRUE)
-	    {
-	        $str = $this->EE->extensions->call('some_hook_name');
-	    }
-
-		if ($this->EE->extensions->active_hook('some_hook_name_2') === TRUE)
-	    {
-	        $str = $this->EE->extensions->call('some_hook_name_2');
-	    }
+		// Do something for the cron job
 	}
 }

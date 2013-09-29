@@ -14,6 +14,14 @@ class Store_order_complete_end_postmaster_hook extends Base_hook {
 	{
 		$member = $this->channel_data->get_member($order['member_id'])->row_array();
 
+		foreach($order['items'] as $index => $item)
+		{
+			if(isset($item['modifiers']))
+			{
+				$order['items'][$index]['modifiers'] = $this->channel_data->utility->add_prefix('modifier', $item['modifiers']);
+			}
+		}
+
 		$order['items'] = $this->channel_data->utility->add_prefix('item', $order['items']);
 		
 		return parent::send($order, $member);
