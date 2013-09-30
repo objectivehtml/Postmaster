@@ -3,11 +3,16 @@
  * 
  * @package		Postmaster
  * @author		Justin Kimbrell
- * @copyright	Copyright (c) 2012, Objective HTML
+ * @copyright		Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
- * @version		1.4.0
+ * @version		1.4.1
  * @build		20130930
  */
+
+#### 1.4.1
+##### 09/30/2013
+
+- (Bug Fix) Fixed an issue with loading the Postmaster_task file during the update process
 
 #### 1.4.0
 ##### 09/30/2013

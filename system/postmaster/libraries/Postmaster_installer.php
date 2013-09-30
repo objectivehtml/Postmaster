@@ -21,7 +21,7 @@ class Postmaster_installer {
 		));
 
 		$this->EE->load->library('postmaster_task', array(
-			'base_path' => PATH_THIRD . 'postmaster/services/'
+			'base_path' => PATH_THIRD . 'postmaster/tasks/'
 		));
 	}
 	
@@ -124,7 +124,7 @@ class Postmaster_installer {
 		$services      = $this->EE->postmaster_service->get_services();
 		$hooks         = $this->EE->postmaster_hook->get_hooks();		
 		$notifications = $this->EE->postmaster_notification->get_notifications();
-		$tasks 		   = $this->EE->postmaster_notification->get_tasks();	
+		$tasks 		   = $this->EE->postmaster_task->get_tasks();	
 		
 		foreach(array_merge($services, $hooks, $notifications, $tasks) as $obj)
 		{
