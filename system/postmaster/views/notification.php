@@ -229,6 +229,7 @@
 				<?php if($notification->display_settings($template->settings)): ?>
 					<div class="margin-top notification-panel" id="<?php echo $notification->get_name()?>_panel">
 						<h3><?php echo $notification->get_title()?> Settings</h3>
+						<p><?php echo $notification->get_description()?></p>
 						<?php echo $notification->display_settings($template->settings); ?>
 					</div>
 				<?php else: ?>

@@ -4,6 +4,15 @@ class Store_report_products_sold_postmaster_notification extends Base_notificati
 	
 	public $title = 'Store Reporting: Total Products Sold';
 	 
+	/**
+	 * Description
+	 * 
+	 * @var string
+	 */
+	 	
+	public $description = 'This notification is used when you have products in Store that are owned by various people. Say you have an "event", and each event is owned by a different person. Each week every event owner should receive Store sales reports for the tickets sold for each event. This notifications makes it possible send sales reports on specific days of each week until the event has passed. This is just one use scenario for this, but you can use it for many other things as well.';
+	
+
 	protected $tables = array(
 		'postmaster_store_report_products_sold' => array(
 			'entry_id'	=> array(

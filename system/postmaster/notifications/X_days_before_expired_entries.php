@@ -18,6 +18,14 @@ class X_days_before_expired_entries_postmaster_notification extends Base_notific
 	 	
 	public $title = 'X Days Before Expired Entries';
 	
+	/**
+	 * Description
+	 * 
+	 * @var string
+	 */
+	 	
+	public $description = 'This notification is used when you want to automatically send emails X days before an entry expires. You can configure as many days as desired prior to the expiration of an entry to send an email.';
+	
 	
 	/**
 	 * Default Settings Field Schema

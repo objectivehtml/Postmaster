@@ -76,6 +76,7 @@
 					<?php if($task->display_settings($template->settings)): ?>
 						<div class="margin-top hook-panel" id="<?php echo $task->get_name()?>_panel">
 							<h3><?php echo $task->get_title()?> Settings</h3>
+							<p><?php echo $task->get_description()?></p>
 							<?php echo $task->display_settings($template->settings); ?>
 						</div>
 					<?php endif; ?>

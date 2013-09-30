@@ -18,6 +18,14 @@ class Cartthrob_abandoned_cart_postmaster_notification extends Base_notification
 	 	
 	public $title = 'CartThrob Abandoned Cart';
 	
+	/**
+	 * Description
+	 * 
+	 * @var string
+	 */
+	 	
+	public $description = 'This notification will allow you to send emails to the people with abandoned carts in CartThrob at specific intervals.';
+	
 	
 	/**
 	 * Default Settings Field Schema
