@@ -20,7 +20,7 @@ class Postmaster_installer {
 			'base_path' => PATH_THIRD . 'postmaster/services/'
 		));
 
-		$this->EE->load->library('postmaster_tasks', array(
+		$this->EE->load->library('postmaster_task', array(
 			'base_path' => PATH_THIRD . 'postmaster/services/'
 		));
 	}
