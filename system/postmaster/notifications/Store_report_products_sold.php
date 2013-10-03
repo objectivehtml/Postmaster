@@ -67,6 +67,11 @@ class Store_report_products_sold_postmaster_notification extends Base_notificati
 					'false' => 'No'
 				)
 			)
+		),
+		'email_field' => array(
+			'label'       => 'Email Field',
+			'description' => 'If you only want to send emails with entries with valid email addresses, enter the name of the channel field storing the value. Note, you still have to set a To Email value, this setting merely validates that field before attempting to send the notification.',
+			'type'  	  => 'input'
 		)
 	);
 	
@@ -126,11 +131,38 @@ class Store_report_products_sold_postmaster_notification extends Base_notificati
 					'total_orders' => $vars['total_orders']
 				));
 
-				parent::send($vars, $member, $entry);
+				$valid = TRUE;
+
+				if(isset($settings->email_field) && !empty($settings->email_field))
+				{
+					if(isset($entry->{$settings->email_field}))
+					{
+						$valid = $this->_validate_email(trim($entry->{$settings->email_field}));
+					}
+					else
+					{
+						$valid = FALSE;
+					}
+				}
+
+				if($valid)
+				{
+					parent::send($vars, $member, $entry);
+				}
 			}
 		}
 	}
 	
+	public function _validate_email($email)
+	{
+		if(empty($email))
+		{
+			return FALSE;
+		}
+
+		return TRUE;
+	}
+
 	/**
 	 * Install
 	 *
