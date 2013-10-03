@@ -72,6 +72,11 @@ class Store_report_products_sold_postmaster_notification extends Base_notificati
 			'label'       => 'Email Field',
 			'description' => 'If you only want to send emails with entries with valid email addresses, enter the name of the channel field storing the value. Note, you still have to set a To Email value, this setting merely validates that field before attempting to send the notification.',
 			'type'  	  => 'input'
+		),
+		'limit' => array(
+			'label'       => 'Limit Entries',
+			'description' => 'If desired, you may limit the total entries that are emailed in a single request. Use this setting if you are running into API limit or capacity issues.',
+			'type'  	  => 'input'
 		)
 	);
 	
@@ -103,9 +108,17 @@ class Store_report_products_sold_postmaster_notification extends Base_notificati
 			$settings->days_to_send = FALSE;
 		}
 
+		$limit = FALSE;
+
+		if(isset($settings->limit) && !empty($settings->limit))
+		{
+			$limit = $settings->limit;
+		}
+
 		$channel = $channel->row();
 		$entries = $this->channel_data->get_channel_entries($channel->channel_id, array(
-			'where' => $where
+			'where' => $where,
+			'limit' => $limit
 		));
 
 		foreach($entries->result() as $entry)
