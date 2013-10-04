@@ -35,9 +35,10 @@ class Email_form_postmaster_delegate extends Postmaster_base_delegate {
 		
 		if($this->EE->input->post('postmaster_email_form'))
 		{
-			$form_field = $this->EE->base_form->post('form_field');			
-			$form_data  = $this->EE->input->post($form_field);
-			$entry_data = $this->EE->channel_data->get_channel_entry($this->param('entry_id'));
+			$form_field   = $this->EE->base_form->post('form_field');			
+			$form_data    = $this->EE->input->post($form_field);	
+			$custom_data  = $this->EE->input->post($this->param('data_field', 'data'));
+			$entry_data   = $this->EE->channel_data->get_channel_entry($this->param('entry_id'));
 			
 			if($entry_data && $entry_data->num_rows() > 0)
 			{
@@ -51,13 +52,23 @@ class Email_form_postmaster_delegate extends Postmaster_base_delegate {
 			
 			foreach($form_data as $index => $email)
 			{
+				$data = array();
+				
+				if(isset($custom_data[$index]))
+				{
+					if(is_array($custom_data[$index]))
+					{
+						$data = $custom_data[$index];
+					}
+				}
+
 				// -------------------------------------------
 			    //  'postmaster_email_form_submit' hook
 			    //   - Used to send emails with Postmaster
 			    //
 			        if ($this->EE->extensions->active_hook('postmaster_email_form_submit'))
 			        {
-			            $row_data = $this->EE->extensions->call('postmaster_email_form_submit', $email, $entry_data);
+			            $row_data = $this->EE->extensions->call('postmaster_email_form_submit', $email, $entry_data, $data);
 			        }
 			    //
 			    // -------------------------------------------

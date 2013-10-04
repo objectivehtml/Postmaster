@@ -10,11 +10,11 @@ class Postmaster_email_form_submit_postmaster_hook extends Base_hook {
 		
 	}
 		
-	public function trigger($email, $entry)
+	public function trigger($email, $entry, $custom_data = array())
 	{
-		$parse_vars = array(
+		$parse_vars = array_merge(array(
 			'email' => $email
-		);
+		), $custom_data);
 		
 		return parent::send($parse_vars, FALSE, $entry);
 	}
