@@ -44,6 +44,10 @@ class Email_form_postmaster_delegate extends Postmaster_base_delegate {
 			{
 				$entry_data = $entry_data->row();
 			}
+			else
+			{
+				$entry_data = array();
+			}
 			
 			if(is_string($form_data))
 			{
@@ -53,7 +57,7 @@ class Email_form_postmaster_delegate extends Postmaster_base_delegate {
 			foreach($form_data as $index => $email)
 			{
 				$data = array();
-				
+
 				if(isset($custom_data[$index]))
 				{
 					if(is_array($custom_data[$index]))
@@ -72,6 +76,13 @@ class Email_form_postmaster_delegate extends Postmaster_base_delegate {
 			        }
 			    //
 			    // -------------------------------------------
+			}
+
+			$return = $this->param('return');
+
+			if($return)
+			{
+				$this->EE->functions->redirect($return);
 			}
 		}
 		

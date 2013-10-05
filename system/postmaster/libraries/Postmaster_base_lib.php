@@ -120,15 +120,20 @@ abstract class Postmaster_base_lib extends Base_class {
 			$objects[] = $default_object;
 		}
 		
-		foreach(directory_map($this->base_path) as $file)
+		$directory = directory_map($this->base_path);
+
+		if(is_array($directory))
 		{
-			if(!in_array($file, $this->reserved_files))
+			foreach($directory as $file)
 			{
-				if($object = $this->load($file, $params))
+				if(!in_array($file, $this->reserved_files))
 				{
-					if(is_object($object))
+					if($object = $this->load($file, $params))
 					{
-						$objects[] = $object;
+						if(is_object($object))
+						{
+							$objects[] = $object;
+						}
 					}
 				}
 			}
