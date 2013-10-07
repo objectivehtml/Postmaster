@@ -294,21 +294,25 @@ class Postmaster_lib {
 	{
 		$this->EE->load->model('postmaster_routes_model');
 
-		$routes = $this->EE->postmaster_routes_model->get_routes_by_task($task_id, $hook);	
+		$routes = $this->EE->postmaster_routes_model->get_routes_by_task($hook, $task_id);	
 
 		return $this->_route($routes, $args);
 	}	
 	
-	public function route($hook, $args)
+	public function route_hook($hook_id, $hook, $args)
 	{
 		$this->EE->load->model('postmaster_routes_model');
 		
-		$routes = $this->EE->postmaster_routes_model->get_routes_by_hook($hook);	
+		var_dump($hook);exit();
+
+		$routes = $this->EE->postmaster_routes_model->get_routes_by_hook($hook, $hook_id);	
 		
-		return $this->_route($routes, $args);
+		return $this->_route($routes, $args, array(
+			'hook' => $hook
+		));
 	}
 
-	private function _route($routes, $args)
+	private function _route($routes, $args, $params = array())
 	{
 		$return = array();
 		
@@ -317,8 +321,27 @@ class Postmaster_lib {
 			$path = PATH_THIRD . 'postmaster/' . $route['file'];
 
 			if(file_exists($path))
-			{				
-				$response = call_user_func_array(array($this->EE->postmaster_routes_model->load($route['class'], $path), $route['method']), $args);
+			{	
+				/*			
+				if($route['type'] == 'hook' || empty($route['type']))
+				{
+					$params['hook'] = $this->EE->postmaster_model->get_hook($route['obj_id'])->row();
+				}
+				else
+				{
+					$params['task'] = $this->EE->postmaster_model->get_task($route['obj_id'])->row();
+				}
+				*/
+
+				$obj = $this->EE->postmaster_routes_model->load($route['class'], $path, $params);
+				$row = $this->EE->postmaster_model->get_hook($route['obj_id'])->row();
+
+				$obj->set_hook($row);
+
+
+				var_dump($route['method']);exit();
+				
+				$response = call_user_func_array(array($obj, $route['method']), $args);
 				
 				if(is_null($response))
 				{
@@ -494,10 +517,11 @@ class Postmaster_lib {
 			'base_path' => PATH_THIRD.'postmaster/hooks/'
 		));
 		
-		if(!empty($hook))
-		{
-			return $this->EE->postmaster_hook->trigger($hook, $args);
-		}			
+		$this->EE->load->model('postmaster_routes_model');
+		
+		$routes = $this->EE->postmaster_routes_model->get_routes_by_hook($hook);	
+
+		return $this->_route($routes, $args);
 	}
 
 

@@ -7,20 +7,20 @@ class Postmaster_routes_model extends CI_Model {
 		parent::__construct();
 	}
 	
-	public function load($class, $path = FALSE)
+	public function load($class, $path = FALSE, $params = array())
 	{
 		if($path && !class_exists($class))
 		{
 			require_once $path;
 		}		
-		
+
 		if(isset($this->$class))
 		{
 			$obj =& $this->$class;
 		}
 		else
 		{
-			$obj = new $class();
+			$obj = new $class($params);
 		}
 		
 		return $obj;
@@ -38,43 +38,78 @@ class Postmaster_routes_model extends CI_Model {
 		return $this->channel_data->get('postmaster_routes', $params);
 	}
 	
-	public function get_routes_by_hook($hook)
+	public function get_routes_by_type($hook, $type = FALSE, $id = FALSE)
 	{
+		$where = array(
+			'hook' => $hook
+		);
+
+		if($type)
+		{
+			$where['type'] = $type;
+		}
+
+		if($id)
+		{
+			$where['obj_id'] = $id;
+		}
+
 		return $this->get_routes(array(
-			'where' => array(
-				'hook' => $hook	
-			)
+			'where' => $where
 		));
 	}
-	
-	public function get_routes_by_task($task, $hook)
+
+	public function get_routes_by_hook($hook, $id = FALSE)
 	{
-		return $this->get_routes(array(
-			'where' => array(
-				'obj_id' => $task,
-				'type'   => 'task',
-				'hook'   => $hook	
-			)
-		));
+		return $this->get_routes_by_type($hook, 'hook', $id);
 	}
 	
+	public function get_routes_by_task($hook, $id = FALSE)
+	{
+		
+		return $this->get_routes_by_type($hook, 'task', $id);
+	}
+
 	public function get_route($id)
 	{
 		return $this->get_routes(array(
 			'where' => array(
-				'id' => $id	
+				'obj_id' => $id
 			)
 		));
 	}
 
-	public function needs_installed($class, $method, $hook, $file, $type = FALSE, $id = FALSE)
+	public function needs_installed_2($class, $method, $hook, $file, $type = FALSE, $id = FALSE)
 	{
-		if($id)
+		$data = array(
+			'class'  => $class,
+			'method' => $method,
+			'hook'   => $hook,
+			'file'   => $file,
+		);
+
+		if($type)
 		{
-			$this->db->where('obj_id !=', $id);
+			$data['type']   = $type;
 		}
 
-		return $this->existing($class, $method, $hook, $file, $type) ? FALSE : TRUE;
+		if($id)
+		{
+			$data['obj_id'] = $id;
+		}
+
+		$routes = $this->get_routes(array(
+			'where' => $data
+		))->num_rows() == 0 ? FALSE : TRUE;
+
+		var_dump($routes);exit();
+
+		return $this->existing($class, $method, $hook, $file, $type, $id) ? FALSE : TRUE;
+	}
+
+	public function needs_installed($class, $method, $hook, $file, $type = FALSE, $id = FALSE)
+	{
+		return $this->existing($class, $method, $hook, $file, $type, $id) ? FALSE : TRUE;
 	}
 
 	public function existing($class, $method, $hook, $file, $type = FALSE, $id = FALSE)
@@ -86,6 +121,25 @@ class Postmaster_routes_model extends CI_Model {
 			'file'   => $file,
 		);
 
+		if($type)
+		{
+			$data['type']   = $type;
+		}
+
+		if($id)
+		{
+			$data['obj_id'] = $id;
+		}
+
+		return $this->get_routes(array(
+			'where' => $data
+		))->num_rows() == 0 ? FALSE : TRUE;
+	}
+
+	public function existing_by_id($id, $type = FALSE)
+	{
+		$data = array();
+		
 		if($type)
 		{
 			$data['type']   = $type;
@@ -128,16 +182,51 @@ class Postmaster_routes_model extends CI_Model {
 		$this->db->update('postmaster_routes', $data);
 	}
 	
+	/*
 	public function delete_route($id, $data = array())
 	{
 		$this->db->where('id', $id);
 		$this->db->delete('postmaster_routes');
 	}
-	
+	*/
+
 	public function delete($where = array())
 	{
 		$this->db->where($where);
 		$this->db->delete('postmaster_routes');
+	}
+	
+	public function delete_route($route_id, $type = FALSE)
+	{
+		$where = array(
+			'obj_id' => $route_id
+		);
+
+		if(!$type)
+		{
+			$where['type'] = $type;
+		}
+
+		$hooks = $this->get_routes(array(
+			'where' => $where
+		));
+
+		foreach($hooks->result() as $row)
+		{	
+			if($this->needs_installed($row->class, $row->method, $row->hook, $row->file, 'hook', $route_id))
+			{
+				$this->db->delete('extensions', array(
+					'class'  => 'Postmaster_ext',
+					'method' => 'trigger_hook',
+					'hook'   => $row->hook
+				));	
+			}
+		}
+
+		$this->delete(array(
+			'type'   => 'hook',
+			'obj_id' => $route_id
+		));
 	}
 
 	public function delete_task($task_id)
@@ -155,7 +244,7 @@ class Postmaster_routes_model extends CI_Model {
 			{
 				$this->db->delete('extensions', array(
 					'class'  => 'Postmaster_ext',
-					'method' => 'route_task_hook',
+					'method' => 'trigger_task_hook',
 					'hook'   => $row->hook
 				));	
 			}

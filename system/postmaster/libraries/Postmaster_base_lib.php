@@ -70,7 +70,7 @@ abstract class Postmaster_base_lib extends Base_class {
 	public function get_object($index = FALSE, $params = FALSE)
 	{		
 		$this->objects = $this->get_objects($params);
-		
+
 		if($index && is_int($index))
 		{
 			if(!isset($this->objects[$index]))

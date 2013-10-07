@@ -55,6 +55,21 @@ class Postmaster_installer {
 				$this->EE->db->update('postmaster_queue', $data);
 			}
 		}
+
+		if(version_compare($version, '1.4.2', '<'))
+		{
+			$this->EE->db->where('class', 'Postmaster_ext');
+			$this->EE->db->where('method', 'route_hook');
+			$this->EE->db->update('extensions', array(
+				'method' => 'trigger_hook'
+			));
+
+			$this->EE->db->where('class', 'Postmaster_ext');
+			$this->EE->db->where('method', 'route_task_hook');
+			$this->EE->db->update('extensions', array(
+				'method' => 'trigger_task_hook'
+			));
+		}
 	}
 	
 	public function install_action($class, $method)

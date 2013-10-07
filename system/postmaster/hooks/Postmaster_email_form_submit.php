@@ -9,13 +9,18 @@ class Postmaster_email_form_submit_postmaster_hook extends Base_hook {
 		parent::__construct();
 		
 	}
+
+	public function pre_process()
+	{
+		exit('pre process');
+	}
 		
 	public function trigger($email, $entry, $custom_data = array())
 	{
 		$parse_vars = array_merge(array(
 			'email' => $email
 		), $custom_data);
-		
+
 		return parent::send($parse_vars, FALSE, $entry);
 	}
 }

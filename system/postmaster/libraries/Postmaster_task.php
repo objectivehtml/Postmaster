@@ -183,8 +183,6 @@ class Postmaster_task extends Postmaster_base_lib {
 	 
 	public function trigger($index, $args = array())
 	{
-		var_dump($index);exit();
-
 		$actual_hooks = $this->EE->postmaster_model->get_actual_installed_hooks($index);
 		
 		$return = array();
@@ -196,7 +194,7 @@ class Postmaster_task extends Postmaster_base_lib {
 				$hook['enabled'] = TRUE;	
 			}
 			
-			if($this->EE->postmaster_lib->is_enabled($hook['enabled']))
+			if($this->EE->postmaster_hook->is_enabled($hook['enabled']))
 			{
 				$hook_obj = $this->get_hook($hook['installed_hook']);
 				$hook_obj->set_settings(json_decode($hook['settings']));

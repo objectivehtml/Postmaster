@@ -163,7 +163,7 @@ class Postmaster_model extends CI_Model {
 
 		$extension = array(
 			'class'    => 'Postmaster_ext',
-			'method'   => 'route_task_hook',
+			'method'   => 'trigger_task_hook',
 			'hook'     => $hook['hook'],
 			'priority' => $hook['priority'],
 			'version'  => POSTMASTER_VERSION,
@@ -188,6 +188,8 @@ class Postmaster_model extends CI_Model {
 	public function create_hook($hook)
 	{	
 		$this->load->library('postmaster_hook');
+		$this->load->model('postmaster_routes_model');
+
 		$this->postmaster_hook->set_base_path(PATH_THIRD . 'postmaster/hooks/');
 		
 		$obj = $this->postmaster_hook->get_hook(!empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook']);
@@ -217,6 +219,11 @@ class Postmaster_model extends CI_Model {
 		$hook['extension_id']     = $this->db->insert_id();
 		
 		$this->db->insert('postmaster_hooks', $hook);
+
+		$class = get_class($obj);
+		$file  = 'hooks/' . ucfirst($obj->get_name()) . '.php';
+
+		$this->postmaster_routes_model->create($class, 'trigger', $obj->get_hook(), $file, 'hook', $this->db->insert_id());
 	}
 
 	public function create_task($task)
@@ -225,7 +232,7 @@ class Postmaster_model extends CI_Model {
 			'base_path' => PATH_THIRD.'postmaster/tasks/'
 		));
 
-		$obj = $this->postmaster_task->load($task['task']);
+		$obj = $this->postmaster_task->get_task($task['task']);
 		
 		$task['enable_cron'] = 0;
 
@@ -283,8 +290,14 @@ class Postmaster_model extends CI_Model {
 		$this->load->model('postmaster_routes_model');
 		$this->postmaster_routes_model->delete_task($id);
 
-		$this->db->where('id', $id);
-		$this->db->delete('postmaster_tasks');
+		$this->db->delete('postmaster_tasks', array(
+			'id' => $id
+		));
+
+		$this->db->delete('postmaster_routes', array(
+			'type' 	 => 'task',
+			'obj_id' => $hook->row('id')
+		));
 	}
 
 	/*
@@ -365,6 +378,11 @@ class Postmaster_model extends CI_Model {
 		$this->db->delete('postmaster_hooks', array(
 			'id' => $hook->row('id')
 		));
+
+		$this->db->delete('postmaster_routes', array(
+			'type'   => 'hook',
+			'obj_id' => $hook->row('id')
+		));
 	}
 	
 	public function get_actual_installed_hooks($hook)
@@ -399,6 +417,8 @@ class Postmaster_model extends CI_Model {
 		$saved_hook = $this->get_hook($id);
 		
 		$this->load->library('postmaster_hook');
+		$this->load->model('postmaster_routes_model');
+
 		$this->postmaster_hook->set_base_path(PATH_THIRD . 'postmaster/hooks/');
 		
 		$obj = $this->postmaster_hook->get_hook(!empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook']);
@@ -413,9 +433,17 @@ class Postmaster_model extends CI_Model {
 		);
 		
 		$hook['actual_hook_name'] = $obj->get_hook();
-		
-		$this->db->where('extension_id', $saved_hook->row('extension_id'));
-		$this->db->update('extensions', $extension);
+
+		$file  = 'hooks/' . ucfirst($obj->get_name()) . '.php';
+
+		if($this->postmaster_routes_model->existing_by_id($id, 'hook'))
+		{
+			$this->db->where('extension_id', $saved_hook->row('extension_id'));
+			$this->db->update('extensions', $extension);	
+		}
+
+		$this->postmaster_routes_model->delete_route($id, 'hook');
+		$this->postmaster_routes_model->create(get_class($obj), 'trigger_hook', $obj->get_hook(), $file, 'hook', $id);
 		
 		$this->db->where('id', $id);
 		$this->db->update('postmaster_hooks', $hook);
