@@ -256,9 +256,12 @@ class Postmaster_model extends CI_Model {
 
 	public function edit_task($id, $task)
 	{
+		$saved_task = $this->get_task($id);
+
 		$this->load->library('postmaster_task', array(
 			'base_path' => PATH_THIRD.'postmaster/tasks/'
 		));
+		$this->load->model('postmaster_routes_model');
 
 		$obj = $this->postmaster_task->load($task['task']);
 		
@@ -278,7 +281,7 @@ class Postmaster_model extends CI_Model {
 			foreach($obj->get_hooks() as $hook)
 			{
 				$this->install_task_hook($id, $obj, $hook);
-			}
+			}			
 		}
 
 		$this->db->where('id', $id);
@@ -296,7 +299,7 @@ class Postmaster_model extends CI_Model {
 
 		$this->db->delete('postmaster_routes', array(
 			'type' 	 => 'task',
-			'obj_id' => $hook->row('id')
+			'obj_id' => $id
 		));
 	}
 

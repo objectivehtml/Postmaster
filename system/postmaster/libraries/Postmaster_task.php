@@ -181,40 +181,52 @@ class Postmaster_task extends Postmaster_base_lib {
 	 * @return	array
 	 */
 	 
-	public function trigger($index, $args = array())
+	public function trigger($route, $args = array())
 	{
-		$actual_hooks = $this->EE->postmaster_model->get_actual_installed_hooks($index);
+		$route = (object) $route;
+		//$routes = $this->EE->postmaster_routes_model->get_routes_by_task($index);
 		
 		$return = array();
-		
-		foreach($actual_hooks->result_array() as $index => $hook)
-		{
-			if(!isset($hook['enabled']))
-			{
-				$hook['enabled'] = TRUE;	
-			}
+
+		//foreach($routes->result() as $index => $route)
+		//{
+			$task 	  = $this->EE->postmaster_model->get_task($route->obj_id)->row_array();
 			
-			if($this->EE->postmaster_hook->is_enabled($hook['enabled']))
+			$task_obj = $this->get_task($task['task']);
+
+			if(!isset($task['enabled']))
 			{
-				$hook_obj = $this->get_hook($hook['installed_hook']);
-				$hook_obj->set_settings(json_decode($hook['settings']));
-				
-				call_user_func_array(array($hook_obj, 'pre_process'), $args);
-				
-				$hook_name = !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'];
-					
-				$hook_obj->set_hook($hook);
-					
-				$responses[] = call_user_func_array(array($hook_obj, 'trigger'), $args);
-				
-				$hook_obj->set_responses($responses);
-				
-				call_user_func_array(array($hook_obj, 'post_process'), $args);
-				
-				$return = array_merge($return, $hook_obj->get_responses());
+				$task['enabled'] = TRUE;	
 			}
-		}
-		
+
+			if($this->EE->postmaster_lib->validate_enabled($task['enabled'], 'task'))
+			{
+				$task_obj->set_settings(json_decode($task['settings']));
+				
+				call_user_func_array(array($task_obj, 'pre_process'), $args);
+				
+				$task_obj->set_task($task);
+					
+				$response    = call_user_func_array(array($task_obj, $route->method), $args);
+
+				if(!is_object($response))
+				{
+					$response = (object) array(
+						'return_data' => $response,
+						'end_script'  => FALSE
+					);
+				}
+				
+				$responses[] = $response;
+
+				$task_obj->set_response($response);
+
+				call_user_func_array(array($task_obj, 'post_process'), $args);
+				
+				$return = array_merge($return, array($response));
+			}
+		// }
+
 		return $return;
 	}
 }

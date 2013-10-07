@@ -43,7 +43,7 @@ class Postmaster_ext {
 		$this->EE->load->library('postmaster_hook', array(
 			'base_path' => PATH_THIRD.'postmaster/hooks/'
 		));
-		
+
 		$hook      = $this->EE->extensions->in_progress;		
 		$args      = func_get_args();
 		$responses = $this->EE->postmaster_lib->trigger_task_hook($hook, $args);
@@ -71,7 +71,7 @@ class Postmaster_ext {
 
 		$responses = $this->EE->postmaster_lib->trigger_hook($hook, $args);
 		$return    = $this->EE->postmaster_hook->return_data($responses);
-		
+
 		$this->EE->extensions->end_script = $this->EE->postmaster_hook->end_script($responses);
 			
 		if($return != 'Undefined')
@@ -108,7 +108,7 @@ class Postmaster_ext {
 		return $data;
 	}
 		
-	public function route_hook()
+	public function trigger_task_hook_hook()
 	{
 		return $this->trigger_hook();
 	}

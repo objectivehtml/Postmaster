@@ -18,6 +18,8 @@ abstract class Base_task extends Postmaster_base_api {
 	protected $task;
 	
 	protected $enable_cron = FALSE;
+
+	protected $response    = NULL;
 	
 	protected $hooks = array(
 		/*
@@ -30,6 +32,8 @@ abstract class Base_task extends Postmaster_base_api {
 	);
 
 	protected $fields = array();
+
+	protected $class_suffix = '_postmaster_task';
 
 	/**
 	 * Constructor
@@ -50,10 +54,9 @@ abstract class Base_task extends Postmaster_base_api {
 		parent::__construct();
 	}
 
-	
 	public function get_task()
 	{
-		return !empty($this->task) ? $this->task : $this->name;
+		return !empty($this->task) ? $this->task : $this->get_name();
 	}
 
 	public function display_settings($settings = array())
@@ -71,29 +74,5 @@ abstract class Base_task extends Postmaster_base_api {
 	public function trigger_cron()
 	{
 		return;
-	}
-}
-
-if(!class_exists('Postmaster_Task_Response'))
-{
-	/**
-	 * Postmaster Service Response
-	 */
-	 
-	class Postmaster_Task_Response extends Base_class {
-	
-		public  $task_id,
-				$site_id,
-				$title,
-				$installed_hook,
-				$user_defined_hook,
-				$actual_hook_name,
-				$priority,
-				$settings;
-	
-		public function __construct($data = array())
-		{		
-			parent::__construct($data);		
-		}
 	}
 }

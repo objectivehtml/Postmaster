@@ -179,10 +179,7 @@ class Postmaster_hook extends Postmaster_base_lib {
 	{
 		$this->EE->load->model('postmaster_routes_model');
 
-		var_dump($this->EE->postmaster_routes_model->get_routes_by_hook($index));exit();
-
-
-		$actual_hooks = $this->EE->postmaster_routes_model->get_actual_installed_hooks($index);
+		$actual_hooks = $this->EE->postmaster_model->get_actual_installed_hooks($index);
 		
 		$return = array();
 		
