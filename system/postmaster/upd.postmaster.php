@@ -767,7 +767,10 @@ class Postmaster_upd {
 		
 		if($hooks->num_rows() > 0)
 		{
-			$this->EE->load->library('postmaster_hook');
+			$this->EE->load->library('postmaster_hook', array(
+				'base_path' => PATH_THIRD.'postmaster/hooks/'
+			));
+		
 			$this->EE->postmaster_hook->set_base_path(PATH_THIRD . 'postmaster/hooks/');
 		
 			foreach($hooks->result_array() as $hook)
