@@ -151,8 +151,15 @@ class Postmaster_mcp {
 			)
 		);
 		
-		$this->EE->cp->set_variable('cp_page_title', 'Postmaster');
-		
+		if(version_compare(APP_VER, '2.6.0', '<'))
+		{
+			$this->EE->cp->set_variable('cp_page_title', $this->EE->lang->line('postmaster_module_name'));
+		}
+		else
+		{
+			$this->EE->view->cp_page_title = $this->EE->lang->line('postmaster_module_name');
+		}
+
 		$this->EE->cp->set_right_nav(array(
 			'postmaster_documentation'     => $this->cp_url('doctag').'&id=Core'
 			/* 'Text Editor Settings' => $this->cp_url('editor_settings') */
@@ -195,7 +202,14 @@ class Postmaster_mcp {
 			$title = 'Edit Notification';	
 		}
 		
-		$this->EE->cp->set_variable('cp_page_title', $title);
+		if(version_compare(APP_VER, '2.6.0', '<'))
+		{
+			$this->EE->cp->set_variable('cp_page_title', $title);
+		}
+		else
+		{
+			$this->EE->view->cp_page_title = $title;
+		}
 		
 		$this->EE->cp->set_right_nav(array(
 			'&larr; Back to Home'  => $this->cp_url('index'),
@@ -237,8 +251,15 @@ class Postmaster_mcp {
 			$title = 'Edit Hook';	
 		}
 		
-		$this->EE->cp->set_variable('cp_page_title', $title);
-		
+		if(version_compare(APP_VER, '2.6.0', '<'))
+		{
+			$this->EE->cp->set_variable('cp_page_title', $title);
+		}
+		else
+		{
+			$this->EE->view->cp_page_title = $title;
+		}
+
 		$this->EE->cp->set_right_nav(array(
 			'&larr; Back to Home'  => $this->cp_url('index'),
 			'Text Editor Settings' => $this->cp_url('editor_settings'),
@@ -278,8 +299,15 @@ class Postmaster_mcp {
 			$title = 'Edit Task';	
 		}
 		
-		$this->EE->cp->set_variable('cp_page_title', $title);
-		
+		if(version_compare(APP_VER, '2.6.0', '<'))
+		{
+			$this->EE->cp->set_variable('cp_page_title', $title);
+		}
+		else
+		{
+			$this->EE->view->cp_page_title = $title;
+		}
+
 		$this->EE->cp->set_right_nav(array(
 			'&larr; Back to Home'  => $this->cp_url('index'),
 			'Text Editor Settings' => $this->cp_url('editor_settings'),
@@ -290,7 +318,15 @@ class Postmaster_mcp {
 	
 	public function doctag()
 	{
-		$this->EE->cp->set_variable('cp_page_title', 'Documentation');
+		if(version_compare(APP_VER, '2.6.0', '<'))
+		{
+			$this->EE->cp->set_variable('cp_page_title', 'Documentation');
+		}
+		else
+		{
+			$this->EE->view->cp_page_title = 'Documentation';
+		}
+		
 		$this->EE->cp->set_right_nav(array(
 			'&larr; Back to Home' => $this->cp_url('index')
 		));
@@ -521,8 +557,15 @@ class Postmaster_mcp {
 	
 	public function editor_settings()
 	{
-		$this->EE->cp->set_variable('cp_page_title', 'Text Editor Configuration');
-		
+		if(version_compare(APP_VER, '2.6.0', '<'))
+		{
+			$this->EE->cp->set_variable('cp_page_title', 'Text Editor Configuration');
+		}
+		else
+		{
+			$this->EE->view->cp_page_title = 'Text Editor Configuration';
+		}
+				
 		$this->EE->cp->set_right_nav(array(
 			'&larr; Back to Home' => $this->cp_url('index'),
 			'Create New Template' => $this->cp_url('create_template'),
@@ -601,7 +644,14 @@ class Postmaster_mcp {
 
 		$vars['template'] = new Email_Parcel();
 
-		$this->EE->cp->set_variable('cp_page_title', 'New Parcel');
+		if(version_compare(APP_VER, '2.6.0', '<'))
+		{
+			$this->EE->cp->set_variable('cp_page_title', 'New Parcel');
+		}
+		else
+		{
+			$this->EE->view->cp_page_title = 'New Parcel';
+		}
 		
 		$this->EE->cp->set_right_nav(array(
 			'&larr; Back to Home' => $this->cp_url('index'),
@@ -653,7 +703,14 @@ class Postmaster_mcp {
 
 		$vars['template'] = new Email_Parcel($parcel);
 
-		$this->EE->cp->set_variable('cp_page_title', 'Edit Parcel');
+		if(version_compare(APP_VER, '2.6.0', '<'))
+		{
+			$this->EE->cp->set_variable('cp_page_title', 'Edit Parcel');
+		}
+		else
+		{
+			$this->EE->view->cp_page_title = 'Edit Parcel';
+		}
 		
 		$this->EE->cp->set_right_nav(array(
 			'&larr; Back to Home' => $this->cp_url('index'),
