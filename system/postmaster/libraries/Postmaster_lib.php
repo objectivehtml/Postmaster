@@ -936,9 +936,16 @@ class Postmaster_lib {
 	 
 	public function current_url($append = '', $value = '')
 	{	
-		$this->EE->load->helper('addon_helper');
+		if($config_url = config_item('postmaster_base_url'))
+		{
+			$base_url = $config_url;
+		}
+		else
+		{
+			$this->EE->load->helper('addon_helper');
 		
-		$base_url = base_url();
+			$base_url = base_url();
+		}
 		
 		if(!empty($append))
 		{
