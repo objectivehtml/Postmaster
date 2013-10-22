@@ -5,9 +5,21 @@
  * @author		Justin Kimbrell
  * @copyright		Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
- * @version		1.4.1
- * @build		20130930
+ * @version		1.4.3
+ * @build		20131022
  */
+
+#### 1.4.3
+##### 10/22/2013
+
+- (Bug Fix) Added new config to help assist supporting multiple dev environments.
+
+#### 1.4.2
+##### 10/15/2013
+
+- (Feature) Added redirect parameter to the Email Form Utility
+- (Bug Fix) Fixed more update/install issues.
+- (Bug Fix) Fixed an issue with deprecated functions showing in the dev log in the CP
 
 #### 1.4.1
 ##### 09/30/2013
