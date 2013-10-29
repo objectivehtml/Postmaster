@@ -145,7 +145,6 @@ if(!class_exists('Base_form'))
 			
 			// Merges the default hidden_fields			
 			$hidden_fields  = array_merge($this->hidden_fields, array(
-				'XID'	   => '{XID_HASH}',
 				'site_url' => $this->param('site_url') ? $this->param('site_url') : $this->EE->config->item('site_url'),
 				'required' 		=> $this->required,
 				'secure_return' => $this->secure_return,
@@ -153,6 +152,11 @@ if(!class_exists('Base_form'))
 				'base_form_submit' => TRUE,
 				'return'		=> $this->return
 			));
+
+			if(defined('XID_SECURE_HASH'))
+			{
+				$hidden_fields['XID'] = XID_SECURE_HASH;
+			}
 			
 			// Loops through the member groups looking for dynamic redirects
 			foreach($this->groups as $group)
@@ -217,7 +221,6 @@ if(!class_exists('Base_form'))
 			{
 				$this->tagdata = $this->parse_fields($fields, $entry);				
 			}
-			
 			// Parse the template variables
 			$this->tagdata = $this->parse(array($post));
 					
@@ -597,9 +600,9 @@ if(!class_exists('Base_form'))
 		 * @param	string	The delimiting value
 		 * @return	array
 		 */
-		 public function add_prefix($prefix, $data, $delimeter = ':')
-		 {
-		 	return $this->EE->channel_data->utility->add_prefix($prefix, $data, $delimeter);	
-		 }	
+		public function add_prefix($prefix, $data, $delimeter = ':')
+		{
+			return $this->EE->channel_data->utility->add_prefix($prefix, $data, $delimeter);	
+		}	
 	}
 }
