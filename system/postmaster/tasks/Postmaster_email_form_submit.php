@@ -12,14 +12,21 @@ class Postmaster_email_form_submit_postmaster_task extends Base_task {
 		)
 	);
 
+	protected $enable_cron = TRUE;
+
 	public function __construct()
 	{
 		parent::__construct();
 		
 	}
-		
+	
+	public function trigger_cron()
+	{
+		exit('trigger cron');
+	}
+
 	public function postmaster_email_form_submit($email, $entry, $custom_data = array())
 	{
-		exit('asd');
+		return 'Undefined';
 	}
 }

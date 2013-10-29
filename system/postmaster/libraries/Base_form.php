@@ -217,6 +217,7 @@ if(!class_exists('Base_form'))
 			{
 				$this->tagdata = $this->parse_fields($fields, $entry);				
 			}
+			
 			// Parse the template variables
 			$this->tagdata = $this->parse(array($post));
 					
@@ -598,28 +599,7 @@ if(!class_exists('Base_form'))
 		 */
 		 public function add_prefix($prefix, $data, $delimeter = ':')
 		 {
-		 	$new_data = array();
-		 	
-		 	foreach($data as $data_index => $data_value)
-		 	{
-		 		if(is_array($data_value))
-		 		{
-		 			$new_row = array();
-		 			
-		 			foreach($data_value as $inner_index => $inner_value)
-		 			{
-		 				$new_row[$prefix . $delimeter . $inner_index] = $inner_value;
-		 			}
-		 			
-		 			$new_data[$data_index] = $new_row;
-		 		}
-		 		else
-		 		{
-		 			$new_data[$prefix . $delimeter . $data_index] = $data_value;
-		 		}
-		 	}
-		 	
-		 	return $new_data;	
+		 	return $this->EE->channel_data->utility->add_prefix($prefix, $data, $delimeter);	
 		 }	
 	}
 }

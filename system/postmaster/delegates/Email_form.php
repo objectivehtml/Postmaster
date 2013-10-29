@@ -72,7 +72,7 @@ class Email_form_postmaster_delegate extends Postmaster_base_delegate {
 			    //
 			        if ($this->EE->extensions->active_hook('postmaster_email_form_submit'))
 			        {
-			            $row_data = $this->EE->extensions->call('postmaster_email_form_submit', $email, $entry_data, $data);
+			        	$row_data = $this->EE->extensions->call('postmaster_email_form_submit', $email, $entry_data, $data);
 			        }
 			    //
 			    // -------------------------------------------
