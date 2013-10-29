@@ -82,6 +82,11 @@ class Postmaster_ext {
 		return NULL;
 	}
 		
+	public function route_hook()
+	{
+		return $this->trigger_hook();
+	}
+		
 	public function entry_submission_start($channel_id, $autosave)
 	{ 	
 	
