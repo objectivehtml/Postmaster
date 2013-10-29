@@ -39,6 +39,7 @@ class Email_form_postmaster_delegate extends Postmaster_base_delegate {
 			$form_data    = $this->EE->input->post($form_field);	
 			$custom_data  = $this->EE->input->post($this->param('data_field', 'data'));
 			$entry_data   = $this->EE->channel_data->get_channel_entry($this->param('entry_id'));
+			$global_data  = $this->EE->input->post($this->param('global_field', 'global'));
 			
 			if($entry_data && $entry_data->num_rows() > 0)
 			{
@@ -64,6 +65,16 @@ class Email_form_postmaster_delegate extends Postmaster_base_delegate {
 					{
 						$data = $custom_data[$index];
 					}
+				}
+
+				if($global_data && !is_array($global_data))
+				{
+					$global_data = array($global_data);
+				}
+
+				if($global_data && count($global_data) > 0)
+				{
+					$data = array_merge($data, $global_data);
 				}
 
 				// -------------------------------------------
