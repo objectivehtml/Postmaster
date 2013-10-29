@@ -655,10 +655,12 @@ class Postmaster_upd {
 		    'class'     => 'Postmaster_mcp',
 		    'method'    => 'notification_action'
 		),
+		/*
 		array(
 		    'class'     => 'Postmaster_ext',
 		    'method'    => 'route_hook'
 		),
+		*/
 		array(
 		    'class'     => 'Postmaster_mcp',
 		    'method'    => 'create_task_action'
