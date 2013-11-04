@@ -943,15 +943,23 @@ class Postmaster_lib {
 		else
 		{
 			$this->EE->load->helper('addon_helper');
-		
+			
 			$base_url = base_url();
+
+			$url_has_www  = preg_match('/^www\./', $_SERVER['HTTP_HOST']);
+			$base_has_www = preg_match('/^www\./', $base_url);
+
+			if(!$base_has_www && $url_has_www)
+			{
+				$base_url = preg_replace('/^http:\/\//', 'http://www.', $base_url);
+			}
 		}
 		
 		if(!empty($append))
 		{
 			$base_url .= '?'.$append.'='.$value;
 		}
-		
+
 		return $base_url;
 	}
 }
