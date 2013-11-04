@@ -56,7 +56,7 @@ class Postmaster_installer {
 			}
 		}
 
-		if(version_compare($version, '1.4.2', '<'))
+		if(version_compare($version, '1.4.1', '>'))
 		{
 			$this->EE->db->where('class', 'Postmaster_ext');
 			$this->EE->db->where('method', 'route_hook');
