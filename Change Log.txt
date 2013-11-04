@@ -3,15 +3,23 @@
  * 
  * @package		Postmaster
  * @author		Justin Kimbrell
- * @copyright		Copyright (c) 2012, Objective HTML
+ * @copyright	Copyright (c) 2013, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
  * @version		1.4.3
- * @build		20131022
+ * @build		20131104
  */
 
 #### 1.4.3
-##### 10/22/2013
+##### 11/04/2013
 
+- (Feature) Added new global_field parameter to assign global data to the Email Form tag/templates.
+- (Bug Fix) Fixed an issue with Postmaster's legacy route_hook method being installed while the trigger_hook method being the correct method.
+- (Bug Fix) Fixed an issue with the current_url method not returning the proper URL is the base_url has no WWW but the current URL does.
+- (Bug Fix) Removed the route_hook trigger from the installation file
+- (Bug Fix) Fixed an issue with upgrading from 1.4.1 to 1.4.3.
+- (Bug Fix) Fixed an incompatibility for version prior to EE 2.7
+- (Bug Fix) Fixed an issue with the Email Form Send hook
+- (Bug Fix) Fixed an issue with Base Form not parsing correctly
 - (Bug Fix) Added new config to help assist supporting multiple dev environments.
 
 #### 1.4.2
