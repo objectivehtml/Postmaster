@@ -947,7 +947,7 @@ class Postmaster_lib {
 			$base_url = base_url();
 
 			$url_has_www  = preg_match('/^www\./', $_SERVER['HTTP_HOST']);
-			$base_has_www = preg_match('/^www\./', $base_url);
+			$base_has_www = preg_match('/^(http:\/\/www|www)\./', $base_url);
 
 			if(!$base_has_www && $url_has_www)
 			{
