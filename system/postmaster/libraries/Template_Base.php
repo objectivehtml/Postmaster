@@ -68,6 +68,11 @@ abstract class Template_Base extends Base_class {
 	
 	public function services()
 	{
+		if(!isset($this->EE->postmaster_service))
+		{
+			$this->EE->load->library('postmaster_service');
+		}
+
 		return $this->EE->postmaster_service->get_services($this->settings);
 	}
 	
