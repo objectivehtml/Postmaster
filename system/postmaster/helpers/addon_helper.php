@@ -154,3 +154,20 @@ if(!function_exists('base_page'))
 		return $return;
 	}
 }
+
+/**
+ * Base URL
+ *
+ * Returns the "base_url" item from your config file
+ *
+ * @access	public
+ * @return	string
+ */
+if ( ! function_exists('base_url'))
+{
+	function base_url()
+	{
+		$CI =& get_instance();
+		return $CI->config->slash_item('base_url');
+	}
+}
