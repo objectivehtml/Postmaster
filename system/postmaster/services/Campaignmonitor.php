@@ -180,7 +180,7 @@ class CampaignMonitor_postmaster_service extends Base_service {
 		$text_url = $html_url.'&strip_tags=TRUE&plain_message=TRUE';
 
 		$post = array(
-			'Name'      => $parcel->entry->title,
+			'Name'      => $parcel->entry->title . ' - ' . date('Y-m-d h:i:s', time()),
 			'Subject'   => $parsed_object->subject,
 			'FromName'  => $parsed_object->from_name,
 			'FromEmail' => $parsed_object->from_email,

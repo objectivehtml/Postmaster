@@ -9,8 +9,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
- * @version		1.6.0
- * @build		20130619
+ * @version		1.6.1
+ * @build		20131115
  */
 
 if(!class_exists('Base_form'))
@@ -153,11 +153,6 @@ if(!class_exists('Base_form'))
 				'return'		=> $this->return
 			));
 
-			if(defined('XID_SECURE_HASH'))
-			{
-				$hidden_fields['XID'] = XID_SECURE_HASH;
-			}
-			
 			// Loops through the member groups looking for dynamic redirects
 			foreach($this->groups as $group)
 			{
@@ -282,8 +277,15 @@ if(!class_exists('Base_form'))
 				}
 			}
 			
+			$hidden_fields = $this->encode($hidden_fields);
+
+			if(defined('XID_SECURE_HASH'))
+			{
+				$hidden_fields['XID'] = XID_SECURE_HASH;
+			}
+			
 			// Return the form
-			return form_open($this->action, $params, $this->encode($hidden_fields)) . $this->tagdata . '</form>';
+			return form_open($this->action, $params, $hidden_fields) . $this->tagdata . '</form>';
 		}
 		
 		public function get($field_name, $default = FALSE, $decode = TRUE)
