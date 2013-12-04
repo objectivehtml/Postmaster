@@ -405,7 +405,7 @@ class Postmaster_lib {
 			if($ignore_date || $date <= time())
 			{
 				$service->pre_process();
-				
+
 				$response = $service->send($parsed_object, $parcel);
 				
 				$service->set_response($response);				
@@ -427,6 +427,8 @@ class Postmaster_lib {
 					$date = strtotime($parsed_object->send_every, $this->EE->localize->now);					
 					$this->log_action('The email to "'.$parsed_object->to_email.'" is set to be sent every "'.$parsed_object->send_every.'". The next time it will be sent will be '.$date.'.');
 					
+					var_dump($parcel->entry);exit();
+
 					if(isset($parcel->entry))
 					{
 						$this->model->add_parcel_to_queue($parsed_object, $parcel, $date);
@@ -443,7 +445,7 @@ class Postmaster_lib {
 			{
 				$this->log_action('The email to "'.$parsed_object->to_email.'" has been added to the queue and is set to be sent at '.date('Y-m-d H:i', $date).'.');
 
-				if(isset($parcel->parcel_id))
+				if(isset($parcel->entry))
 				{
 					$this->model->add_parcel_to_queue($parsed_object, $parcel, $date);
 				}

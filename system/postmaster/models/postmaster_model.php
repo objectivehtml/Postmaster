@@ -568,11 +568,11 @@ class Postmaster_model extends CI_Model {
 			$start = time();
 		}
 		
-		$this->db->where('send_date <=', date('Y-m-d H:i:a', $this->postmaster_lib->strtotime($start)));
+		$this->db->where('send_date <=', date('Y-m-d H:i:s', $this->postmaster_lib->strtotime($start)));
 
 		if($end)
 		{
-			$this->db->where('send_date >=', date('Y-m-d H:i:a', $this->postmaster_lib->strtotime($end)));
+			$this->db->where('send_date >=', date('Y-m-d H:i:s', $this->postmaster_lib->strtotime($end)));
 		}
 
 		return $this->db->get('postmaster_queue');
