@@ -62,7 +62,7 @@ abstract class Base_service extends Postmaster_base_api {
 	 * @var string
 	 */
 	 		 
-	protected $var_prefix = 'parcel';
+	protected $var_prefix = 'service';
 	
 
 	/**
