@@ -103,6 +103,8 @@ class MandrillMatrixMailingList_postmaster_service extends Mandrill_postmaster_s
 			'order_by' => 'row_order',
 			'sort'     => 'asc'
 		));
+
+		$response = $this->failed_response();
 		
 		foreach($matrix_data->result() as $row)
 		{
@@ -131,10 +133,6 @@ class MandrillMatrixMailingList_postmaster_service extends Mandrill_postmaster_s
 			if(!isset($row->$match_col) || isset($row->$match_col) && !empty($row->$match_col))
 			{
 				$response = parent::send($new_object, $parcel);
-			}
-			else
-			{
-				$response = $this->failed_response();
 			}
 		}
 		
