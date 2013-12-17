@@ -134,7 +134,9 @@ class X_days_before_expired_entries_postmaster_notification extends Base_notific
 			$this->notification = $this->EE->postmaster_lib->append($this->notification, 'entry', $entry);
 			
 			$parse_vars = array();
-			$response 	= parent::send($parse_vars, FALSE, $entry);
+
+			$member 	= $this->EE->channel_data->get_member($entry->author_id);
+			$response 	= parent::send($parse_vars, $member->row(), $entry);
 				
 			$data = array(
 				'entry_id' => $entry->entry_id	
