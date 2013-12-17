@@ -5,9 +5,24 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2013, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
- * @version		1.4.3
- * @build		20131104
+ * @version		1.4.4
+ * @build		20131117
  */
+
+#### 1.4.4
+##### 11/17/2013
+
+- (Feature) Added a new CartThrob Additional Processing hook
+- (Bug Fix) Updated Base Form to latest
+- (Bug Fix) Fixed an issue with CampaignMonitor throwing an error when creating a duplicate campaign. This is a temporary fix until a proper fix can be implemented.
+- (Bug Fix) Fixed an issue with the current_url including www. twice in the URL.
+- (Bug Fix) Added an provision to add the base_url method if it doesn't exist (in rare cases)
+- (Bug Fix) Fixed an issue that caused a PHP error when calling a method if a dependent library wasn't previously loaded properly.
+- (Bug Fix) Fixed an issue preventing users from post dating emails. PHP errors would trigger when sending those emails from the queue.
+- (Bug Fix) Added member data to the expired entries notification
+- (Bug Fix) Updated Channel Data to latest
+- (Bug Fix) Fixed some issues with the Mandrill Matrix Mailing List email service
+- (API) Change the prefix for service variables to "service:".
 
 #### 1.4.3
 ##### 11/04/2013
