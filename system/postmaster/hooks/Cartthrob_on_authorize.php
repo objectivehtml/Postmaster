@@ -41,32 +41,43 @@ class Cartthrob_on_authorize_postmaster_hook extends Base_hook {
 			$parse_vars['auth']
 		);
 
-		return parent::send($parse_vars);
+		$obj = parent::send($parse_vars);
+
+		if($obj->response->status)
+		{
+			if ($this->EE->extensions->active_hook('postmaster_cartthrob_processing') === TRUE)
+			{
+				$this->EE->extensions->call('postmaster_cartthrob_processing', $this->order);
+			}
+		}
+
+		return $obj;
 	}
 	
 	public function post_process()
 	{
 		$responses = $this->responses;
 
-		if($this->end_script($responses))
+		foreach($responses as $obj)
 		{
-			$this->EE->cartthrob->process_discounts()->process_inventory();
-			
-			$this->cart->clear()
-				   ->clear_coupon_codes()
-				   ->clear_totals();
-			
-			$this->cart->set_customer_info('use_billing_info', '0');
-			$this->EE->form_builder->set_return($this->cart->order('authorized_redirect'));
+			if($obj->response->status)
+			{	
+				if($this->end_script($responses))
+				{
+					$this->EE->cartthrob->process_discounts()->process_inventory();
+					
+					$this->cart->clear()
+						   ->clear_coupon_codes()
+						   ->clear_totals();
+					
+					$this->cart->set_customer_info('use_billing_info', '0');
+					$this->EE->form_builder->set_return($this->cart->order('authorized_redirect'));
 
-			if ($this->EE->extensions->active_hook('postmaster_cartthrob_processing') === TRUE)
-			{
-				$this->EE->extensions->call('postmaster_cartthrob_processing', $this->order);
+					$this->cart->save();
+					
+					$this->EE->form_builder->action_complete();
+				}
 			}
-
-			$this->cart->save();
-			
-			$this->EE->form_builder->action_complete();
 		}
 
 		return $responses;
