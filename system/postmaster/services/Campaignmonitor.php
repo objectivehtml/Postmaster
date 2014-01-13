@@ -124,7 +124,9 @@ class CampaignMonitor_postmaster_service extends Base_service {
 				);
 			}
 		}
-		
+
+		$post['Resubscribe'] = TRUE;
+
 		$url = $this->api_url('subscribers', $data['id']);
 		
 		$response = $this->_send($url, $post, $data['api_key'], FALSE);

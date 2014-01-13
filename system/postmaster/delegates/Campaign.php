@@ -120,7 +120,7 @@ class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 			'first_name' => $this->param('first_name', $this->param('fname')),
 			'last_name'  => $this->param('last_name', $this->param('lname')),
 		);
-
+		
 		foreach($this->EE->TMPL->tagparams as $index => $value)
 		{
 			$data['post'][$index] = $this->param($index);
