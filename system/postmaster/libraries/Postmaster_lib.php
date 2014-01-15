@@ -581,7 +581,7 @@ class Postmaster_lib {
 			{
 				if($this->validate_enabled($parcel->enabled))
 				{
-					if($parcel->channel_id == $data['channel_id'])
+					if($parcel->channel_id == $meta['channel_id'])
 					{
 						$entry_data['category'] = isset($entry_data['category']) ? $entry_data['category'] : array();
 		
