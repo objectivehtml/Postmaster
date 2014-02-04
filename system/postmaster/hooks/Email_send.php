@@ -66,9 +66,11 @@ class Email_send_postmaster_hook extends Base_hook {
 	{
 		if($this->hook['service'] != 'ExpressionEngine')
 		{
-			$parsed_hook['message'] = preg_replace('/'.LD.'\/?unwrap'.RD.'/u', '', $parsed_hook['message']);	
+			$parsed_hook['message'] = preg_replace('/'.LD.'\/?unwrap'.RD.'/u', '', $parsed_hook['message']);
+			$parsed_hook['html_message'] = preg_replace('/'.LD.'\/?unwrap'.RD.'/u', '', $parsed_hook['html_message']);
+			$parsed_hook['plain_message'] = preg_replace('/'.LD.'\/?unwrap'.RD.'/u', '', $parsed_hook['plain_message']);	
 		}
-		
+
 		return $parsed_hook;		
 	}
 
