@@ -765,7 +765,7 @@ class Postmaster_mcp {
 			'subject'            => $this->post('subject', TRUE),
 			'message'            => $this->post('message', TRUE),
 			'html_message'       => $this->post('message', TRUE),
-			'plain_message'      => strip_tags($this->post('message', TRUE)),
+			'plain_message'      => $this->plain_text($this->post('message', TRUE)),
 			'installed_hook'     => $this->post('installed_hook', TRUE),
 			'user_defined_hook'  => $this->post('user_defined_hook', TRUE),
 			'priority' 			 => $this->post('priority', TRUE),
@@ -928,7 +928,7 @@ class Postmaster_mcp {
 			'subject'            => $this->post('subject'),
 			'message'            => $this->post('message'),
 			'html_message'       => $this->post('message', TRUE),
-			'plain_message'      => strip_tags($this->post('message', TRUE)),
+			'plain_message'      => $this->plain_text($this->post('message', TRUE)),
 			'trigger'            => is_array($this->post('trigger')) ? implode('|', $this->post('trigger')) : $this->post('trigger'),
 			'post_date_specific' => $this->post('post_date_specific'),
 			'post_date_relative' => $this->post('post_date_relative'),
@@ -1015,6 +1015,11 @@ class Postmaster_mcp {
 		}
 
 		exit($parsed_object->message);
+	}
+
+	public function plain_text($message)
+	{
+		return $this->EE->postmaster_lib->plain_text($message);
 	}
 
 	private function post($name)

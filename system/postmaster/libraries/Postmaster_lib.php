@@ -290,6 +290,23 @@ class Postmaster_lib {
 		return $return;		
 	}
 
+	public function plain_text($message)
+	{
+		// Strip style tags
+		$message = preg_replace("/<style.*<\/style>/us", "", $message);
+
+		// Strip HTML
+		$message = strip_tags($message);
+
+		// Strip consecutive 
+		$message = preg_replace("/(\\n)\\1+/u", "$1$1", $message);
+
+		// Trim the string
+		$message = trim($message);
+		
+		return $message;
+	}
+
 	public function route_task($task_id, $hook, $args)
 	{
 		$this->EE->load->model('postmaster_routes_model');

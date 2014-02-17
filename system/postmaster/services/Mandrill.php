@@ -140,12 +140,13 @@ class Mandrill_postmaster_service extends Base_service {
 			}	
 		}
 
-		$plain_message = strip_tags($parsed_object->message);
+		$plain_message = $this->plain_text($parsed_object->message);
+
 		$html_message  = $parsed_object->message;
 
 		if(isset($parsed_object->plain_message) && !empty($parsed_object->plain_message))
 		{
-			$plain_message = $parsed_object->plain_message;
+			$plain_message = $this->plain_text($parsed_object->plain_message);
 		}
 
 		if(isset($parsed_object->html_message) && !empty($parsed_object->html_message))
@@ -178,7 +179,7 @@ class Mandrill_postmaster_service extends Base_service {
 		$post['message']['html'] = $html_message;
 		
 		$post['message'] = (object) $post['message'];
-		
+
 		if(!empty($parsed_object->bcc))
 		{
 			$post['bcc_address'] = $parsed_object->bcc;
@@ -195,6 +196,8 @@ class Mandrill_postmaster_service extends Base_service {
 			$response = json_decode($response);
 		}
 		
+		// var_dump($plain_message);exit();
+
 		return new Postmaster_Service_Response(array(
 			'status'     => $response[0]->status == 'sent' ? POSTMASTER_SUCCESS : POSTMASTER_FAILED,
 			'parcel_id'  => $parcel->id,

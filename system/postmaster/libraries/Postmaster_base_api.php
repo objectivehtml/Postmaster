@@ -66,6 +66,19 @@ abstract class Postmaster_base_api extends Postmaster_core {
 	 * @return	object
 	 */
 	 
+	public function plain_text($message)
+	{
+		return $this->EE->postmaster_lib->plain_text($message);
+	}
+	
+			
+	/**
+	 * Get the default settings
+	 *
+	 * @access	public
+	 * @return	object
+	 */
+	 
 	public function default_settings()
 	{
 		return (object) $this->default_settings;
