@@ -3,11 +3,22 @@
  * 
  * @package		Postmaster
  * @author		Justin Kimbrell
- * @copyright	Copyright (c) 2013, Objective HTML
+ * @copyright	Copyright (c) 2014, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
- * @version		1.4.4
- * @build		20131117
+ * @version		1.4.5
+ * @build		20140221
  */
+
+#### 1.4.5
+##### 02/21/2014
+- (Feature) Added a new CartThrob Additional Processing hook
+- (Feature) Added member_member_register hook
+- (Bug Fix) Fixed CT issues that would prevent hooks from triggering in some cases
+- (Bug Fix) Fixed an issue with subscribe function not working for CampaignMonitor
+- (Bug Fix) Fixed an issue with parcel not sending if user changed the channel_id in the publish entry form.
+- (Bug Fix) Fixed an issue with PHP errors appearing in some cases when using the API
+- (Bug Fix) Fixed an issue with the {unwrap} tag still appearing in the email_send hook.
+- (Bug Fix) Fixed issue with sending plain text emails. Added new method Postmaster_lib::plain_text($message) to remove the unwanted HTML tags while attempting to maintain the formatting.
 
 #### 1.4.4
 ##### 11/17/2013
