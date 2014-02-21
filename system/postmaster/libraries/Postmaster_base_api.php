@@ -1,6 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once 'Postmaster_core.php';
+require_once PATH_THIRD.'postmaster/libraries/Postmaster_core.php';
+require_once PATH_THIRD.'postmaster/libraries/Postmaster_curl.php';
+require_once PATH_THIRD.'postmaster/libraries/Uuid.php';
 
 abstract class Postmaster_base_api extends Postmaster_core {
 
@@ -28,6 +30,8 @@ abstract class Postmaster_base_api extends Postmaster_core {
 		'bcc',
 		'subject',
 		'message',
+		'html_message', // New in v1.4
+		'plain_message', // New in v1.4
 		'post_date_specific',
 		'post_date_relative',
 		'send_every',
@@ -49,46 +53,25 @@ abstract class Postmaster_base_api extends Postmaster_core {
 				
 		$this->EE =& get_instance();
 		
-		$this->EE->load->driver('interface_builder');
-		
 		$this->name         = strtolower(str_replace($this->class_suffix, '', get_class($this)));
 		$this->filename     = ucfirst($this->name).'.php';
-		$this->IB           = $this->EE->interface_builder;
-		$this->channel_data = $this->EE->channel_data;	
-								
-		$this->IB->set_var_name($this->name);
-		$this->IB->set_prefix('setting');
-		$this->IB->set_use_array(TRUE);
+		$this->channel_data = $this->EE->channel_data;
 	}
 	
+		
 	/**
-	 * Display the settings table
+	 * Get the default settings
 	 *
 	 * @access	public
-	 * @param	array 	The InterfaceBuilder schema array 
-	 * @return	string
+	 * @return	object
 	 */
 	 
-	 /*		
-	public function display_settings($data = array())
+	public function plain_text($message)
 	{
-		if(count($this->fields) == 0)
-		{		
-			return FALSE;
-		}
-		
-		$settings = isset($data->{$this->name}) ? $data->{$this->name} : $this->get_default_settings();
-		
-		$this->IB->set_var_name($this->name);
-		$this->IB->set_prefix('setting');
-		$this->IB->set_use_array(TRUE);
-				
-		return $this->IB->table($this->fields, $settings, postmaster_table_attr());
+		return $this->EE->postmaster_lib->plain_text($message);
 	}
-	*/
-	 	
 	
-	
+			
 	/**
 	 * Get the default settings
 	 *
@@ -102,6 +85,20 @@ abstract class Postmaster_base_api extends Postmaster_core {
 	}
 	
 	
+	/**
+	 * Return a failed response
+	 *
+	 * @access	public
+	 * @param	array	An array of properties to set  
+	 * @return	object
+	 */
+	
+	public function failed_response($params = array())
+	{
+		return $this->EE->postmaster_lib->failed_response($params);
+	}
+	 
+	 
 	/**
 	 * Get the individual service settings array from the global settings
 	 *
@@ -131,7 +128,7 @@ abstract class Postmaster_base_api extends Postmaster_core {
 	 * @return	
 	 */
 	 
-	public function display_settings($settings, $parcel = FALSE)
+	public function display_settings($settings)
 	{
 		return $this->build_table($settings);
 	}
@@ -145,8 +142,13 @@ abstract class Postmaster_base_api extends Postmaster_core {
 	 * @return	string
 	 */
 	 
-	public function build_table($settings)
+	public function build_table($settings, $fields = FALSE)
 	{	
+		if($fields)
+		{
+			$this->fields = $fields;	
+		}
+		
 		if(count($this->fields) == 0)
 		{		
 			return NULL;
@@ -154,11 +156,12 @@ abstract class Postmaster_base_api extends Postmaster_core {
 		
 		$settings = $this->get_settings($settings);
 		
-		$this->IB->set_var_name($this->get_name());
-		$this->IB->set_prefix('setting');
-		$this->IB->set_use_array(TRUE);
+		$params   = array(
+			'varName'   => 'setting['.$this->get_name().']',
+			'dataArray' => TRUE
+		);
 		
-		return $this->IB->table($this->fields, $settings, postmaster_table_attr());
+		return InterfaceBuilder::table($this->fields, $settings, $params, postmaster_table_attr());
 	}	
 		
 	/**

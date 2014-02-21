@@ -51,6 +51,19 @@ class Postageapp_postmaster_service extends Base_service {
 	{		
 		$settings = $this->get_settings();
 
+		$plain_message = strip_tags($parsed_object->message);
+		$html_message  = $parsed_object->message;
+
+		if(isset($parsed_object->html_message) && !empty($parsed_object->html_message))
+		{
+			$html_message = $parsed_object->html_message;
+		}
+
+		if(isset($parsed_object->plain_message) && !empty($parsed_object->plain_message))
+		{
+			$plain_message = $parsed_object->plain_message;
+		}
+
 		$post = array(
 			'api_key' => $settings->api_key,
 			'uid' => $this->uid->v4(),
@@ -61,8 +74,8 @@ class Postageapp_postmaster_service extends Base_service {
 					'from' => $parsed_object->from_email
 				),
 				'content' => array(
-					'text/plain' => strip_tags($parsed_object->message),
-					'text/html'  => $parsed_object->message
+					'text/plain' => $plain_message,
+					'text/html'  => $html_message
 				)
 			)
 		);
@@ -109,6 +122,6 @@ class Postageapp_postmaster_service extends Base_service {
 
 	public function display_settings($settings, $parcel)
 	{	
-		return $this->build_table($settings, $this->fields);
+		return $this->build_table($settings);
 	}
 }

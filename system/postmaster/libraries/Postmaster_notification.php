@@ -77,9 +77,9 @@ class Postmaster_notification extends Postmaster_base_lib {
 	 * @return	mixed
 	 */
 	
-	public function get_notification($index = FALSE)
+	public function get_notification($index = FALSE, $settings = FALSE)
 	{		
-		return parent::get_object($index);
+		return parent::get_object($index, $settings);
 	}
 	
 	
@@ -90,9 +90,11 @@ class Postmaster_notification extends Postmaster_base_lib {
 	 * @return	array
 	 */
 	
-	public function get_notifications()
+	public function get_notifications($settings = FALSE)
 	{
-		return parent::get_objects();
+		return parent::get_objects(array(
+			'settings' => $settings
+		));
 	}	
 	
 		
@@ -120,15 +122,27 @@ class Postmaster_notification extends Postmaster_base_lib {
 	 
 	public function trigger($notification_obj, $args = array())
 	{
-		call_user_func_array(array($notification_obj, 'pre_process'), $args);
+		$enabled = TRUE;
 		
-		$response = call_user_func_array(array($notification_obj, 'trigger'), $args);
+		if(isset($notification_obj->enabled))
+		{
+			$enabled = $notification_obj->enabled;
+		}
+	
+		if($this->EE->postmaster_lib->validate_enabled($enabled, 'hook'))
+		{	
+			call_user_func_array(array($notification_obj, 'pre_process'), $args);
+			
+			$response = call_user_func_array(array($notification_obj, 'trigger'), $args);
+			
+			$notification_obj->set_response($response);
+			
+			call_user_func_array(array($notification_obj, 'post_process'), $args);
+			
+			return $notification_obj->get_response();
+		}
 		
-		$notification_obj->set_response($response);
-		
-		call_user_func_array(array($notification_obj, 'post_process'), $args);
-		
-		return $notification_obj->get_response();
+		return FALSE;
 	}
 	
 }

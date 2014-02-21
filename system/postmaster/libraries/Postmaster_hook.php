@@ -103,9 +103,9 @@ class Postmaster_hook extends Postmaster_base_lib {
 	 * @return	mixed
 	 */
 	
-	public function get_hook($index = FALSE)
-	{	
-		return parent::get_object($index);
+	public function get_hook($index = FALSE, $settings = FALSE)
+	{		
+		return parent::get_object($index, $settings);
 	}
 	
 	
@@ -116,9 +116,11 @@ class Postmaster_hook extends Postmaster_base_lib {
 	 * @return	array
 	 */
 	
-	public function get_hooks()
+	public function get_hooks($settings = FALSE)
 	{	
-		return parent::get_objects();
+		return parent::get_objects(array(
+			'settings' => $settings
+		));
 	}	
 	
 	
@@ -175,28 +177,38 @@ class Postmaster_hook extends Postmaster_base_lib {
 	 
 	public function trigger($index, $args = array())
 	{
+		$this->EE->load->model('postmaster_routes_model');
+
 		$actual_hooks = $this->EE->postmaster_model->get_actual_installed_hooks($index);
 		
 		$return = array();
 		
 		foreach($actual_hooks->result_array() as $index => $hook)
 		{
-			$hook_obj = $this->get_hook($hook['installed_hook']);
-			$hook_obj->set_settings(json_decode($hook['settings']));
+			if(!isset($hook['enabled']))
+			{
+				$hook['enabled'] = TRUE;	
+			}
 			
-			call_user_func_array(array($hook_obj, 'pre_process'), $args);
-			
-			$hook_name = !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'];
+			if($this->EE->postmaster_lib->validate_enabled($hook['enabled'], 'hook'))
+			{			
+				$hook_obj = $this->get_hook($hook['installed_hook']);
+				$hook_obj->set_settings(json_decode($hook['settings']));
 				
-			$hook_obj->set_hook($hook);
+				call_user_func_array(array($hook_obj, 'pre_process'), $args);
 				
-			$responses[] = call_user_func_array(array($hook_obj, 'trigger'), $args);
-			
-			$hook_obj->set_responses($responses);
-			
-			call_user_func_array(array($hook_obj, 'post_process'), $args);
-			
-			$return = array_merge($return, $hook_obj->get_responses());
+				$hook_name = !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'];
+					
+				$hook_obj->set_hook($hook);
+					
+				$responses[] = call_user_func_array(array($hook_obj, 'trigger'), $args);
+				
+				$hook_obj->set_responses($responses);
+				
+				call_user_func_array(array($hook_obj, 'post_process'), $args);
+				
+				$return = array_merge($return, $hook_obj->get_responses());
+			}
 		}
 		
 		return $return;

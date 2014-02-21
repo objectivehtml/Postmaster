@@ -1271,7 +1271,7 @@ if(!class_exists('Channel_data_lib'))
 
 			// Joins the channel_data table
 
-			$this->EE->db->join('member_data', 'members.member_id = member_data.member_id', 'left');
+			$this->EE->db->join('member_data', 'members.member_id = member_data.member_id');
 
 			$params = array(
 				'select' 	=> $select,

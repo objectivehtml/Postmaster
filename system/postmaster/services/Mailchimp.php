@@ -88,6 +88,11 @@ MailChimp helps you design email newsletters, share them on social networks, int
 				show_error('Something has gone wrong. Your email campaign has not been created.');
 			}
 
+			if(isset($response->error) && isset($response->code))
+			{
+				show_error('Error Code: '.$response->code.' - "'.$response->error.'"');
+			}
+
 			$response = $this->send_campaign($settings->api_key, $response);
 		}
 
@@ -113,7 +118,7 @@ MailChimp helps you design email newsletters, share them on social networks, int
 	
 	public function display_settings($settings, $parcel)
 	{
-		$html = $this->build_table($settings, $this->fields);
+		$html = $this->build_table($settings);
 
 		$html .= '
 		<h3>Mailing Lists</h3>
@@ -304,6 +309,19 @@ MailChimp helps you design email newsletters, share them on social networks, int
 	{
 		$settings = $parcel->settings->{$this->name};
 
+		$plain_message = strip_tags($parsed_object->message);
+		$html_message  = $parsed_object->message;
+
+		if(isset($parsed_object->html_message) && !empty($parsed_object->html_message))
+		{
+			$html_message = $parsed_object->html_message;
+		}
+
+		if(isset($parsed_object->plain_message) && !empty($parsed_object->plain_message))
+		{
+			$plain_message = $parsed_object->plain_message;
+		}
+
 		$params = array(
 			'type'    => 'regular',
 			'options' => array(
@@ -315,8 +333,8 @@ MailChimp helps you design email newsletters, share them on social networks, int
 				'title'		 => $parcel->entry->title
 			),
 			'content' => array(
-				'html' => $parsed_object->message,
-				'text' => strip_tags($parsed_object->message)
+				'html' => $html_message,
+				'text' => $plain_message
 			)
 		);
 

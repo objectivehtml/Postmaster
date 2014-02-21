@@ -19,6 +19,10 @@ class Postmaster_installer {
 		$this->EE->load->library('postmaster_service', array(
 			'base_path' => PATH_THIRD . 'postmaster/services/'
 		));
+
+		$this->EE->load->library('postmaster_task', array(
+			'base_path' => PATH_THIRD . 'postmaster/tasks/'
+		));
 	}
 	
 	public function version_update($version)
@@ -50,6 +54,21 @@ class Postmaster_installer {
 				$this->EE->db->where('id', $row->id);
 				$this->EE->db->update('postmaster_queue', $data);
 			}
+		}
+
+		if(version_compare($version, '1.4.1', '>'))
+		{
+			$this->EE->db->where('class', 'Postmaster_ext');
+			$this->EE->db->where('method', 'route_hook');
+			$this->EE->db->update('extensions', array(
+				'method' => 'trigger_hook'
+			));
+
+			$this->EE->db->where('class', 'Postmaster_ext');
+			$this->EE->db->where('method', 'route_task_hook');
+			$this->EE->db->update('extensions', array(
+				'method' => 'trigger_task_hook'
+			));
 		}
 	}
 	
@@ -119,9 +138,10 @@ class Postmaster_installer {
 	{
 		$services      = $this->EE->postmaster_service->get_services();
 		$hooks         = $this->EE->postmaster_hook->get_hooks();		
-		$notifications = $this->EE->postmaster_notification->get_notifications();	
+		$notifications = $this->EE->postmaster_notification->get_notifications();
+		$tasks 		   = $this->EE->postmaster_task->get_tasks();	
 		
-		foreach(array_merge($services, $hooks, $notifications) as $obj)
+		foreach(array_merge($services, $hooks, $notifications, $tasks) as $obj)
 		{
 			if(is_object($obj))
 			{

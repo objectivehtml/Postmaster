@@ -40,6 +40,14 @@ class MandrillMatrixMailingList_postmaster_service extends Mandrill_postmaster_s
 			'email_col' => array(
 				'label' => 'Email Column'
 			),
+			'match_col' => array(
+				'label' => 'Match Column',
+				'description' => 'If you you want send the email based on a value of a column matching a specific value, enter the name of that column here.'
+			),
+			'match_val' => array(
+				'label' => 'Match Value',
+				'description' => 'This is the value you want to match in the column specified above.'
+			),
 		);
 		
 		$this->fields = array_merge($new_fields, $orig_fields);
@@ -51,12 +59,26 @@ class MandrillMatrixMailingList_postmaster_service extends Mandrill_postmaster_s
 	{
 		$settings    = $this->get_settings();
 		$field       = $this->EE->channel_data->get_field_by_name($settings->matrix_field);
-		$cols        = $this->EE->channel_data->get('matrix_cols');
+		$cols        = $this->EE->channel_data->get('matrix_cols', array(
+			'where' => array(
+				'field_id' => $field->row('field_id')
+			)
+		));
 		$cols		 = $this->EE->channel_data->utility->reindex('col_name', $cols->result());
 		
+		$match_col = isset($settings->match_col) ? $settings->match_col : '';
+		$match_val = isset($settings->match_val) ? $settings->match_val : '';
+			
 		$select = array();
 		
-		foreach(array('first_name', 'last_name', 'email') as $name)
+		$select_fields = array('first_name', 'last_name', 'email');
+
+		foreach($cols as $col)
+		{
+			$select[] = 'col_id_'.$col->col_id.' as \''.$col->col_name.'\'';
+		}
+
+		foreach($select_fields as $name)
 		{
 			$column = $settings->{$name.'_col'};
 			
@@ -66,17 +88,28 @@ class MandrillMatrixMailingList_postmaster_service extends Mandrill_postmaster_s
 			}
 		}
 		
+		if(isset($cols[$match_col]))
+		{
+			$select[] = 'col_id_'.$cols[$match_col]->col_id . ' as \''.$cols[$match_col]->col_name.'\'';
+		}
+		
 		$matrix_data = $this->EE->channel_data->get('matrix_data', array(
 			'select' => $select, 
 			'where'  => array(
 				'site_id'  => config_item('site_id'),
 				'entry_id' => $parcel->entry->entry_id,
 				'field_id' => $field->row('field_id')
-			)
+			),
+			'order_by' => 'row_order',
+			'sort'     => 'asc'
 		));
+
+		$response = $this->failed_response();
 		
 		foreach($matrix_data->result() as $row)
 		{
+			//$prefixed_row = $this->EE->channel_data->utility->add_prefix($this->var_prefix, $row);
+
 			$name = '';
 			
 			if(isset($row->{$settings->first_name_col}) && !empty($row->{$settings->first_name_col}))
@@ -94,8 +127,13 @@ class MandrillMatrixMailingList_postmaster_service extends Mandrill_postmaster_s
 			
 			$parsed_object->to_name  = $name;
 			$parsed_object->to_email = $email;
-			
-			$response = parent::send($parsed_object, $parcel);
+
+			$new_object = (object) $this->parse((array) $parsed_object, (array) $row);
+
+			if(!isset($row->$match_col) || isset($row->$match_col) && !empty($row->$match_col))
+			{
+				$response = parent::send($new_object, $parcel);
+			}
 		}
 		
 		return $response;

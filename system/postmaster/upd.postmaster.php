@@ -110,6 +110,14 @@ class Postmaster_upd {
 			'message'	=> array(
 				'type'	=> 'longtext'
 			),
+			/* New in v1.4 */
+			'html_message'	=> array(
+				'type'	=> 'longtext'
+			),
+			/* New in v1.4 */
+			'plain_message'	=> array(
+				'type'	=> 'longtext'
+			),
 			'settings' => array(
 				'type'	=> 'longtext'
 			),
@@ -125,6 +133,16 @@ class Postmaster_upd {
 			'send_every'  => array(
 				'type' => 'varchar',
 				'constraint' => 100
+			),
+			'enabled'  => array(
+				'type'       => 'int',
+				'constraint' => 1,
+				'default'    => 1
+			),
+			'send_once'  => array(
+				'type'       => 'int',
+				'constraint' => 1,
+				'default'    => 0
 			)
 		),
 		'postmaster_hooks' 	=> array(
@@ -189,6 +207,14 @@ class Postmaster_upd {
 			'message'	=> array(
 				'type'	=> 'longtext'
 			),
+			/* New in v1.4 */
+			'html_message'	=> array(
+				'type'	=> 'longtext'
+			),
+			/* New in v1.4 */
+			'plain_message'	=> array(
+				'type'	=> 'longtext'
+			),
 			'settings' => array(
 				'type'	=> 'longtext'
 			),
@@ -209,6 +235,11 @@ class Postmaster_upd {
 			'extra_conditionals' => array(
 				'type'	=> 'text'
 			),
+			'enabled'  => array(
+				'type'       => 'int',
+				'constraint' => 1,
+				'default'    => 1
+			)
 		),
 
 		'postmaster_notifications' 	=> array(
@@ -261,6 +292,14 @@ class Postmaster_upd {
 			'message'	=> array(
 				'type'	=> 'longtext'
 			),
+			/* New in v1.4 */
+			'html_message'	=> array(
+				'type'	=> 'longtext'
+			),
+			/* New in v1.4 */
+			'plain_message'	=> array(
+				'type'	=> 'longtext'
+			),
 			'settings' => array(
 				'type'	=> 'longtext'
 			),
@@ -277,7 +316,13 @@ class Postmaster_upd {
 			'extra_conditionals' => array(
 				'type'	=> 'text'
 			),
+			'enabled'  => array(
+				'type'       => 'int',
+				'constraint' => 1,
+				'default'    => 1
+			)
 		),
+		
 		'postmaster_queue' 	=> array(
 			'id'	=> array(
 				'type'				=> 'int',
@@ -347,6 +392,14 @@ class Postmaster_upd {
 			'message'	=> array(
 				'type'	=> 'longtext'
 			),
+			/* New in v1.4 */
+			'html_message'	=> array(
+				'type'	=> 'longtext'
+			),
+			/* New in v1.4 */
+			'plain_message'	=> array(
+				'type'	=> 'longtext'
+			),
 			'send_every'  => array(
 				'type' => 'varchar',
 				'constraint' => 100
@@ -410,6 +463,14 @@ class Postmaster_upd {
 			'message'	=> array(
 				'type'	=> 'longtext'
 			),
+			/* New in v1.4 */
+			'html_message'	=> array(
+				'type'	=> 'longtext'
+			),
+			/* New in v1.4 */
+			'plain_message'	=> array(
+				'type'	=> 'longtext'
+			),
 			'status'  => array(
 				'type'       => 'varchar',
 				'constraint' => 250
@@ -448,6 +509,10 @@ class Postmaster_upd {
 				'primary_key'		=> TRUE,
 				'auto_increment'	=> TRUE
 			),
+			'obj_id'	=> array(
+				'type'				=> 'int',
+				'constraint'		=> 100,
+			),
 			'class' => array(
 				'type'			=> 'varchar',
 				'constraint' 	=> 100
@@ -463,8 +528,46 @@ class Postmaster_upd {
 			'file'   => array(
 				'type'			=> 'varchar',
 				'constraint' 	=> 100
+			),
+			'type'   => array(
+				'type'			=> 'varchar',
+				'constraint' 	=> 100
 			)
 		),
+		
+		'postmaster_tasks' 	=> array(
+			'id'	=> array(
+				'type'				=> 'int',
+				'constraint'		=> 100,
+				'primary_key'		=> TRUE,
+				'auto_increment'	=> TRUE
+			),
+			'site_id' => array(
+				'type'			=> 'int',
+				'constraint' 	=> 100
+			),
+			'title'  => array(
+				'type'       => 'varchar',
+				'constraint' => 250
+			),
+			'task'  => array(
+				'type'       => 'varchar',
+				'constraint' => 250
+			),
+			'settings' => array(
+				'type'	=> 'longtext'
+			),
+			'enabled'  => array(
+				'type'       => 'int',
+				'constraint' => 1,
+				'default'    => 1
+			),
+			'enable_cron'  => array(
+				'type'       => 'int',
+				'constraint' => 1,
+				'default'    => 0
+			)
+		)
 	);
 	
 	private $actions = array(
@@ -555,6 +658,22 @@ class Postmaster_upd {
 		array(
 		    'class'     => 'Postmaster_ext',
 		    'method'    => 'route_hook'
+		),
+		array(
+		    'class'     => 'Postmaster_mcp',
+		    'method'    => 'create_task_action'
+		),
+		array(
+		    'class'     => 'Postmaster_mcp',
+		    'method'    => 'edit_task_action'
+		),
+		array(
+		    'class'     => 'Postmaster_mcp',
+		    'method'    => 'duplicate_task_action'
+		),
+		array(
+		    'class'     => 'Postmaster_mcp',
+		    'method'    => 'task_action'
 		)
 	);
 	
@@ -624,6 +743,7 @@ class Postmaster_upd {
 		$this->EE->data_forge = new Data_forge();
 		$this->EE->data_forge->update_tables($this->tables);
 
+		$this->EE->load->add_package_path(PATH_THIRD . 'postmaster');
 		$this->EE->load->library('postmaster_installer');
 		
 		foreach($this->actions as $action)
@@ -647,7 +767,10 @@ class Postmaster_upd {
 		
 		if($hooks->num_rows() > 0)
 		{
-			$this->EE->load->library('postmaster_hook');
+			$this->EE->load->library('postmaster_hook', array(
+				'base_path' => PATH_THIRD.'postmaster/hooks/'
+			));
+		
 			$this->EE->postmaster_hook->set_base_path(PATH_THIRD . 'postmaster/hooks/');
 		
 			foreach($hooks->result_array() as $hook)

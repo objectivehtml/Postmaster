@@ -4,6 +4,9 @@
 	<p>Postmaster uses a robust text editor to create and maintain the e-mail parcels (templates). You can adjust any of the following settings to fit your individual needs and preference. For more information regarding the text editor, visit <a href="http://codemirror.net/doc/manual.html">CodeMirror.net</a></p>
 
 	<table class="mainTable" cellpadding="0" cellspacing="0">
+		
+		<input type="hidden" name="XID" value="<?php echo $xid?>">
+	
 		<thead>
 			<tr>
 				<th>Preference</th>

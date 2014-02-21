@@ -210,6 +210,15 @@ class Postmaster_lib {
 	 
 	public function parse($parcel, $member_id = FALSE, $parse_vars = array(), $prefix = 'parcel', $delimeter = ':')
 	{
+		/* Fix 9/18/13 - Typography hack to prevent encoding URL's in emails */
+		
+		$current_method = $this->EE->input->get('M');
+		
+		if(REQ == 'CP' && $current_method)
+		{
+			$_GET['M'] = 'send_email';
+		}
+
 		$parcel_copy    = clone $parcel;
 		$channel_id     = isset($parcel->entry->channel_id) ? $parcel->entry->channel_id : 0;
 		$channels       = $this->EE->postmaster_model->get_channels();
@@ -239,12 +248,25 @@ class Postmaster_lib {
 			
 		}
 		
-		$parse_vars[$prefix.$delimeter.'safecracker'] = isset($this->EE->safecracker) ? TRUE : FALSE;
-		$parse_vars[$prefix.$delimeter.'logged_in_group_id'] = $this->EE->session->userdata('group_id');
+		$parse_vars[$prefix.$delimeter.'safecracker'] 		  = isset($this->EE->safecracker) ? TRUE : FALSE;
+		$parse_vars[$prefix.$delimeter.'logged_in_group_id']  = $this->EE->session->userdata('group_id');
 		$parse_vars[$prefix.$delimeter.'logged_in_member_id'] = $this->EE->session->userdata('member_id');
-		
+		$parse_vars[$prefix.$delimeter.'current_time'] 		  = $this->EE->localize->now;
+
+		if(isset($parse_vars[$prefix.$delimeter.'edit_date']))
+		{
+			$edit_date = $parse_vars[$prefix.$delimeter.'edit_date'];
+
+			$parse_vars[$prefix.$delimeter.'edit_date'] = mktime(substr($edit_date, 8, 2), substr($edit_date, 10, 2),  substr($edit_date, 12, 2), substr($edit_date, 4, 2), substr($edit_date, 6, 2), substr($edit_date, 0, 4));//mktime();
+			$entry_vars[$prefix.$delimeter.'edit_date'] = $parse_vars[$prefix.$delimeter.'edit_date'];
+		}
+		else
+		{
+			$parse_vars[$prefix.$delimeter.'edit_date'] = FALSE;
+		}
+
 		$parse_vars = array_merge($parse_vars, $this->EE->postmaster_model->get_member($member_id, 'member'));
-		
+
 		if(isset($parcel_copy->entry))
 		{
 			$entry = $parcel_copy->entry;
@@ -256,24 +278,85 @@ class Postmaster_lib {
 			$entry_vars = array();
 		}
 		
-		return $this->convert_array($this->EE->channel_data->tmpl->parse_array($parcel_copy, $parse_vars, $entry_vars, $channels, $channel_fields, $prefix.$delimeter));
+		$return = $this->convert_array($this->EE->channel_data->tmpl->parse_array($parcel_copy, $parse_vars, $entry_vars, $channels, $channel_fields, $prefix.$delimeter));
+		
+		/* Fix 9/18/13 - Typography hack to prevent encoding URL's in emails */
+		
+		if(REQ == 'CP' && $current_method)
+		{
+			$_GET['M'] = $current_method;
+		}
+
+		return $return;		
 	}
+
+	public function plain_text($message)
+	{
+		// Strip style tags
+		$message = preg_replace("/<style.*<\/style>/us", "", $message);
+
+		// Strip HTML
+		$message = strip_tags($message);
+
+		// Strip consecutive 
+		$message = preg_replace("/(\\n)\\1+/u", "$1$1", $message);
+
+		// Trim the string
+		$message = trim($message);
+		
+		return $message;
+	}
+
+	public function route_task($task_id, $hook, $args)
+	{
+		$this->EE->load->model('postmaster_routes_model');
+
+		$routes = $this->EE->postmaster_routes_model->get_routes_by_task($hook, $task_id);	
+
+		return $this->_route($routes, $args, 'task');
+	}	
 	
-	
-	public function route($hook, $args)
+	public function route_hook($hook_id, $hook, $args)
 	{
 		$this->EE->load->model('postmaster_routes_model');
 		
-		$routes = $this->EE->postmaster_routes_model->get_routes_by_hook($hook);	
+		var_dump($hook);exit();
+
+		$routes = $this->EE->postmaster_routes_model->get_routes_by_hook($hook, $hook_id);	
+		
+		return $this->_route($routes, $args, 'hook');
+	}
+
+	private function _route($routes, $args, $type)
+	{
 		$return = array();
 		
 		foreach($routes->result_array() as $route)
 		{
 			$path = PATH_THIRD . 'postmaster/' . $route['file'];
-			
+
 			if(file_exists($path))
-			{				
-				$response = call_user_func_array(array($this->EE->postmaster_routes_model->load($route['class'], $path), $route['method']), $args);
+			{	
+				if($route['type'] == 'hook' || empty($route['type']))
+				{
+					return $this->EE->postmaster_hook->trigger($route['hook'], $args);
+				}
+				else
+				{
+					return $this->EE->postmaster_task->trigger($route, $args);
+				}
+
+/*
+				if($route['type'] == '')
+				
+
+				$obj = $this->EE->postmaster_routes_model->load($route['class'], $path);
+				$row = $this->EE->postmaster_model->get_hook($route['obj_id'])->row();
+
+				$obj->set_hook($row);
+
+
+				$response = call_user_func_array(array($obj, $route['method']), $args);
 				
 				if(is_null($response))
 				{
@@ -305,9 +388,11 @@ class Postmaster_lib {
 				}
 				
 				$return[] = $response;
+		*/
+
 			}
 		}
-		
+
 		return $return;
 	}
 	
@@ -337,7 +422,7 @@ class Postmaster_lib {
 			if($ignore_date || $date <= time())
 			{
 				$service->pre_process();
-				
+
 				$response = $service->send($parsed_object, $parcel);
 				
 				$service->set_response($response);				
@@ -359,6 +444,8 @@ class Postmaster_lib {
 					$date = strtotime($parsed_object->send_every, $this->EE->localize->now);					
 					$this->log_action('The email to "'.$parsed_object->to_email.'" is set to be sent every "'.$parsed_object->send_every.'". The next time it will be sent will be '.$date.'.');
 					
+					var_dump($parcel->entry);exit();
+
 					if(isset($parcel->entry))
 					{
 						$this->model->add_parcel_to_queue($parsed_object, $parcel, $date);
@@ -375,7 +462,7 @@ class Postmaster_lib {
 			{
 				$this->log_action('The email to "'.$parsed_object->to_email.'" has been added to the queue and is set to be sent at '.date('Y-m-d H:i', $date).'.');
 
-				if(isset($parcel->parcel_id))
+				if(isset($parcel->entry))
 				{
 					$this->model->add_parcel_to_queue($parsed_object, $parcel, $date);
 				}
@@ -449,10 +536,34 @@ class Postmaster_lib {
 			'base_path' => PATH_THIRD.'postmaster/hooks/'
 		));
 		
-		if(!empty($hook))
-		{
-			return $this->EE->postmaster_hook->trigger($hook, $args);
-		}			
+		$this->EE->load->model('postmaster_routes_model');
+		
+		$routes = $this->EE->postmaster_routes_model->get_routes_by_hook($hook);	
+
+		return $this->_route($routes, $args, 'hook');
+	}
+
+
+	/**
+	 * Convenience method to trigger the specific task hook.
+	 *
+	 * @access	public
+	 * @param	string 	The name of the hook to call
+	 * @param 	array	An array of arguments used to call the hook
+	 * @return	
+	 */
+	 
+	public function trigger_task_hook($hook, $args)
+	{
+		$this->EE->load->library('postmaster_task', array(
+			'base_path' => PATH_THIRD.'postmaster/tasks/'
+		));
+		
+		$this->EE->load->model('postmaster_routes_model');
+		
+		$routes = $this->EE->postmaster_routes_model->get_routes_by_task($hook);	
+
+		return $this->_route($routes, $args, 'task');		
 	}
 	
 	
@@ -482,50 +593,67 @@ class Postmaster_lib {
 			$entry_data = isset($data['revision_post']) ? $data['revision_post'] : $data;
 
 			//$this->log_action('Entry '.$entry_id.' validation has started. There are '.count($parcels).' parcels to validate.');
-
-			if($parcel->channel_id == $data['channel_id'])
+			
+			if($this->should_send_email($parcel->send_once, $entry_id, $parcel->id))
 			{
-				$entry_data['category'] = isset($entry_data['category']) ? $entry_data['category'] : array();
-
-				if($this->validate_trigger($parcel->trigger))
+				if($this->validate_enabled($parcel->enabled))
 				{
-					if($this->validate_categories($entry_data['category'], $parcel->categories))
-					{		
-						if($this->validate_member($meta['author_id'], $parcel->member_groups))
-						{		
-							if($this->validate_status($meta['status'], $parcel->statuses))
-							{	
-								$entry  = $this->EE->channel_data->get_channel_entry($entry_id)->row();
-								$parcel = $this->append($parcel, 'entry', $entry);							
-								
-								$this->append($parcel, 'safecracker', (isset($this->EE->safecracker) ? TRUE : FALSE));
-								
-								$member_id = FALSE;
-								
-								if(isset($parcel->entry->author_id))
-								{
-									$member_id = $parcel->entry->author_id;
-								}
-								
-								$parsed_object = $this->parse($parcel, $member_id);
-								$parsed_object->settings = $parcels[$index]->settings;
-
-								if($this->validate_conditionals($parsed_object->extra_conditionals))
-								{	
-									$this->send($parsed_object, $parcel);
+					if($parcel->channel_id == $meta['channel_id'])
+					{
+						$entry_data['category'] = isset($entry_data['category']) ? $entry_data['category'] : array();
+		
+						if($this->validate_trigger($parcel->trigger))
+						{
+							if($this->validate_categories($entry_data['category'], $parcel->categories))
+							{		
+								if($this->validate_member($meta['author_id'], $parcel->member_groups))
+								{		
+									if($this->validate_status($meta['status'], $parcel->statuses))
+									{	
+										$entry  = $this->EE->channel_data->get_channel_entry($entry_id)->row();
+										$parcel = $this->append($parcel, 'entry', $entry);							
+										
+										$this->append($parcel, 'safecracker', (isset($this->EE->safecracker) ? TRUE : FALSE));
+										
+										$member_id = FALSE;
+										
+										if(isset($parcel->entry->author_id))
+										{
+											$member_id = $parcel->entry->author_id;
+										}
+										
+										$parsed_object = $this->parse($parcel, $member_id);
+										$parsed_object->settings = $parcels[$index]->settings;
+		
+										if($this->validate_conditionals($parsed_object->extra_conditionals))
+										{	
+											$this->send($parsed_object, $parcel);
+										}
+									}
 								}
 							}
 						}
 					}
+					else
+					{				
+						$this->log_action('The "'.$parcel->title.'" parcel does not have a valid channel_id, which is "'.$data['channel_id'].'"');
+					}
 				}
-			}
-			else
-			{				
-				$this->log_action('The "'.$parcel->title.'" parcel does not have a valid channel_id, which is "'.$data['channel_id'].'"');
 			}
 		}
 	}
 
+	public function should_send_email($send_once, $entry_id, $parcel_id)
+	{
+		$send_once = (int) $send_once;
+
+		if(!$send_once)
+		{
+			return TRUE;
+		}
+
+		return $this->EE->postmaster_model->has_sent($entry_id, $parcel_id) ? FALSE : TRUE;
+	}
 	
 	/**
 	 * Validate a parsed conditional string 
@@ -535,7 +663,7 @@ class Postmaster_lib {
 	 * @return	bool
 	 */
 	 
-	public function validate_conditionals($extra_conditionals)
+	public function validate_conditionals($extra_conditionals, $type = 'parcel')
 	{
 		$extra_conditionals = trim(strtoupper($extra_conditionals));
 
@@ -546,7 +674,7 @@ class Postmaster_lib {
 		}
 		else
 		{
-			$this->log_action('The parcel does not have valid extra conditions.');
+			$this->log_action('The '.$type.' does not have valid extra conditions.');
 			return FALSE;
 		}
 	}
@@ -559,7 +687,7 @@ class Postmaster_lib {
 	 * @return	bool
 	 */
 	 
-	public function validate_categories($subject, $valid_categories)
+	public function validate_categories($subject, $valid_categories, $type = 'parcel')
 	{
 		$valid = 0;
 
@@ -579,7 +707,7 @@ class Postmaster_lib {
 		else
 		{		
 			$valid = FALSE;
-			$this->log_action('The parcel does not have a valid category.');
+			$this->log_action('The '.$type.' does not have a valid category.');
 		}
 
 		return $valid;
@@ -640,6 +768,29 @@ class Postmaster_lib {
 
 
 	/**
+	 * Validate a parsed conditional string 
+	 *
+	 * @access	public
+	 * @param	string 	A parsed string
+	 * @return	bool
+	 */
+	 
+	public function validate_enabled($enabled, $type = 'parcel')
+	{
+		$enabled = (int) trim($enabled);
+
+		if($enabled != 0)
+		{				
+			return TRUE;
+		}
+		else
+		{
+			$this->log_action('The email did not send because the '.$type.' is not enabled.');
+			return FALSE;
+		}
+	}
+	
+	/**
 	 * Validate an member against the valid groups
 	 *
 	 * @access	public
@@ -648,7 +799,7 @@ class Postmaster_lib {
 	 * @return	bool
 	 */
 	 
-	public function validate_member($subject, $valid_members)
+	public function validate_member($subject, $valid_members, $type = 'parcel')
 	{
 		$valid  = FALSE;
 		$member = $this->EE->channel_data->get_member($subject)->row();
@@ -667,7 +818,7 @@ class Postmaster_lib {
 		}
 		else
 		{
-			$this->log_action('The parcel does not have a valid author, which has a member_id of '.$subject.'.');
+			$this->log_action('The '.$type.' does not have a valid author, which has a member_id of '.$subject.'.');
 		}
 
 		return $valid;
@@ -684,7 +835,7 @@ class Postmaster_lib {
 	 * @return	bool
 	 */
 	 
-	public function validate_status($subject, $statuses)
+	public function validate_status($subject, $statuses, $type = 'parcel')
 	{
 		$valid = FALSE;
 
@@ -710,7 +861,7 @@ class Postmaster_lib {
 		}
 		else
 		{
-			$this->log_action('The parcel does not have a valid status, which is "'.$subject.'".');
+			$this->log_action('The '.$type.' does not have a valid status, which is "'.$subject.'".');
 		}
 		
 		return $valid;
@@ -803,23 +954,31 @@ class Postmaster_lib {
 	 */
 	 
 	public function current_url($append = '', $value = '')
-	{
-		$http = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 'https://' : 'http://';
-		
-		$port = $_SERVER['SERVER_PORT'] == '80' || $_SERVER['SERVER_PORT'] == '443' ? NULL : ':' . $_SERVER['SERVER_PORT'];
-		
-		if(!isset($_SERVER['SCRIPT_URI']))
-		{				
-			 $_SERVER['SCRIPT_URI'] = $http . $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'];
+	{	
+		if($config_url = config_item('postmaster_base_url'))
+		{
+			$base_url = $config_url;
 		}
-		
-		$base_url = $http . $_SERVER['HTTP_HOST'] . '/' . config_item('site_index');
+		else
+		{
+			$this->EE->load->helper('addon_helper');
+			
+			$base_url = base_url();
+
+			$url_has_www  = preg_match('/^www\./', $_SERVER['HTTP_HOST']);
+			$base_has_www = preg_match('/^(http:\/\/www|www)\./', $base_url);
+
+			if(!$base_has_www && $url_has_www)
+			{
+				$base_url = preg_replace('/^http:\/\//', 'http://www.', $base_url);
+			}
+		}
 		
 		if(!empty($append))
 		{
 			$base_url .= '?'.$append.'='.$value;
 		}
-		
+
 		return $base_url;
 	}
 }

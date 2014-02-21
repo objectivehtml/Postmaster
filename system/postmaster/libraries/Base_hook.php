@@ -166,7 +166,7 @@ abstract class Base_hook extends Postmaster_base_api {
 			$member_data = FALSE;
 			$return_data = $member_data;	
 		}
-		
+
 		$hook			  = (array) $this->hook;
 		$settings		  = $hook['settings'];
 		

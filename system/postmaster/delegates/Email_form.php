@@ -35,13 +35,19 @@ class Email_form_postmaster_delegate extends Postmaster_base_delegate {
 		
 		if($this->EE->input->post('postmaster_email_form'))
 		{
-			$form_field = $this->EE->base_form->post('form_field');			
-			$form_data  = $this->EE->input->post($form_field);
-			$entry_data = $this->EE->channel_data->get_channel_entry($this->param('entry_id'));
+			$form_field   = $this->EE->base_form->post('form_field');			
+			$form_data    = $this->EE->input->post($form_field);	
+			$custom_data  = $this->EE->input->post($this->param('data_field', 'data'));
+			$entry_data   = $this->EE->channel_data->get_channel_entry($this->param('entry_id'));
+			$global_data  = $this->EE->input->post($this->param('global_field', 'global'));
 			
 			if($entry_data && $entry_data->num_rows() > 0)
 			{
 				$entry_data = $entry_data->row();
+			}
+			else
+			{
+				$entry_data = array();
 			}
 			
 			if(is_string($form_data))
@@ -51,16 +57,43 @@ class Email_form_postmaster_delegate extends Postmaster_base_delegate {
 			
 			foreach($form_data as $index => $email)
 			{
+				$data = array();
+
+				if(isset($custom_data[$index]))
+				{
+					if(is_array($custom_data[$index]))
+					{
+						$data = $custom_data[$index];
+					}
+				}
+
+				if($global_data && !is_array($global_data))
+				{
+					$global_data = array($global_data);
+				}
+
+				if($global_data && count($global_data) > 0)
+				{
+					$data = array_merge($data, $global_data);
+				}
+
 				// -------------------------------------------
 			    //  'postmaster_email_form_submit' hook
 			    //   - Used to send emails with Postmaster
 			    //
 			        if ($this->EE->extensions->active_hook('postmaster_email_form_submit'))
 			        {
-			            $row_data = $this->EE->extensions->call('postmaster_email_form_submit', $email, $entry_data);
+			        	$row_data = $this->EE->extensions->call('postmaster_email_form_submit', $email, $entry_data, $data);
 			        }
 			    //
 			    // -------------------------------------------
+			}
+
+			$return = $this->param('return');
+
+			if($return)
+			{
+				$this->EE->functions->redirect($return);
 			}
 		}
 		

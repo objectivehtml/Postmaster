@@ -44,7 +44,10 @@ class Email_Parcel {
 			$post_date_relative,
 			$send_every,
 			$parser_url,
-			$trigger;
+			$trigger,
+			$enabled = TRUE,
+			$site_id,
+			$send_once = FALSE;
 
 	public 	$channels, $channel_array;
 
@@ -52,6 +55,7 @@ class Email_Parcel {
 	{
 		$this->EE =& get_instance();
 		
+		$this->site_id         = config_item('site_id');
 		$this->trigger 		   = array();
 		$this->channels        = $this->EE->channel_data->get_channels(array('where' => array(
 			'site_id' => $this->EE->config->item('site_id')
@@ -71,6 +75,7 @@ class Email_Parcel {
 				$this->$attr = $value;
 			}
 			
+			$this->send_once     = $this->send_once == '0' ? FALSE : TRUE;
 			$this->channel 		 = $this->EE->channel_data->get_channel($this->channel_id);
 			$this->settings      = json_decode($this->settings);
 			$this->categories    = explode('|', $this->categories);
@@ -229,7 +234,12 @@ class Email_Parcel {
 		
 		return $member_groups->result();
 	}
-
+	
+	public function is_enabled()
+	{
+		return $this->enabled != 0 ? TRUE : FALSE;
+	}
+	
 	private function cp_url($method = 'index', $useAmp = FALSE)
 	{
 		return $this->EE->postmaster_lib->cp_url($method, $useAmp);

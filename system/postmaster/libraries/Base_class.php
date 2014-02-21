@@ -24,13 +24,16 @@ if(!class_exists('BaseClass'))
 	   	    	
 	    public function __construct($data = array())
 	    {
-		    foreach($data as $key => $value)
-		    {
-			    if(property_exists($this, $key))
+	    	if(is_array($data))
+	    	{
+			    foreach($data as $key => $value)
 			    {
-				    $this->$key = $value;
+				    if(property_exists($this, $key))
+				    {
+					    $this->$key = $value;
+				    }
 			    }
-		    }
+			}
 		    
 		    return;
 	    }    

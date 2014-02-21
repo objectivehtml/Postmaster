@@ -3,11 +3,101 @@
  * 
  * @package		Postmaster
  * @author		Justin Kimbrell
- * @copyright	Copyright (c) 2012, Objective HTML
+ * @copyright	Copyright (c) 2014, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
- * @version		1.3.4
- * @build		20130522
+ * @version		1.4.5
+ * @build		20140221
  */
+
+#### 1.4.5
+##### 02/21/2014
+- (Feature) Added a new CartThrob Additional Processing hook
+- (Feature) Added member_member_register hook
+- (Bug Fix) Fixed CT issues that would prevent hooks from triggering in some cases
+- (Bug Fix) Fixed an issue with subscribe function not working for CampaignMonitor
+- (Bug Fix) Fixed an issue with parcel not sending if user changed the channel_id in the publish entry form.
+- (Bug Fix) Fixed an issue with PHP errors appearing in some cases when using the API
+- (Bug Fix) Fixed an issue with the {unwrap} tag still appearing in the email_send hook.
+- (Bug Fix) Fixed issue with sending plain text emails. Added new method Postmaster_lib::plain_text($message) to remove the unwanted HTML tags while attempting to maintain the formatting.
+
+#### 1.4.4
+##### 11/17/2013
+
+- (Feature) Added a new CartThrob Additional Processing hook
+- (Bug Fix) Updated Base Form to latest
+- (Bug Fix) Fixed an issue with CampaignMonitor throwing an error when creating a duplicate campaign. This is a temporary fix until a proper fix can be implemented.
+- (Bug Fix) Fixed an issue with the current_url including www. twice in the URL.
+- (Bug Fix) Added an provision to add the base_url method if it doesn't exist (in rare cases)
+- (Bug Fix) Fixed an issue that caused a PHP error when calling a method if a dependent library wasn't previously loaded properly.
+- (Bug Fix) Fixed an issue preventing users from post dating emails. PHP errors would trigger when sending those emails from the queue.
+- (Bug Fix) Added member data to the expired entries notification
+- (Bug Fix) Updated Channel Data to latest
+- (Bug Fix) Fixed some issues with the Mandrill Matrix Mailing List email service
+- (API) Change the prefix for service variables to "service:".
+
+#### 1.4.3
+##### 11/04/2013
+
+- (Feature) Added new global_field parameter to assign global data to the Email Form tag/templates.
+- (Bug Fix) Fixed an issue with Postmaster's legacy route_hook method being installed while the trigger_hook method being the correct method.
+- (Bug Fix) Fixed an issue with the current_url method not returning the proper URL is the base_url has no WWW but the current URL does.
+- (Bug Fix) Removed the route_hook trigger from the installation file
+- (Bug Fix) Fixed an issue with upgrading from 1.4.1 to 1.4.3.
+- (Bug Fix) Fixed an incompatibility for version prior to EE 2.7
+- (Bug Fix) Fixed an issue with the Email Form Send hook
+- (Bug Fix) Fixed an issue with Base Form not parsing correctly
+- (Bug Fix) Added new config to help assist supporting multiple dev environments.
+
+#### 1.4.2
+##### 10/15/2013
+
+- (Feature) Added redirect parameter to the Email Form Utility
+- (Bug Fix) Fixed more update/install issues.
+- (Bug Fix) Fixed an issue with deprecated functions showing in the dev log in the CP
+
+#### 1.4.1
+##### 09/30/2013
+
+- (Bug Fix) Fixed an issue with loading the Postmaster_task file during the update process
+
+#### 1.4.0
+##### 09/30/2013
+
+- (Feature) Added the new Tasks API
+- (Feature) Added the ability to enable and disable Postmaster actions without deleting or changing their settings
+- (Feature) Added new Email_form utility which creates the {exp:postmaster:email_form:open} tag.
+- (Feature) Created a new Email Form Submit hook to send emails posted in the Email_form delegate.
+- (Feature) Added new Postmaster Endpoint utility to create a dynamic template tag to send email using an API endpoint.
+- (Feature) Created a new notification to trigger X days before expiration.
+- (Feature) Added new hook to make Postmaster work with the notify users hook in Better Workflow.
+- (Feature) Added compatibility with the CP_members_member_register hook so Postmaster can send emails when members register via the CP.
+- (Feature) Added unencrypted password to the variables being parsed for the CP Registration hook. (Use cautiously!)
+- (Feature) Included 2 new Zoo Visitor hooks. Register and Edit Profile hooks now included
+- (Feature) Added compatibility for Store (v1) Successful Checkouts.
+- (Feature) Added ability to use custom fields with CampaignMonitor within subscribe forms
+- (Feature) Added new Weekly Store Reporting notification
+- (Feature) Added the ability to only send entry parcels one time.
+- (API) Added new trim_array function to the base_api class
+- (API) Installed addon_helper to make getting the current page url's consistent
+- (API) Added new plain_message and html_message columns to the Postmaster tables to support multiple email content types (vs just one).
+- (API) Added the var_prefix property to the Base_service class to ensure all services are properly prefixed when using $this->parse() method.
+- (API) Added backwards compatibility to the control panel for the new multiple email content types.
+- (API) Updated all email services to include compatibility for html_message and plain_message content types (vs. just supporting one type). This feature is still not 100% ready for production, but the underlying API is now available at the core.
+- (API) Fixed namespacing issue with the Curl library. Renamed to Postmaster_curl() which is still accessed via $this->curl object.
+- (Bug Fix) Fixed EE 2.7 compatibility issues
+- (Bug Fix) Fixed bug with getting the current_page url
+- (Bug Fix) Fixed an issue with the db migrations utility
+- (Bug Fix) Fixed an issue with legacy hooks without an enabled index that would throw a PHP error
+- (Bug Fix) Renamed file to avoid issues with older versions of PHP
+- (Bug Fix) Fixed issues with the Matrix Mailing service not parsing matrix data properly.
+- (Bug Fix) Fixed parsing issues with current_time and edit_date within Parcels
+- (Bug Fix) Added an error to the MailChimp service that triggers if the campaign fails to create.
+- (Bug Fix) Fixed an issue that would cause PHP errors with 5.2.x
+- (Bug Fix) Fixed an issue with the way assets were being loaded
+- (Bug Fix) Fixed an EE bug that prevented parcels, hooks, and notifications from being created properly within an MSM setup. Error only triggered for alt. sites.
+- (Bug Fix) Fixed an issue with the typography class parsing URL's incorrectly.
+- (Bug Fix) Fixed an issue with Postmaster updating on certain servers and causing PHP errors.
+
 
 #### 1.3.4
 ##### 05/22/2013

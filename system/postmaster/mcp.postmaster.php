@@ -13,6 +13,7 @@
 
 require_once 'libraries/Email_Parcel.php';
 require_once 'libraries/Template_Hook.php';
+require_once 'libraries/Template_Task.php';
 require_once 'libraries/Template_Notification.php';
 require_once 'config/postmaster_config.php';
 
@@ -26,7 +27,12 @@ class Postmaster_mcp {
 		
 		$this->EE->load->library('postmaster_lib');
 		$this->EE->load->driver('interface_builder');
-		
+			
+		if($site_id = $this->EE->input->post('site_id'))
+		{
+			$this->EE->config->set_item('site_id', ($site_id ? $site_id : 1));
+		}
+
 		if(REQ == 'CP')
 		{
 			$this->EE->load->library('doctag', array('base_path' => PATH_THIRD.'postmaster/doctags/'));		
@@ -99,6 +105,19 @@ class Postmaster_mcp {
 			$hooks[$index] = (object) $hooks[$index];
 		}
 		
+		$tasks = $this->EE->postmaster_model->get_tasks()->result_array();
+		
+		foreach($tasks as $index => $value)
+		{
+			$tasks[$index]['edit_url']      = $this->cp_url('task').'&id='.$value['id'];
+			$tasks[$index]['delete_url']    = $this->cp_url('delete_task_action').'&id='.$value['id'];
+			$tasks[$index]['duplicate_url'] = $this->cp_url('duplicate_task_action').'&id='.$value['id'];
+			$tasks[$index]['ping_url'] 	    = (int) $value['enable_cron'] == 1 ? $this->current_url('ACT', $this->EE->channel_data->get_action_id(__CLASS__, 'task_action')).'&id='.$value['id'] : 'N/A';
+			
+			
+			$tasks[$index] = (object) $tasks[$index];
+		}
+		
 		$notifications = $this->EE->postmaster_model->get_notifications()->result_array();
 		
 		foreach($notifications as $index => $value)
@@ -116,9 +135,11 @@ class Postmaster_mcp {
 			'themes'  	=> $this->themes,
 			'parcels' 	=> $this->EE->postmaster_model->get_parcels(),
 			'hooks'     => $hooks,
+			'tasks'     => $tasks,
 			'notifications'     => $notifications,
 			'create_parcel_url' => $this->cp_url('create_template'),
 			'add_hook_url' => $this->cp_url('hook'),
+			'add_task_url' => $this->cp_url('task'),
 			'edit_hook_action' => $this->current_url('ACT', $this->EE->channel_data->get_action_id(__CLASS__, 'edit_hook_action')),
 			'add_notification_url' => $this->cp_url('notification'),
 			'edit_hook_action' => $this->current_url('ACT', $this->EE->channel_data->get_action_id(__CLASS__, 'edit_notification_action')),
@@ -130,8 +151,15 @@ class Postmaster_mcp {
 			)
 		);
 		
-		$this->EE->cp->set_variable('cp_page_title', 'Postmaster');
-		
+		if(version_compare(APP_VER, '2.6.0', '<'))
+		{
+			$this->EE->cp->set_variable('cp_page_title', $this->EE->lang->line('postmaster_module_name'));
+		}
+		else
+		{
+			$this->EE->view->cp_page_title = $this->EE->lang->line('postmaster_module_name');
+		}
+
 		$this->EE->cp->set_right_nav(array(
 			'postmaster_documentation'     => $this->cp_url('doctag').'&id=Core'
 			/* 'Text Editor Settings' => $this->cp_url('editor_settings') */
@@ -160,6 +188,7 @@ class Postmaster_mcp {
     	}
     	
 		$vars = array(
+			'xid'      => XID_SECURE_HASH,
 			'ib_path'  => $this->EE->theme_loader->theme_url().'postmaster/javascript/InterfaceBuilder.js',
 			'template' => new Template_Notification($saved_data)
 		);
@@ -173,7 +202,14 @@ class Postmaster_mcp {
 			$title = 'Edit Notification';	
 		}
 		
-		$this->EE->cp->set_variable('cp_page_title', $title);
+		if(version_compare(APP_VER, '2.6.0', '<'))
+		{
+			$this->EE->cp->set_variable('cp_page_title', $title);
+		}
+		else
+		{
+			$this->EE->view->cp_page_title = $title;
+		}
 		
 		$this->EE->cp->set_right_nav(array(
 			'&larr; Back to Home'  => $this->cp_url('index'),
@@ -203,6 +239,7 @@ class Postmaster_mcp {
     	}
     	
 		$vars = array(
+			'xid'      => XID_SECURE_HASH,
 			'ib_path'  => $this->EE->theme_loader->theme_url().'postmaster/javascript/InterfaceBuilder.js',
 			'template' => new Template_Hook($saved_data)
 		);
@@ -214,8 +251,15 @@ class Postmaster_mcp {
 			$title = 'Edit Hook';	
 		}
 		
-		$this->EE->cp->set_variable('cp_page_title', $title);
-		
+		if(version_compare(APP_VER, '2.6.0', '<'))
+		{
+			$this->EE->cp->set_variable('cp_page_title', $title);
+		}
+		else
+		{
+			$this->EE->view->cp_page_title = $title;
+		}
+
 		$this->EE->cp->set_right_nav(array(
 			'&larr; Back to Home'  => $this->cp_url('index'),
 			'Text Editor Settings' => $this->cp_url('editor_settings'),
@@ -224,9 +268,65 @@ class Postmaster_mcp {
 		return $this->EE->load->view('hook', $vars, TRUE);
 	}
 	
+	public function task()
+	{
+		$this->EE->theme_loader->javascript('postmaster');
+		$this->EE->theme_loader->javascript('qtip');
+		$this->EE->theme_loader->css('qtip');
+
+    	$saved_data = array();
+    	
+    	if($task_id = $this->EE->input->get('id'))
+    	{
+	    	$saved_data = $this->EE->postmaster_model->get_task($task_id)->row_array();
+	    	$saved_data['settings'] = json_decode($saved_data['settings']);
+    	}
+    	
+    	$this->EE->load->library('postmaster_task', array(
+			'base_path' => PATH_THIRD.'postmaster/tasks/'
+		));
+		
+		$vars = array(
+			'xid'      => XID_SECURE_HASH,
+			'ib_path'  => $this->EE->theme_loader->theme_url().'postmaster/javascript/InterfaceBuilder.js',
+			'template' => new Template_Task($saved_data)
+		);
+		
+		$title = 'New Task';
+		
+		if($this->EE->input->get('id'))
+		{
+			$title = 'Edit Task';	
+		}
+		
+		if(version_compare(APP_VER, '2.6.0', '<'))
+		{
+			$this->EE->cp->set_variable('cp_page_title', $title);
+		}
+		else
+		{
+			$this->EE->view->cp_page_title = $title;
+		}
+
+		$this->EE->cp->set_right_nav(array(
+			'&larr; Back to Home'  => $this->cp_url('index'),
+			'Text Editor Settings' => $this->cp_url('editor_settings'),
+		));
+		
+		return $this->EE->load->view('task', $vars, TRUE);
+	}
+	
 	public function doctag()
 	{
-		$this->EE->cp->set_variable('cp_page_title', 'Documentation');
+		if(version_compare(APP_VER, '2.6.0', '<'))
+		{
+			$this->EE->cp->set_variable('cp_page_title', 'Documentation');
+		}
+		else
+		{
+			$this->EE->view->cp_page_title = 'Documentation';
+		}
+		
 		$this->EE->cp->set_right_nav(array(
 			'&larr; Back to Home' => $this->cp_url('index')
 		));
@@ -316,14 +416,65 @@ class Postmaster_mcp {
 		}
 		
 		$notification = $notification->row();
+		
+		if((int) $notification->enabled == 0)
+		{
+			return;
+		}
+
 		$notification->settings = json_decode($notification->settings);
 		
-		// var_dump($notification->settings);exit();
-
 		$obj = $this->EE->postmaster_notification->load($notification->notification, $notification);
 		$obj->set_notification($notification);
 		
 		$this->EE->postmaster_notification->trigger($obj);
+	}
+	
+	public function task_action()
+	{
+		$this->EE->load->library('postmaster_task', array(
+			'base_path' => PATH_THIRD.'postmaster/tasks/'
+		));
+		
+		$id = $this->EE->input->get_post('id');
+
+		if(!$id)
+		{
+			return;
+		}
+		
+		$task = $this->EE->postmaster_model->get_task($id);
+
+		if($task->num_rows() == 0)
+		{
+			return;
+		}
+		
+		$task = $task->row();
+
+		if((int) $task->enabled == 0)
+		{
+			return;
+		}
+
+		$task->settings = json_decode($task->settings);
+		
+		// var_dump($notification->settings);exit();
+
+		$obj = $this->EE->postmaster_task->load($task->task, $task);
+		$obj->set_task($task);
+		
+		$this->EE->postmaster_task->ping($obj);
+	}
+	
+	public function delete_task_action()
+	{
+		$id  = $this->get('id');
+		$url = $this->cp_url('index');
+
+		$this->EE->postmaster_model->delete_task($id);
+
+		$this->EE->functions->redirect($url);
 	}
 	
 	public function delete_notification_action()
@@ -366,6 +517,16 @@ class Postmaster_mcp {
 		$this->EE->functions->redirect($url);
 	}
 
+	public function duplicate_task_action()
+	{
+		$id  = $this->get('id');
+		$url = $this->cp_url('index');
+
+		$this->EE->postmaster_model->duplicate_task($id);
+
+		$this->EE->functions->redirect($url);
+	}
+
 	public function duplicate_notification_action()
 	{
 		$id  = $this->get('id');
@@ -396,14 +557,23 @@ class Postmaster_mcp {
 	
 	public function editor_settings()
 	{
-		$this->EE->cp->set_variable('cp_page_title', 'Text Editor Configuration');
-		
+		if(version_compare(APP_VER, '2.6.0', '<'))
+		{
+			$this->EE->cp->set_variable('cp_page_title', 'Text Editor Configuration');
+		}
+		else
+		{
+			$this->EE->view->cp_page_title = 'Text Editor Configuration';
+		}
+				
 		$this->EE->cp->set_right_nav(array(
 			'&larr; Back to Home' => $this->cp_url('index'),
 			'Create New Template' => $this->cp_url('create_template'),
 		));
 
-		$vars = array();
+		$vars = array(
+			'xid' => XID_SECURE_HASH,
+		);
 
 		$settings = $this->EE->postmaster_model->get_editor_settings();
 
@@ -464,6 +634,7 @@ class Postmaster_mcp {
 		}
 
 		$vars = array(
+			'xid'           => XID_SECURE_HASH,
 			'ib_path'	    => $this->EE->theme_loader->theme_url().'postmaster/javascript/InterfaceBuilder.js',
 			'channels'		=> json_encode($channels),
 			'fields'		=> json_encode($field_data),
@@ -473,7 +644,14 @@ class Postmaster_mcp {
 
 		$vars['template'] = new Email_Parcel();
 
-		$this->EE->cp->set_variable('cp_page_title', 'New Parcel');
+		if(version_compare(APP_VER, '2.6.0', '<'))
+		{
+			$this->EE->cp->set_variable('cp_page_title', 'New Parcel');
+		}
+		else
+		{
+			$this->EE->view->cp_page_title = 'New Parcel';
+		}
 		
 		$this->EE->cp->set_right_nav(array(
 			'&larr; Back to Home' => $this->cp_url('index'),
@@ -512,6 +690,7 @@ class Postmaster_mcp {
 		}
 
 		$vars = array(
+			'xid'      		=> XID_SECURE_HASH,
 			'ib_path'	    => $this->EE->theme_loader->theme_url().'postmaster/javascript/InterfaceBuilder.js',
 			'channels'		=> json_encode($channels),
 			'fields'		=> json_encode($field_data),
@@ -524,7 +703,14 @@ class Postmaster_mcp {
 
 		$vars['template'] = new Email_Parcel($parcel);
 
-		$this->EE->cp->set_variable('cp_page_title', 'Edit Parcel');
+		if(version_compare(APP_VER, '2.6.0', '<'))
+		{
+			$this->EE->cp->set_variable('cp_page_title', 'Edit Parcel');
+		}
+		else
+		{
+			$this->EE->view->cp_page_title = 'Edit Parcel';
+		}
 		
 		$this->EE->cp->set_right_nav(array(
 			'&larr; Back to Home' => $this->cp_url('index'),
@@ -578,6 +764,8 @@ class Postmaster_mcp {
 			'bcc'                => $this->post('bcc', TRUE),
 			'subject'            => $this->post('subject', TRUE),
 			'message'            => $this->post('message', TRUE),
+			'html_message'       => $this->post('message', TRUE),
+			'plain_message'      => $this->plain_text($this->post('message', TRUE)),
 			'installed_hook'     => $this->post('installed_hook', TRUE),
 			'user_defined_hook'  => $this->post('user_defined_hook', TRUE),
 			'priority' 			 => $this->post('priority', TRUE),
@@ -586,6 +774,7 @@ class Postmaster_mcp {
 			'send_every'         => $this->post('send_every', TRUE),
 			'extra_conditionals' => $this->post('extra_conditionals'),
 			'service'            => $this->post('service', TRUE),
+			'enabled' 			 => $this->post('enabled') == '1' ? 1 : 0,
 			'settings'           => json_encode($this->post('setting', TRUE))
 		);
 		
@@ -634,15 +823,60 @@ class Postmaster_mcp {
 			'bcc'                => $this->post('bcc', TRUE),
 			'subject'            => $this->post('subject', TRUE),
 			'message'            => $this->post('message', TRUE),
+			'html_message'       => $this->post('html_message', TRUE),
+			'plain_message'      => $this->post('plain_message', TRUE),
 			'notification'	     => $this->post('notification', TRUE),
 			'post_date_specific' => $this->post('post_date_specific', TRUE),
 			'post_date_relative' => $this->post('post_date_relative', TRUE),
 			'send_every'         => $this->post('send_every', TRUE),
 			'extra_conditionals' => $this->post('extra_conditionals'),
 			'service'            => $this->post('service', TRUE),
+			'enabled' 			 => $this->post('enabled') == '1' ? 1 : 0,
 			'settings'           => json_encode($this->post('setting', TRUE))
 		);
 		
+		if($this->EE->input->post('id'))
+		{
+			$this->EE->postmaster_model->$method($this->EE->input->post('id'), $parcel);
+		}
+		else
+		{
+			$this->EE->postmaster_model->$method($parcel);
+		}
+		
+		$this->EE->functions->redirect($this->post('return'));
+	}
+
+	public function create_task_action()
+	{
+		return $this->_task_action('create');
+	}
+	
+	public function edit_task_action()
+	{
+		return $this->_task_action('edit');
+	}
+	
+	private function _task_action($method)
+	{
+		if($method == 'add')
+		{
+			$method = 'create';
+		}
+		
+		$method .= '_task';
+		
+		$this->EE->load->library('postmaster_lib');
+		
+		$parcel = array(
+			'site_id'            => config_item('site_id'),
+			'title'              => $this->post('title', TRUE),
+			'task'               => $this->post('task', TRUE),
+			//'service'            => $this->post('service', TRUE),
+			'enabled' 			 => $this->post('enabled') == '1' ? 1 : 0,
+			'settings'           => json_encode($this->post('setting', TRUE))
+		);
+
 		if($this->EE->input->post('id'))
 		{
 			$this->EE->postmaster_model->$method($this->EE->input->post('id'), $parcel);
@@ -693,13 +927,17 @@ class Postmaster_mcp {
 			'statuses'           => $this->post('statuses') ? implode('|', $this->post('statuses')) : NULL,
 			'subject'            => $this->post('subject'),
 			'message'            => $this->post('message'),
+			'html_message'       => $this->post('message', TRUE),
+			'plain_message'      => $this->plain_text($this->post('message', TRUE)),
 			'trigger'            => is_array($this->post('trigger')) ? implode('|', $this->post('trigger')) : $this->post('trigger'),
 			'post_date_specific' => $this->post('post_date_specific'),
 			'post_date_relative' => $this->post('post_date_relative'),
 			'send_every'         => $this->post('send_every'),
 			'service'            => $this->post('service'),
 			'extra_conditionals' => $this->post('extra_conditionals'),
-			'settings'           => json_encode($this->post('setting'))
+			'enabled' 			 => $this->post('enabled') == '1' ? 1 : 0,
+			'settings'           => json_encode($this->post('setting')),
+			'send_once'          => (int) $this->post('send_once')
 		);
 
 		$this->EE->postmaster_model->$method($parcel, $this->post('id'));
@@ -779,6 +1017,11 @@ class Postmaster_mcp {
 		exit($parsed_object->message);
 	}
 
+	public function plain_text($message)
+	{
+		return $this->EE->postmaster_lib->plain_text($message);
+	}
+
 	private function post($name)
 	{
 		$return = $this->EE->input->post($name);
@@ -813,12 +1056,7 @@ class Postmaster_mcp {
 	
 	private function current_url($append = '', $value = '')
 	{
-		$url = (!empty($_SERVER['HTTPS'])) ? 'https://'.$_SERVER['SERVER_NAME'] : 'http://'.$_SERVER['SERVER_NAME'];
-		
-		if(!empty($append))
-			$url .= '?'.$append.'='.$value;
-		
-		return $url;
+		return $this->EE->postmaster_lib->current_url($append, $value);
 	}
 	
 }

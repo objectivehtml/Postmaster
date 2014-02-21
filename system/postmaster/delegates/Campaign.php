@@ -168,7 +168,7 @@ class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 			$this->EE->base_form->set_rule('email', 'required|email');
 			
 			if((bool) $this->post($prefix.'form'))
-			{						
+			{				
 				if(count($this->EE->base_form->field_errors) == 0)
 				{
 					$service = $this->EE->input->post($prefix.'service');
@@ -178,13 +178,13 @@ class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 					$api_key = $this->post($prefix.'id', TRUE);
 					
 					$data          = array(
-						'return'     => $this->post('return', TRUE),
-						'api_key'    => $api_key,
-						'email'      => $this->post('email', FALSE),
-						'id'	 	 => $this->post($prefix.'list', TRUE),
-						'email_type' => $this->post('email_type', FALSE, 'html'),
-						'first_name' => $this->post('first_name', FALSE, $this->post('fname', FALSE)),
-						'last_name'  => $this->post('last_name', FALSE, $this->post('lname', FALSE))
+						'return'        => $this->post('return', TRUE),
+						'api_key'       => $api_key,
+						'email'         => $this->post('email', FALSE),
+						'id'	 	    => $this->post($prefix.'list', TRUE),
+						'email_type'    => $this->post('email_type', FALSE, 'html'),
+						'first_name'    => $this->post('first_name', FALSE, $this->post('fname', FALSE)),
+						'last_name'     => $this->post('last_name', FALSE, $this->post('lname', FALSE)),
 					);
 					
 					$reserved = array('XID', 'site_url', 'required', 'secure_return', 'ajax_response', 'base_form_submit', 'return', 'rule', 'email');
@@ -198,7 +198,7 @@ class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 							$data['post'][$index] = $this->post($index, FALSE, FALSE, TRUE);
 						}
 					}
-						
+
 					if($subscribe)
 					{
 						$response = $service->subscribe($data);
@@ -207,7 +207,7 @@ class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 					{
 						$response = $service->unsubscribe($data);
 					}
-					
+
 					if($this->post('ajax_response', TRUE) == 'y')
 					{
 						$this->json($response);

@@ -71,6 +71,19 @@ class SendGrid_postmaster_service extends Base_service {
 	{
 		$settings = $this->get_settings();
 
+		$plain_message = strip_tags($parsed_object->message);
+		$html_message  = $parsed_object->message;
+
+		if(isset($parsed_object->html_message) && !empty($parsed_object->html_message))
+		{
+			$html_message = $parsed_object->html_message;
+		}
+
+		if(isset($parsed_object->plain_message) && !empty($parsed_object->plain_message))
+		{
+			$plain_message = $parsed_object->plain_message;
+		}
+
 		$post = array(
 			'api_user' => $settings->api_user,
 			'api_key'  => $settings->api_key,
@@ -79,13 +92,14 @@ class SendGrid_postmaster_service extends Base_service {
 			'from'     => $parsed_object->from_email,
 			'fromname' => $parsed_object->from_name,
 			'subject'  => $parsed_object->subject,
-			'text'     => strip_tags($parsed_object->message),
+			'text'     => $plain_message,
+			'html'     => $html_message,
 			'date'     => date('r', $this->now)
 		);
 		
-		if(!isset($settings->plain_text_only) || $settings->plain_text_only == 'false')
+		if(isset($settings->plain_text_only) && $settings->plain_text_only == 'true')
 		{
-			$post['html'] = $parsed_object->message;	
+			$post['html'] = $plain_message;	
 		}
 		
 		$this->curl->create($this->url);		
@@ -126,6 +140,6 @@ class SendGrid_postmaster_service extends Base_service {
 
 	public function display_settings($settings, $parcel)
 	{	
-		return $this->build_table($settings, $this->fields);
+		return $this->build_table($settings);
 	}
 }

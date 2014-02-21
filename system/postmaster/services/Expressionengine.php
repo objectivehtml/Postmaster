@@ -214,13 +214,15 @@ class ExpressionEngine_postmaster_service extends Base_service {
 			'cc'         => $parsed_object->cc,
 			'bcc'        => $parsed_object->bcc,
 			'subject'    => $parsed_object->subject,
-			'message'    => $parsed_object->message,
-			'parcel'     => $parcel
+			'message'    => !empty($parsed_object->message) ? $parsed_object->message : $parsed_object->html_message,
+			'html_message'  => $parsed_object->html_message,
+			'plain_message' => $parsed_object->plain_message,
+			'parcel'        => $parcel
 		));
 	}
 
 	public function display_settings($settings, $parcel)
 	{	
-		return $this->build_table($settings, $this->fields);
+		return $this->build_table($settings);
 	}
 }

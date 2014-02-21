@@ -12,7 +12,7 @@
  * @license         http://philsturgeon.co.uk/code/dbad-license
  * @link			http://philsturgeon.co.uk/code/codeigniter-curl
  */
-class Curl {
+class Postmaster_curl {
 
 	protected $_ci;                 // CodeIgniter instance
 	protected $last_response;

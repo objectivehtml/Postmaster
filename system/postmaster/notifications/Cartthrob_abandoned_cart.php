@@ -18,6 +18,14 @@ class Cartthrob_abandoned_cart_postmaster_notification extends Base_notification
 	 	
 	public $title = 'CartThrob Abandoned Cart';
 	
+	/**
+	 * Description
+	 * 
+	 * @var string
+	 */
+	 	
+	public $description = 'This notification will allow you to send emails to the people with abandoned carts in CartThrob at specific intervals.';
+	
 	
 	/**
 	 * Default Settings Field Schema
@@ -85,13 +93,9 @@ class Cartthrob_abandoned_cart_postmaster_notification extends Base_notification
 	
 	public function display_settings($data = array())
 	{
-		$settings = isset($data->{$this->name}) ? $data->{$this->name} : $this->get_default_settings();
+		$settings = $this->get_settings();
 		
-		$this->IB->set_var_name($this->name);
-		$this->IB->set_prefix('setting');
-		$this->IB->set_use_array(TRUE);
-	
-		$field =  array(
+		$field = array(
 			'label' => 'Email Intervals',
 			'id'	=> 'email_intervals',
 			'type'	=> 'matrix',
@@ -118,10 +122,11 @@ class Cartthrob_abandoned_cart_postmaster_notification extends Base_notification
 				'attributes' => postmaster_table_attr()
 			)
 		);
-		
-		$field = $this->IB->load('email_intervals', $this->IB->convert_array($field));
-		
-		return $field->display_field(isset($settings->email_intervals) ? $settings->email_intervals : NULL);
+				
+		return InterfaceBuilder::field('email_intervals', $field, $settings, array(
+			'dataArray' => TRUE,
+			'varName'   => 'setting[cartthrob_abandoned_cart]'
+		))->display_field();
 	}
 	
 	public function send()

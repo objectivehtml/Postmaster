@@ -67,10 +67,10 @@ abstract class Postmaster_base_lib extends Base_class {
 	 * @return	mixed
 	 */
 	
-	public function get_object($index = FALSE)
+	public function get_object($index = FALSE, $params = FALSE)
 	{		
-		$this->objects = $this->get_objects();
-		
+		$this->objects = $this->get_objects($params);
+
 		if($index && is_int($index))
 		{
 			if(!isset($this->objects[$index]))
@@ -84,11 +84,14 @@ abstract class Postmaster_base_lib extends Base_class {
 		{
 			foreach($this->objects as $x => $obj)
 			{
-				$object = rtrim(get_class($obj), $this->class_suffix);
-								
-				if($index == $obj->get_name() || $index == $obj->get_title())
+				if(is_object($obj))
 				{
-					return $this->objects[$x];
+					$object = rtrim(get_class($obj), $this->class_suffix);
+						
+					if($index == $obj->get_name() || $index == $obj->get_title())
+					{
+						return $this->objects[$x];
+					}
 				}
 			}
 		}
@@ -104,11 +107,11 @@ abstract class Postmaster_base_lib extends Base_class {
 	 * @return	array
 	 */
 	
-	public function get_objects()
+	public function get_objects($params = FALSE)
 	{
 		$this->EE->load->helper('directory');
 		
-		$default_object = $this->load($this->default_object);
+		$default_object = $this->load($this->default_object, $params);
 		
 		$objects = array();
 		
@@ -117,15 +120,20 @@ abstract class Postmaster_base_lib extends Base_class {
 			$objects[] = $default_object;
 		}
 		
-		foreach(directory_map($this->base_path) as $file)
+		$directory = directory_map($this->base_path);
+
+		if(is_array($directory))
 		{
-			if(!in_array($file, $this->reserved_files))
+			foreach($directory as $file)
 			{
-				if($object = $this->load($file))
+				if(!in_array($file, $this->reserved_files))
 				{
-					if(is_object($object))
+					if($object = $this->load($file, $params))
 					{
-						$objects[] = $object;
+						if(is_object($object))
+						{
+							$objects[] = $object;
+						}
 					}
 				}
 			}
@@ -183,7 +191,7 @@ abstract class Postmaster_base_lib extends Base_class {
 				$class .= $this->class_suffix;
 			}
 			
-			if(file_exists($this->base_path . ucfirst($file) . '.php'))
+			if(!class_exists($class) && file_exists($this->base_path . ucfirst($file) . '.php'))
 			{
 				require_once $this->base_path . ucfirst($file) . '.php';
 			}

@@ -15,6 +15,8 @@
 
 <form action="<?php echo $template->action?>" method="post" class="group postmaster">
 	
+	<input type="hidden" name="XID" value="<?php echo $xid?>">
+	
 	<fieldset class="column group sidebar">
 				
 		<div class="container">
@@ -27,6 +29,23 @@
 				<h2>Notification Title</h2>
 
 				<p>The Notification Title is a value you can use to give each notification you install some meaning or context. This field has no programatic purpose, and is strictly for you to use to know what is what.</p>
+				
+			</div>
+		</div>
+		
+		<div class="container margin-top">
+			<h3><a href="#help-enabled" class="help"><label for="enabled">Enabled?</label> <span>(?)</span></a></h3>
+			
+			<select name="enabled" id="enabled">
+				<option value="1" <?php echo $template->is_enabled() ? 'selected="selected"' : ''; ?>>Enabled</option>
+				<option value="0" <?php echo !$template->is_enabled() ? 'selected="selected"' : ''; ?>>Disabled</option>
+			</select>
+			
+			<div id="help-enabled" class="help-text">
+				
+				<h2>Is the Notification Enabled?</h2>
+
+				<p>The Enabled property is a value you can use to prevent the parcel from sending without having to change the data or delete it.</p>
 				
 			</div>
 		</div>
@@ -210,6 +229,7 @@
 				<?php if($notification->display_settings($template->settings)): ?>
 					<div class="margin-top notification-panel" id="<?php echo $notification->get_name()?>_panel">
 						<h3><?php echo $notification->get_title()?> Settings</h3>
+						<p><?php echo $notification->get_description()?></p>
 						<?php echo $notification->display_settings($template->settings); ?>
 					</div>
 				<?php else: ?>
@@ -259,6 +279,7 @@
 		</div>
 		
 		<input type="hidden" name="id" value="<?php echo $template->id?>" />
+		<input type="hidden" name="site_id" value="<?php echo $template->site_id?>" />
 		<input type="hidden" name="return" value="<?php echo $template->return?>" />
 
 		<button type="submit" class="submit float-right"><?php echo $template->button?></button>

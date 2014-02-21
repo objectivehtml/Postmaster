@@ -9,6 +9,8 @@ class Template_Hook extends Template_Base {
 	public $installed_hook = '';
 	
 	public $user_defined_hook;
+	
+	public $enabled = 1;
 		
 	public function __construct($params = array())
 	{
@@ -47,6 +49,11 @@ class Template_Hook extends Template_Base {
 		}
 		
 		return $return;
+	}
+	
+	public function is_enabled()
+	{
+		return $this->enabled != 0 ? TRUE : FALSE;
 	}
 	
 	public function priorities()

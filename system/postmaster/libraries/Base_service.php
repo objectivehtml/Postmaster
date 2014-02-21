@@ -1,7 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once PATH_THIRD.'postmaster/libraries/Curl.php';
-require_once PATH_THIRD.'postmaster/libraries/Uuid.php';
 require_once PATH_THIRD.'postmaster/libraries/Postmaster_base_api.php';
 
 /**
@@ -57,6 +55,15 @@ abstract class Base_service extends Postmaster_base_api {
 	 
 	protected $response;
 
+	
+	/**
+	 * Variable prefix
+	 * 
+	 * @var string
+	 */
+	 		 
+	protected $var_prefix = 'service';
+	
 
 	/**
 	 * Fields to parse
@@ -73,6 +80,8 @@ abstract class Base_service extends Postmaster_base_api {
 		'bcc',
 		'subject',
 		'message',
+		'html_message', // New in v1.4
+		'plain_message', // New in v1.4
 		'post_date_specific',
 		'post_date_relative',
 		'send_every',
@@ -93,15 +102,10 @@ abstract class Base_service extends Postmaster_base_api {
 		$this->EE->load->library('postmaster_lib');
 		$this->EE->load->driver('interface_builder');
 		
-		$this->curl = new Curl();
+		$this->curl = new Postmaster_curl();
 		$this->uid  = new Uuid();
 		$this->lib  = $this->EE->postmaster_lib;
-		$this->now  = $this->EE->localize->now;
-				
-		$this->EE->interface_builder->set_var_name($this->name);
-		$this->EE->interface_builder->set_use_array(TRUE);
-		
-		$this->IB	=& $this->EE->interface_builder;		
+		$this->now  = $this->EE->localize->now;	
 	}
 	
 	
@@ -221,6 +225,8 @@ if(!class_exists('Postmaster_Service_Response'))
 				$subject,
 				$status,
 				$message,
+				$html_message, // New in v1.4
+				$plain_message, // New in v1.4
 				$parcel;
 	
 		public function __construct($data = array())

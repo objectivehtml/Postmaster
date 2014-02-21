@@ -76,7 +76,6 @@ class CampaignMonitor_postmaster_service extends Base_service {
 		
 		$subscribers = $this->_get($url, $data['api_key']);
 		
-		//var_dump($subscribers);exit();
 		foreach($subscribers->Results as $index => $subscriber)
 		{
 			$result = array(
@@ -107,13 +106,27 @@ class CampaignMonitor_postmaster_service extends Base_service {
 	}
 		
 	public function subscribe($data)
-	{
+	{	
 		$post = array(
 			'EmailAddress' => $data['email'],
 			'Name'         => !isset($data['name']) ? ($this->EE->input->post('name', TRUE) ? $this->EE->input->post('name', TRUE) : $data['email']) : $data['name'],
-			'CustomFields' => array()
 		);
-		
+
+		if(isset($data['post']['custom_fields']))
+		{
+			$post['CustomFields'] = array();
+
+			foreach($data['post']['custom_fields'] as $key => $value)
+			{
+				$post['CustomFields'][] = (object) array(
+					'Key'   => $key,
+					'Value' => $value
+				);
+			}
+		}
+
+		$post['Resubscribe'] = TRUE;
+
 		$url = $this->api_url('subscribers', $data['id']);
 		
 		$response = $this->_send($url, $post, $data['api_key'], FALSE);
@@ -129,38 +142,6 @@ class CampaignMonitor_postmaster_service extends Base_service {
 			'success' => $success == 'success' ? TRUE : FALSE,
 			'data'    => $post,
 			'errors'  => $success == 'success' ? array() : array(array('error' => lang('postmaster_invalid_email'), 'code' => $this->curl->error_code))
-		));
-		
-		return $return;
-		
-		/*
-		$params = array(
-			'apikey'            => $data['api_key'],
-			'listid'            => $data['id'],
-			'email_address'     => $data['email'],
-			'email_type'		=> $data['email_type'],
-			'double_optin'      => (bool) $this->param($data['post'], 'double_optin', TRUE),
-			'update_existing'   => (bool) $this->param($data['post'], 'update_existing', FALSE),
-			'replace_interests' => (bool) $this->param($data['post'], 'replace_interests', TRUE),
-			'send_welcome'      => (bool) $this->param($data['post'], 'send_welcome', FALSE),	
-		);
-		
-		$unset = array('double_optin', 'update_existing', 'replace_interests', 'send_welcome');
-		
-		foreach($unset as $var)
-		{
-			unset($data['post'][$var]);
-		}
-		
-		$params['merge_vars'] = $data['post'];
-	
-		$response = $this->post($url, $params);
-		*/
-		
-		$return = new Newsletter_Subscription_Response(array(
-			'success' => $response === TRUE ? TRUE : FALSE,
-			'data'    => $response,
-			'errors'  => $response === TRUE ? array() : array(array('error' => $response->error, 'code' => $response->code))
 		));
 		
 		return $return;
@@ -198,10 +179,10 @@ class CampaignMonitor_postmaster_service extends Base_service {
 		
 		$html_url = $this->EE->postmaster_lib->current_url('ACT', $this->EE->channel_data->get_action_id('Postmaster_mcp', 'template')).'&entry_id='.$parcel->entry->entry_id.'&parcel_id='.$parcel->id;
 
-		$text_url = $html_url.'&strip_tags=TRUE';
+		$text_url = $html_url.'&strip_tags=TRUE&plain_message=TRUE';
 
 		$post = array(
-			'Name'      => $parcel->entry->title,
+			'Name'      => $parcel->entry->title . ' - ' . date('Y-m-d h:i:s', time()),
 			'Subject'   => $parsed_object->subject,
 			'FromName'  => $parsed_object->from_name,
 			'FromEmail' => $parsed_object->from_email,
@@ -295,11 +276,11 @@ class CampaignMonitor_postmaster_service extends Base_service {
 			$this->fields['client_id']['options'] = $options;
 		}
 
-		$html = $this->build_table($full_settings, $this->fields);
+		$html = $this->build_table($full_settings);
 
 		$html .= '
 		<h3>Mailing Lists</h3>
-		<p>Select all of the following lists in which you want to use to send your campaign. <a href="#" class="mailchimp-refresh">Refresh the List</a></p>';
+		<p>Select all of the following lists in which you want to use to send your campaign. <a href="#" class="campaignmonitor-refresh">Refresh the List</a></p>';
 
 		$html .= $this->display_mailing_lists($settings, $parcel);
 
@@ -310,9 +291,15 @@ class CampaignMonitor_postmaster_service extends Base_service {
 	{
 		$client_url = $this->call_url('client_options');
 		$list_url   = $this->call_url('list_rows');
+		$client_id  = $settings->client_id;
+		$lists 	    = $settings->list_id;
 
 		$html = "
 		<script type=\"text/javascript\">
+
+			var currentClientId = ".(!empty($client_id) ? "'".$client_id."'" : 'false')."
+			var currentListIds  = ".(count($lists) > 0 ? json_encode($lists) : 'false').";
+
 			$(document).ready(function() {
 
 				function getClients() {
@@ -321,13 +308,17 @@ class CampaignMonitor_postmaster_service extends Base_service {
 
 					if(apiKey != \"\") {
 						$.get(url+'&api_key='+apiKey+'&ajax=1', function(html) {
+							console.log(html);
 							$('#compaignmonitor_client_id').html(html);
+							if(currentClientId) {
+								$('#compaignmonitor_client_id').val(currentClientId);
+							}
 							getLists();
 						});
 					}
 				}
 
-				//getClients();
+				getClients();
 
 				function getLists() {
 					var url = '".$list_url."';
@@ -336,6 +327,29 @@ class CampaignMonitor_postmaster_service extends Base_service {
 
 					$.get(url+'&api_key='+apiKey+'&client='+clientId+'&ajax=1', function(html) {
 						$('#campaignmonitor-lists').html(html);
+						if(currentListIds) {
+							$('#campaignmonitor-lists option').attr('checked', false);
+							$.each(currentListIds, function(i, id) {
+								$('#campaignmonitor-lists input[value=\"'+id+'\"]').attr('checked', true);
+							});
+						}
+
+						$('#campaignmonitor-lists input').click(function() {
+							var values = [];
+
+							$('#campaignmonitor-lists input').each(function() {
+								var _t = $(this);
+
+								if(_t.attr('checked')) {
+									values.push(_t);
+								}
+							});
+			
+							console.log(values);
+
+							currentListIds = values;
+						});
+
 					});
 				}
 
@@ -352,14 +366,13 @@ class CampaignMonitor_postmaster_service extends Base_service {
 				});
 
 				$('#compaignmonitor_client_id').change(function() {
+					currentClientId = $(this).val();
 					getLists();
 				});
 
 				$('.campaignmonitor-refresh').click(function() {
 
-					var apiKey = $('#compaignmonitor_api_key').val();
-
-					alert(client_url);
+					getClients();
 
 					return false;
 				});
@@ -387,11 +400,12 @@ class CampaignMonitor_postmaster_service extends Base_service {
 	public function client_options($api_key, $ajax = FALSE)
 	{
 		$data  = $this->get_clients($api_key);
+
 		$html = NULL;
 
 		foreach($data as $client)
 		{
-			$html = '<option value="'.$client->ClientID.'">'.$client->Name.'</option>';
+			$html .= '<option value="'.$client->ClientID.'">'.$client->Name.'</option>';
 		}
 
 		if(!$ajax)
@@ -449,7 +463,7 @@ class CampaignMonitor_postmaster_service extends Base_service {
 
 	public function api_url($method, $id = FALSE, $endpoint = FALSE, $params = array())
 	{
-		return $this->url . $method . ( $id ? '/' . $id : NULL) . ($endpoint ? '/' . $endpoint : NULL) . '.json?' . http_build_query($params);
+		return $this->url . $method . ( $id ? '/' . $id : NULL) . ($endpoint ? '/' . $endpoint : NULL) . '.json' . (count($params) > 0 ? '?'.http_build_query($params) : NULL);
 	}
 
 	public function _get($url, $api_key)

@@ -4,7 +4,7 @@
  *	Version
 /* -------------------------------------- */
 
-$config['postmaster_version'] = '1.3.4';
+$config['postmaster_version'] = '1.4.4';
 
 if(!defined('POSTMASTER_VERSION'))
 {	
@@ -18,3 +18,12 @@ if(!defined('POSTMASTER_VERSION'))
 $config['postmaster_debug'] = config_item('postmaster_debug') ? 
 							  config_item('postmaster_debug') : 
 							  (config_item('debug') != '0' ? TRUE : FALSE);
+
+
+/*------------------------------------------
+ *	Postmaster Base URL
+ *  - Override the default current_url with
+      one you define.
+/* -------------------------------------- */
+
+$config['postmaster_base_url'] = config_item('postmaster_base_url');

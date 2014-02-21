@@ -9,8 +9,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
- * @version		1.4.3
- * @build		20121102
+ * @version		1.6.1
+ * @build		20131115
  */
 
 if(!class_exists('Base_form'))
@@ -47,6 +47,7 @@ if(!class_exists('Base_form'))
 			// Load user defined key from config if one exists, if not use default.
 			// Obviously it's much more secure to use your own key!
 			
+			$this->EE->load->helper('addon_helper');
 			$this->EE->load->library('encrypt');
 			$this->EE->load->library('form_validation');
 			
@@ -144,7 +145,6 @@ if(!class_exists('Base_form'))
 			
 			// Merges the default hidden_fields			
 			$hidden_fields  = array_merge($this->hidden_fields, array(
-				'XID'	   => '{XID_HASH}',
 				'site_url' => $this->param('site_url') ? $this->param('site_url') : $this->EE->config->item('site_url'),
 				'required' 		=> $this->required,
 				'secure_return' => $this->secure_return,
@@ -152,7 +152,7 @@ if(!class_exists('Base_form'))
 				'base_form_submit' => TRUE,
 				'return'		=> $this->return
 			));
-			
+
 			// Loops through the member groups looking for dynamic redirects
 			foreach($this->groups as $group)
 			{
@@ -269,8 +269,23 @@ if(!class_exists('Base_form'))
 				$this->EE->output->show_user_error('general', array_merge($this->field_errors, $this->errors));
 			}
 			
+			foreach($params as $param => $value)
+			{
+				if(empty($value))
+				{
+					unset($params[$param]);
+				}
+			}
+			
+			$hidden_fields = $this->encode($hidden_fields);
+
+			if(defined('XID_SECURE_HASH'))
+			{
+				$hidden_fields['XID'] = XID_SECURE_HASH;
+			}
+			
 			// Return the form
-			return form_open($this->action, $params, $this->encode($hidden_fields)) . $this->tagdata . '</form>';
+			return form_open($this->action, $params, $hidden_fields) . $this->tagdata . '</form>';
 		}
 		
 		public function get($field_name, $default = FALSE, $decode = TRUE)
@@ -534,39 +549,12 @@ if(!class_exists('Base_form'))
 		
 		public function current_url($uri_segments = TRUE)
 		{
-			$segments = $this->EE->uri->segment_array();
-			
-			$base_url = $this->base_url();
-			
-			$uri	  = '';
-			
-			$port = $_SERVER['SERVER_PORT'] == '80' || $_SERVER['SERVER_PORT'] == '443' ? NULL : ':' . $_SERVER['SERVER_PORT'];
-			
-			if($uri_segments)
-			{
-				$uri = '/' . implode('/', $segments);
-			}
-			
-			$get = '';
-			
-			if(count($_GET) > 0)
-			{
-				$get = '?'.http_build_query($_GET);
-			}
-			
-			return $base_url . $port . $uri . $get;
+			return page_url($uri_segments);
 		}
 		
 		public function base_url()
 		{
-			$http = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 'https://' : 'http://';
-			
-			if(!isset($_SERVER['SCRIPT_URI']))
-			{				
-				 $_SERVER['SCRIPT_URI'] = $http . $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'];
-			}
-			
-			return $http . $_SERVER['HTTP_HOST'];
+			return base_url();
 		}
 
 		public function parse($vars, $tagdata = FALSE)
@@ -614,30 +602,9 @@ if(!class_exists('Base_form'))
 		 * @param	string	The delimiting value
 		 * @return	array
 		 */
-		 public function add_prefix($prefix, $data, $delimeter = ':')
-		 {
-		 	$new_data = array();
-		 	
-		 	foreach($data as $data_index => $data_value)
-		 	{
-		 		if(is_array($data_value))
-		 		{
-		 			$new_row = array();
-		 			
-		 			foreach($data_value as $inner_index => $inner_value)
-		 			{
-		 				$new_row[$prefix . $delimeter . $inner_index] = $inner_value;
-		 			}
-		 			
-		 			$new_data[$data_index] = $new_row;
-		 		}
-		 		else
-		 		{
-		 			$new_data[$prefix . $delimeter . $data_index] = $data_value;
-		 		}
-		 	}
-		 	
-		 	return $new_data;	
-		 }	
+		public function add_prefix($prefix, $data, $delimeter = ':')
+		{
+			return $this->EE->channel_data->utility->add_prefix($prefix, $data, $delimeter);	
+		}	
 	}
 }

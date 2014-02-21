@@ -74,9 +74,9 @@ class Postmaster_service extends Postmaster_base_lib {
 	 * @return	mixed
 	 */
 	
-	public function get_service($index = FALSE)
+	public function get_service($index = FALSE, $settings = FALSE)
 	{		
-		return parent::get_object($index);
+		return parent::get_object($index, $settings);
 	}
 	
 	
@@ -87,9 +87,11 @@ class Postmaster_service extends Postmaster_base_lib {
 	 * @return	array
 	 */
 	
-	public function get_services()
+	public function get_services($settings = FALSE)
 	{	
-		return parent::get_objects();
+		return parent::get_objects(array(
+			'settings' => $settings
+		));
 	}	
 	
 	/**
