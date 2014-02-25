@@ -165,7 +165,7 @@ class Postmaster_lib {
 	{
 		$parsed_object = $this->convert_array($parsed_object);
 		$send_date     = $parsed_object->post_date_specific;
-		
+
 		$send_date     = !empty($send_date) ? strtotime($send_date) : time();
 		
 		if(!empty($parsed_object->post_date_relative))
@@ -444,8 +444,6 @@ class Postmaster_lib {
 					$date = strtotime($parsed_object->send_every, $this->EE->localize->now);					
 					$this->log_action('The email to "'.$parsed_object->to_email.'" is set to be sent every "'.$parsed_object->send_every.'". The next time it will be sent will be '.$date.'.');
 					
-					var_dump($parcel->entry);exit();
-
 					if(isset($parcel->entry))
 					{
 						$this->model->add_parcel_to_queue($parsed_object, $parcel, $date);
