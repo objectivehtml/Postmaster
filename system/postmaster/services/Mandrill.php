@@ -171,13 +171,11 @@ class Mandrill_postmaster_service extends Base_service {
 			),
 		);
 
-		if(isset($settings->plain_text_only) && $settings->plain_text_only == 'true')
+		if(isset($settings->plain_text_only) && $settings->plain_text_only != 'true')
 		{	
-			$html_message = $plain_message;
+			$post['message']['html'] = $html_message;
 		}
-		
-		$post['message']['html'] = $html_message;
-		
+				
 		$post['message'] = (object) $post['message'];
 
 		if(!empty($parsed_object->bcc))
