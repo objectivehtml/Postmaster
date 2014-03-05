@@ -14,8 +14,9 @@ class Email_send_postmaster_hook extends Base_hook {
 	{	
 		$recipients = implode(', ', $vars['recipients']);
 
-		$to   = $this->_extract_email($vars['headers']['From']);
-		$from = array();
+		$from = $this->_extract_email($vars['headers']['From']);
+
+		$to = array();
 
 		foreach($vars['recipients'] as $recipient)
 		{
@@ -23,15 +24,15 @@ class Email_send_postmaster_hook extends Base_hook {
 
 			if(!empty($recipient['name']))
 			{
-				$from[] = '"'.$recipient['name'].'" <'.$recipient['email'].'>';
+				$to[] = '"'.$recipient['name'].'" <'.$recipient['email'].'>';
 			}
 			else
 			{
-				$from[] = $recipient['email'];
+				$to[] = $recipient['email'];
 			}
 		}
 
-		$from = implode(',', $from);
+		$to = implode(',', $to);
 
 		$parse_vars = array(
 			'headers' 		=> array(
@@ -40,10 +41,10 @@ class Email_send_postmaster_hook extends Base_hook {
 			'header_str'    => $vars['header_str'],
 			'header_string' => $vars['header_str'],
 			'recipients'    => $recipients,
-			'from_email'	=> $from,
-			'from_name'	    => '',
-			'to_email'      => $to['email'],
-			'to_name' 		=> $to['name'],
+			'from_email'	=> $from['email'],
+			'from_name'	    => $from['name'],
+			'to_email'      => $to,
+			'to_name' 		=> '',
 			'reply_to'		=> isset($vars['headers']['Reply-To']) ? $vars['headers']['Reply-To'] : NULL,
 			'cc' 			=> implode(',', $vars['cc_array']),
 			'bcc' 			=> implode(',', $vars['bcc_array']),
@@ -51,7 +52,7 @@ class Email_send_postmaster_hook extends Base_hook {
 			'message'		=> $vars['finalbody'],
 			'finalbody'		=> $vars['finalbody'],
 		);
-		
+
 		$return = $this->send($parse_vars, TRUE);
 		
 		if($return->response->status == 'success')
