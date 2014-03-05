@@ -73,8 +73,8 @@ class Postmaster_ext {
 		$return    = $this->EE->postmaster_hook->return_data($responses);
 
 		$this->EE->extensions->end_script = $this->EE->postmaster_hook->end_script($responses);
-			
-		if($return != 'Undefined')
+		
+		if($return !== 'Undefined')
 		{
 			return $return;
 		}
