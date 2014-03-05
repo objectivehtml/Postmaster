@@ -194,8 +194,6 @@ class Mandrill_postmaster_service extends Base_service {
 			$response = json_decode($response);
 		}
 		
-		// var_dump($plain_message);exit();
-
 		return new Postmaster_Service_Response(array(
 			'status'     => $response[0]->status == 'sent' ? POSTMASTER_SUCCESS : POSTMASTER_FAILED,
 			'parcel_id'  => $parcel->id,
@@ -212,6 +210,8 @@ class Mandrill_postmaster_service extends Base_service {
 			'bcc'        => $parsed_object->bcc,
 			'subject'    => $parsed_object->subject,
 			'message'    => $parsed_object->message,
+			'html_message' => $parsed_object->html_message,
+			'plain_message' => $parsed_object->plain_message,
 			'parcel'     => $parcel
 		));
 	}
