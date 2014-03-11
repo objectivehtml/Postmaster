@@ -88,6 +88,8 @@ class SendGrid_postmaster_service extends Base_service {
 			'api_user' => $settings->api_user,
 			'api_key'  => $settings->api_key,
 			'to'       => $parsed_object->to_email,
+			'cc'       => $parsed_object->cc,
+			'bcc'      => $parsed_object->bcc,
 			'toname'   => $parsed_object->to_name,
 			'from'     => $parsed_object->from_email,
 			'fromname' => $parsed_object->from_name,
