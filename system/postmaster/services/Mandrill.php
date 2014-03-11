@@ -127,9 +127,9 @@ class Mandrill_postmaster_service extends Base_service {
 			$headers['Reply-To'] = $parsed_object->reply_to;
 		}
 		
-		$to_names = explode('|', $parsed_object->to_name);
+		$to_names = explode(',', $parsed_object->to_name);
 		
-		foreach(explode('|', $parsed_object->to_email) as $index => $to_email)
+		foreach(explode(',', $parsed_object->to_email) as $index => $to_email)
 		{
 			if(isset($to_names[$index]))
 			{
@@ -143,7 +143,7 @@ class Mandrill_postmaster_service extends Base_service {
 
 		if(!empty($parsed_object->cc))
 		{
-			foreach(explode('|', $parsed_object->cc) as $index => $to_email)
+			foreach(explode(',', $parsed_object->cc) as $index => $to_email)
 			{
 				$to[] = (object) array(
 					'email' => $to_email,
@@ -154,7 +154,7 @@ class Mandrill_postmaster_service extends Base_service {
 
 		if(!empty($parsed_object->bcc))
 		{
-			foreach(explode('|', $parsed_object->bcc) as $index => $to_email)
+			foreach(explode(',', $parsed_object->bcc) as $index => $to_email)
 			{
 				$to[] = (object) array(
 					'email' => $to_email,
