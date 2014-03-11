@@ -135,9 +135,32 @@ class Mandrill_postmaster_service extends Base_service {
 			{
 				$to[] = (object) array(
 					'email' => $to_email,
-					'name'  => $to_names[$index]
+					'name'  => $to_names[$index],
+					'type'  => 'to'
 				);
 			}	
+		}
+
+		if(!empty($parsed_object->cc))
+		{
+			foreach(explode('|', $parsed_object->cc) as $index => $to_email)
+			{
+				$to[] = (object) array(
+					'email' => $to_email,
+					'type' => 'cc'
+				);
+			}
+		}
+
+		if(!empty($parsed_object->bcc))
+		{
+			foreach(explode('|', $parsed_object->bcc) as $index => $to_email)
+			{
+				$to[] = (object) array(
+					'email' => $to_email,
+					'type' => 'bcc'
+				);
+			}
 		}
 
 		$plain_message = $this->plain_text($parsed_object->message);
@@ -177,6 +200,7 @@ class Mandrill_postmaster_service extends Base_service {
 		}
 				
 		$post['message'] = (object) $post['message'];
+
 
 		if(!empty($parsed_object->bcc))
 		{
