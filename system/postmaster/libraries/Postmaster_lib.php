@@ -926,19 +926,29 @@ class Postmaster_lib {
 	 
 	public function cp_url($method = 'index', $useAmp = FALSE)
 	{
-		if(!defined('BASE'))
+		if(version_compare(APP_VER, '2.8.0', '>='))
 		{
-			define('BASE', '');
+			return cp_url('addons_modules/show_module_cp', array(
+				'module' => 'postmaster',
+				'method' => $method
+			));
 		}
+		else
+		{
+			if(!defined('BASE'))
+			{
+				define('BASE', '');
+			}
 
-		$amp  = !$useAmp ? AMP : '&';
+			$amp  = !$useAmp ? AMP : '&';
 
-		$file = substr(BASE, 0, strpos(BASE, '?'));
-		$file = str_replace($file, '', $_SERVER['PHP_SELF']) . BASE;
+			$file = substr(BASE, 0, strpos(BASE, '?'));
+			$file = str_replace($file, '', $_SERVER['PHP_SELF']) . BASE;
 
-		$url  = $file .$amp. '&C=addons_modules' .$amp . 'M=show_module_cp' . $amp . 'module=postmaster' . $amp . 'method=' . $method;
+			$url  = $file .$amp. '&C=addons_modules' .$amp . 'M=show_module_cp' . $amp . 'module=postmaster' . $amp . 'method=' . $method;
 
-		return str_replace(AMP, $amp, $url);
+			return str_replace(AMP, $amp, $url);
+		}
 	}	
 	
 	

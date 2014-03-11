@@ -129,7 +129,7 @@ class Postmaster_mcp {
 			
 			$notifications[$index] = (object) $notifications[$index];
 		}
-		
+
 		$vars = array(
 			'theme_url' => $this->EE->theme_loader->theme_url(),
 			'themes'  	=> $this->themes,
@@ -1044,14 +1044,7 @@ class Postmaster_mcp {
 
 	private function cp_url($method = 'index', $useAmp = FALSE)
 	{
-		$amp  = !$useAmp ? AMP : '&';
-
-		$file = substr(BASE, 0, strpos(BASE, '?'));
-		$file = str_replace($file, '', $_SERVER['PHP_SELF']) . BASE;
-
-		$url  = $file .$amp. '&C=addons_modules' .$amp . 'M=show_module_cp' . $amp . 'module=postmaster' . $amp . 'method=' . $method;
-
-		return str_replace(AMP, $amp, $url);
+		return $this->EE->postmaster_lib->cp_url($method);
 	}
 	
 	private function current_url($append = '', $value = '')
