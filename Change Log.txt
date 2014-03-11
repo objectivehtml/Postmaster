@@ -5,9 +5,22 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2014, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
- * @version		1.4.5
- * @build		20140221
+ * @version		1.4.6
+ * @build		20140311
  */
+
+#### 1.4.6
+##### 03/11/2014
+- (Bug Fix) Fixed EE 2.8.0 compatibility issues
+- (Bug Fix) Fixed an issue that would cause a PHP error
+- (Bug Fix) Fixed an issue with the plain text option in Mandrill
+- (Bug Fix) Updated version number
+- (Bug Fix) Fixed an issue comparing a boolean to a string that worked in PHP 5.3.x but breaks in PHP 5.4+
+- (Bug Fix) Fixed a couple variable mapping issues with the Send System Email hook
+- (Bug Fix) Fixed a couple inconsistencies with the Mandrill email serv
+- (Bug Fix) Fixed an issue with the CC and BCC addresses not working for Mandrill
+- (Bug Fix) Removed the pipe (|) delimiter and replaced with a comma for sending to multiple addresses within the Mandrill email service.
+- (Bug Fix) Added BCC addresses to the SendGrid
 
 #### 1.4.5
 ##### 02/21/2014
