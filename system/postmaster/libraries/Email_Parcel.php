@@ -102,7 +102,7 @@ class Email_Parcel {
 		$this->categories    = !empty($this->categories)    ? $this->categories    : array();
 		$this->statuses      = !empty($this->statuses)      ? $this->statuses      : array();
 		$this->member_groups = !empty($this->member_groups) ? $this->member_groups : array();
-		$this->parser_url    = $this->current_url('ACT', $this->EE->channel_data->get_action_id('Postmaster_mcp', 'parser'));
+		$this->parser_url    = $this->current_url('ACT', $this->EE->channel_data->get_action_id('Postmaster_mcp', 'parser')) . '&site_id='.config_item('site_id');
 	}
 	
 	public function channels()

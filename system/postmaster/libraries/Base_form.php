@@ -9,8 +9,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
- * @version		1.6.1
- * @build		20131115
+ * @version		1.6.2
+ * @build		20140314
  */
 
 if(!class_exists('Base_form'))
@@ -132,9 +132,9 @@ if(!class_exists('Base_form'))
 			$this->rules 			= $this->param('rules', $this->rules);
 			
 			// Loops through parameters and looks for any defined rules
-			if($this->EE->TMPL->tag_data[0]['params'])
+			if($this->EE->TMPL->tagparams)
 			{
-				foreach($this->EE->TMPL->tag_data[0]['params'] as $param => $rule)
+				foreach($this->EE->TMPL->tagparams as $param => $rule)
 				{
 					if(preg_match("/^(rules:)/", $param, $matches))
 					{
@@ -142,7 +142,7 @@ if(!class_exists('Base_form'))
 					}
 				}
 			}
-			
+
 			// Merges the default hidden_fields			
 			$hidden_fields  = array_merge($this->hidden_fields, array(
 				'site_url' => $this->param('site_url') ? $this->param('site_url') : $this->EE->config->item('site_url'),
@@ -172,7 +172,7 @@ if(!class_exists('Base_form'))
 					$hidden_fields['rule['.$param.']'] = $rule;
 				}	
 			}
-			
+
 			// Default form parameters			
 			$params = array(
 				'method' => $this->method,
@@ -189,7 +189,7 @@ if(!class_exists('Base_form'))
 					$params[$param] = $this->param($param);
 				}
 			}
-			
+
 			// Validate the form
 			$this->validate();			
 			
@@ -263,7 +263,7 @@ if(!class_exists('Base_form'))
 			{
 				$this->action = rtrim($this->current_url(FALSE), '/') . '/' . ltrim($this->action, '/');
 			}
-			
+
 			if($this->error_handling != 'inline' && count(array_merge($this->field_errors, $this->errors)) > 0)
 			{
 				$this->EE->output->show_user_error('general', array_merge($this->field_errors, $this->errors));
@@ -400,7 +400,9 @@ if(!class_exists('Base_form'))
 		
 		public function set_field_error($field, $message)
 		{
-			$this->field_errors[$this->decode($field)] = $message;
+			$field = $this->decode($field) ? $this->decode($field) : $field;
+
+			$this->field_errors[$field] = $message;
 		}
 		
 		public function parse_fields($field_data, $entry_data, $prefix = '')
@@ -455,7 +457,7 @@ if(!class_exists('Base_form'))
 		}
 				
 		public function validate($required_fields = array(), $additional_rules = array())
-		{
+		{	
 			if(isset($_POST[$this->validation_field]))
 			{
 				$vars = array();
@@ -466,7 +468,7 @@ if(!class_exists('Base_form'))
 				$validate_fields = !is_array($validate_fields) ? explode('|', $validate_fields) : $validate_fields;
 				
 				$required_fields = array_merge($required_fields, $validate_fields);
-							
+
 				foreach($required_fields as $field)
 				{
 					if(!empty($field))
@@ -476,23 +478,35 @@ if(!class_exists('Base_form'))
 				}
 				
 				$rules = $this->decode(array_merge((isset($_POST['rule']) ? $_POST['rule'] : array()), $this->rules));
-				
+
 				foreach($rules as $field => $rule)
 				{
 					$label = ucwords(str_replace(array('_'), ' ', $field));
 					
 					$required_fields = array_merge(array($field), $required_fields);
-					
+
+					if(is_array($this->EE->input->post($field)))
+					{
+						$field = $field.'[]';
+					}
+
 					$this->EE->form_validation->set_rules($field, $label, $rule);
 				}
-				
+
 				if ($this->EE->form_validation->run() == FALSE)
 				{
 					$error_count = 0;	
 					
 					foreach($required_fields as $field)
 					{	
-						$error = form_error($field);
+						if(is_array($this->EE->input->post($field)))
+						{
+							$error = form_error($field.'[]');
+						}
+						else
+						{
+							$error = form_error($field);
+						}
 							
 						if($error !== FALSE && !empty($error))
 						{	

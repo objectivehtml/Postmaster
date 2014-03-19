@@ -40,7 +40,7 @@ abstract class Template_Base extends Base_class {
 		$this->EE =& get_instance();
 		
 		$this->site_id         = config_item('site_id');
-		$this->parser_url      = $this->current_url('ACT', $this->EE->channel_data->get_action_id('Postmaster_mcp', 'parser'));
+		$this->parser_url      = $this->current_url('ACT', $this->EE->channel_data->get_action_id('Postmaster_mcp', 'parser')) . '&site_id='.config_item('site_id');
 		$this->editor_settings = $this->EE->postmaster_model->get_editor_settings_json();
 		$this->default_theme   = $this->EE->postmaster_model->get_editor_settings('theme');
 		$this->height          = $this->EE->postmaster_model->get_editor_settings('height');
