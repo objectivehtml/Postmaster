@@ -134,14 +134,20 @@ class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 	private function action($subscribe)
 	{
 		$service = $this->load_service();
-		
+		$email   = $this->param('email', FALSE, FALSE, TRUE);
+
+		if($email == 'CURRENT_USER')
+		{
+			$email = $this->EE->session->userdata('email');
+		}
+
 		$data          = array(
 			'return'     => $this->param('return', $this->EE->config->site_url()),
 			'api_key'    => $this->param('key', $this->param('api_key', FALSE, FALSE, TRUE)),
-			'email'      => $this->param('email', FALSE, FALSE, TRUE),
+			'email'      => $email,
 			'id'	 	 => $this->param('list', FALSE, FALSE, TRUE),
 			'email_type' => $this->param('email_type', 'html'),
-			'name' 		 => $this->param('name', $this->param('email')),
+			'name' 		 => $this->param('name', $email),
 			'first_name' => $this->param('first_name', $this->param('fname')),
 			'last_name'  => $this->param('last_name', $this->param('lname')),
 		);

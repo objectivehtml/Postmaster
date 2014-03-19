@@ -22,6 +22,36 @@ class Postmaster extends Postmaster_base_delegate {
 		$this->basepath = PATH_THIRD . 'postmaster/delegates/';
 		$this->suffix   = '_postmaster_delegate';
 	}
+
+	public function mailbox()
+	{
+		$this->EE->load->model('postmaster_model');
+
+		$where = array();
+
+		foreach($this->EE->TMPL->tagparams as $param => $value)
+		{
+			if(preg_match('/^where:/', $param))
+			{
+				$where[preg_replace('/^where:/', '', $param)] = $value;
+			}
+		}
+		
+		$entries = $this->EE->postmaster_model->get_mailbox(
+			$where, 
+			$this->param('limit'),
+			$this->param('offset', 0),
+			$this->param('order_by', 'date'),
+			$this->param('sort', 'asc')
+		);
+
+		if(!$entries->num_rows())
+		{
+			return $this->EE->TMPL->no_results();
+		}
+
+		return $this->parse($entries->result_array());
+	}
 	
 	public function trigger()
 	{

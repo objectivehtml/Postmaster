@@ -7,6 +7,26 @@ class Postmaster_model extends CI_Model {
 		parent::__construct();
 	}
 
+	public function get_mailbox($where = array(), $limit = FALSE, $offset = 0, $order_by = 'date', $sort = 'asc')
+	{
+		if(count($where))
+		{
+			$this->db->where($where);
+		}
+
+		if($limit)
+		{
+			$this->db->limit($limit, $offset);
+		}
+
+		if($order_by)
+		{
+			$this->db->order_by($order_by, $sort);
+		}
+
+		return $this->db->get('postmaster_mailbox');
+	}
+
 	public function has_sent($entry_id, $parcel_id )
 	{
 		$entry_id = (int) $entry_id;
