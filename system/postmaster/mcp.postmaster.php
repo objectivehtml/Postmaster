@@ -33,6 +33,11 @@ class Postmaster_mcp {
 			$this->EE->config->set_item('site_id', ($site_id ? $site_id : 1));
 		}
 
+		if($site_id = $this->get('site_id'))
+		{
+			$this->EE->config->set_item('site_id', ($site_id ? $site_id : 1));
+		}
+		
 		if(REQ == 'CP')
 		{
 			$this->EE->load->library('doctag', array('base_path' => PATH_THIRD.'postmaster/doctags/'));		
