@@ -55,6 +55,31 @@ class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 		return $value;
 	}
 	
+	public function is_subscribed()
+	{
+		$this->load_service();
+		
+		$data = array(
+			'api_key' => $this->param('key', $this->param('api_key')),
+			'id'      => $this->param('list', FALSE, FALSE, TRUE),
+			'email'	  => $this->param('email', FALSE, FALSE, TRUE)
+		);
+
+		$subscribed = $this->service->is_subscribed($data);
+		
+		if($this->EE->TMPL->tagdata)
+		{
+			if($subscribed)
+			{
+				return $this->EE->TMPL->tagdata;
+			}
+
+			return NULL;
+		}
+		
+		return $subscribed;
+	}
+
 	public function subscribers()
 	{
 		$this->load_service();

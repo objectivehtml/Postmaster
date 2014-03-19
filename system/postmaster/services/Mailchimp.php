@@ -47,6 +47,18 @@ MailChimp helps you design email newsletters, share them on social networks, int
 	{
 		parent::__construct();
 	}
+
+	public function is_subscribed($params = array())
+	{
+		$url = $this->api_url($params['api_key'], 'listMemberInfo', array(
+			'id'			=> $params['id'],
+			'email_address' => $params['email']
+		));
+
+		$subscribers = $this->_get($url);
+		
+		return $subscribers->success;
+	}
 	
 	public function subscribers($params = array())
 	{

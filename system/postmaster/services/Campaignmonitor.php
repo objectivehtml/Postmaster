@@ -61,6 +61,17 @@ class CampaignMonitor_postmaster_service extends Base_service {
 		parent::__construct();
 	}
 	
+	public function is_subscribed($params = array())
+	{
+		$url = $this->api_url('subscribers', $params['id'], FALSE, array(
+			'email' => $params['email']
+		));
+
+		$subscriber = $this->_get($url, $params['api_key'], FALSE);
+		
+		return $subscriber ? TRUE : FALSE;
+	}
+	
 	public function subscribers($data)
 	{
 	
@@ -466,14 +477,14 @@ class CampaignMonitor_postmaster_service extends Base_service {
 		return $this->url . $method . ( $id ? '/' . $id : NULL) . ($endpoint ? '/' . $endpoint : NULL) . '.json' . (count($params) > 0 ? '?'.http_build_query($params) : NULL);
 	}
 
-	public function _get($url, $api_key)
+	public function _get($url, $api_key, $throw_error = TRUE)
 	{
 		$this->curl->create($url);
 		$this->curl->http_login($api_key, '');
 		
 		$response = $this->curl->execute();
 
-		if(!empty($this->curl->error_string))
+		if($throw_error && !empty($this->curl->error_string))
 		{
 			show_error($this->curl->error_string);
 		}
