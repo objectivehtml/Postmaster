@@ -89,23 +89,27 @@ MailChimp helps you design email newsletters, share them on social networks, int
 
 	public function send($parsed_object, $parcel)
 	{
+		$response = FALSE;
 		$settings = $this->get_settings();
 
-		foreach($settings->list_id as $list_id)
+		if(isset($settings->list_id))
 		{
-			$response = $this->create_campaign($list_id, $parsed_object, $parcel);	
-			
-			if(empty($response))
+			foreach($settings->list_id as $list_id)
 			{
-				show_error('Something has gone wrong. Your email campaign has not been created.');
-			}
+				$response = $this->create_campaign($list_id, $parsed_object, $parcel);	
+				
+				if(empty($response))
+				{
+					show_error('Something has gone wrong. Your email campaign has not been created.');
+				}
 
-			if(isset($response->error) && isset($response->code))
-			{
-				show_error('Error Code: '.$response->code.' - "'.$response->error.'"');
-			}
+				if(isset($response->error) && isset($response->code))
+				{
+					show_error('Error Code: '.$response->code.' - "'.$response->error.'"');
+				}
 
-			$response = $this->send_campaign($settings->api_key, $response);
+				$response = $this->send_campaign($settings->api_key, $response);
+			}
 		}
 
 		return new Postmaster_Service_Response(array(
