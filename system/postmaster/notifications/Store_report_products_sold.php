@@ -87,6 +87,8 @@ class Store_report_products_sold_postmaster_notification extends Base_notificati
 
 	public function send($vars = array(), $member_data = FALSE, $entry_data = array())
 	{
+		$where = array();
+
 		$settings = $this->get_settings();
 
 		$channel = $this->channel_data->get_channel_by_name($settings->channel_name);
@@ -96,7 +98,6 @@ class Store_report_products_sold_postmaster_notification extends Base_notificati
 			return;
 		}
 
-		$where = array();
 
 		if($settings->omit_expired == 'true')
 		{
@@ -113,11 +114,22 @@ class Store_report_products_sold_postmaster_notification extends Base_notificati
 		if(isset($settings->limit) && !empty($settings->limit))
 		{
 			$limit = $settings->limit;
+		
 		}
 
 		$channel = $channel->row();
+		
+		$where['postmaster_store_report_products_sold.date'] = array(
+			'IS NULL',
+			'or <='.date('Y-m-d 00:00:00', strtotime('-1 day'))
+		);
+
 		$entries = $this->channel_data->get_channel_entries($channel->channel_id, array(
+			'select' => 'postmaster_store_report_products_sold.*',
 			'where' => $where,
+			'left join' => array(
+				'postmaster_store_report_products_sold' => 'channel_data.entry_id = postmaster_store_report_products_sold.entry_id'
+			),
 			'limit' => $limit
 		));
 
@@ -133,6 +145,7 @@ class Store_report_products_sold_postmaster_notification extends Base_notificati
 			if($this->_should_send($entry->entry_id, $settings->days_to_send))
 			{
 				$vars   = $this->_get_entry_stats($entry->entry_id, $status);
+
 				$member = $this->channel_data->get_member($entry->author_id)->row_array();
 
 				$this->_insert_or_update($entry->entry_id, array(
@@ -279,10 +292,10 @@ class Store_report_products_sold_postmaster_notification extends Base_notificati
 			FROM 
 				exp_store_orders
 			LEFT JOIN 
-				exp_store_order_items ON exp_store_orders.order_id=exp_store_order_items.order_id 
+				exp_store_order_items ON exp_store_orders.id=exp_store_order_items.order_id 
 			WHERE 
 				exp_store_order_items.entry_id = ".$entry_id." AND 
-				exp_store_orders.order_status = '".$status."'
+				exp_store_orders.order_status_name = '".$status."'
 		")->row_array();
 
 		foreach($return as $index => $value)
