@@ -426,11 +426,12 @@ class Postmaster_mcp {
 		{
 			return;
 		}
-
-		$notification->settings = json_decode($notification->settings);
+		
+		// $notification->settings = json_decode($notification->settings);
 		
 		$obj = $this->EE->postmaster_notification->load($notification->notification, $notification);
 		$obj->set_notification($notification);
+		$obj->set_settings(json_decode($notification->settings));
 		
 		$this->EE->postmaster_notification->trigger($obj);
 	}
