@@ -62,10 +62,13 @@ MailChimp helps you design email newsletters, share them on social networks, int
 	
 	public function subscribers($params = array())
 	{
-		$url = $this->api_url($params['api_key'], 'listMembers', $params);
+		$url = $this->api_url($params['api_key'], 'listMembers', array(
+			'id'	 => $params['id'],
+			'apikey' => $params['api_key']
+		));
 		
 		$subscribers = $this->_get($url);
-		
+
 		$return = array();
 		
 		if(is_object($subscribers) && is_array($subscribers->data))
