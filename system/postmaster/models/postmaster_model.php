@@ -380,8 +380,13 @@ class Postmaster_model extends CI_Model {
 	
 	public function delete_hook($hook)
 	{
-		$hook = $this->get_hook($hook);
-		
+		$hook  = $this->get_hook($hook);
+		$hooks = $this->get_hooks(array(
+			'where' => array(
+				'actual_hook_name' => $hook->row('actual_hook_name')
+			)
+		));
+
 		if($hook->num_rows() == 0)
 		{
 			return;
@@ -389,7 +394,7 @@ class Postmaster_model extends CI_Model {
 		
 		$name = $hook->row('actual_hook_name');
 		
-		if($hook->num_rows() == 1)
+		if($hooks->num_rows() == 1)
 		{
 			$this->db->delete('extensions', array(
 				'class'  => 'Postmaster_ext',
