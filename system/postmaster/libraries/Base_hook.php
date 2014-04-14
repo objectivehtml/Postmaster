@@ -150,7 +150,7 @@ abstract class Base_hook extends Postmaster_base_api {
 	 * @param	array	An array of custom vars to parse
 	 * @param	mixed 	An array of member data. If FALSE, default is used
 	 * @param	mixed 	If 'Undefined', NULL is returned, otherwise the
-	 					the passed value is returned
+	 *			the passed value is returned
 	 * @return	object
 	 */
 	 	
@@ -167,21 +167,21 @@ abstract class Base_hook extends Postmaster_base_api {
 			$return_data = $member_data;	
 		}
 
-		$hook			  = (array) $this->hook;
-		$settings		  = $hook['settings'];
+		$hook = (array) $this->hook;
+		$settings = $hook['settings'];
 		
 		if(is_string($settings))
 		{
 			$settings = json_decode($settings);
 		}
 		
-		$name             = !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'];		
+		$name = !empty($hook['installed_hook']) ? $hook['installed_hook'] : $hook['user_defined_hook'];		
 		
-		$parsed_hook      = $this->parse($hook, $vars, $member_data, $entry_data);
-		$parsed_hook      = $this->post_parse($parsed_hook);	
+		$parsed_hook = $this->parse($hook, $vars, $member_data, $entry_data);
+		$parsed_hook = $this->post_parse($parsed_hook);	
 			
 		$hook['settings'] = (object) $settings;		
-		$end_script 	  = isset($hook['settings']->$name->end_script) ? (bool) $hook['settings']->$name->end_script : FALSE;
+		$end_script = isset($hook['settings']->$name->end_script) ? (bool) $hook['settings']->$name->end_script : FALSE;
 	
 		$obj = array('end_script' => $end_script);
 		
