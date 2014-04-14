@@ -249,6 +249,7 @@ class Postmaster_lib {
 		}
 		
 		$parse_vars[$prefix.$delimeter.'safecracker'] 		  = isset($this->EE->safecracker) ? TRUE : FALSE;
+		$parse_vars[$prefix.$delimeter.'channel_form'] 		  = isset($this->EE->channel_form) ? TRUE : FALSE;
 		$parse_vars[$prefix.$delimeter.'logged_in_group_id']  = $this->EE->session->userdata('group_id');
 		$parse_vars[$prefix.$delimeter.'logged_in_member_id'] = $this->EE->session->userdata('member_id');
 		$parse_vars[$prefix.$delimeter.'current_time'] 		  = $this->EE->localize->now;
