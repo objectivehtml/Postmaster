@@ -82,6 +82,20 @@ class Postmaster extends Postmaster_base_delegate {
 		
 		return $tagdata;
 	}
+
+	public function activation_url()
+	{
+		$member = $this->EE->channel_data->get_members(array(
+			'select' => 'authcode',
+			'where' => array(
+				'members.member_id' => $this->param('member_id', FALSE, FALSE, TRUE)
+			)
+		));
+
+		$action_id = $this->EE->functions->fetch_action_id('Member', 'activate_member');
+
+		return $this->EE->functions->fetch_site_index(0, 0).QUERY_MARKER.'ACT='.$action_id.'&id='.(!is_array($member->row('authcode')) ? $member->row('authcode') : null);
+	}
 	
 	/**
 		* Adds delegate support to previous version of EE
