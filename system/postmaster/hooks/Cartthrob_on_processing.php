@@ -1,5 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+if(!class_exists('Cartthrob_on_authorize_postmaster_hook'))
+{
+	require_once PATH_THIRD . 'postmaster/libraries/hooks/Cartthrob_on_authorize_postmaster_hook.php';
+}
+
 class Cartthrob_on_processing_postmaster_hook extends Cartthrob_on_authorize_postmaster_hook {
 	
 	protected $title = 'CartThrob on Processing';
