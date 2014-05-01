@@ -58,12 +58,17 @@ class Cartthrob_on_authorize_postmaster_hook extends Base_hook {
 	{
 		$responses = $this->responses;
 
+		// var_dump($responses);exit();
+		
 		foreach($responses as $obj)
 		{
 			if($obj->response->status)
 			{	
 				if($this->end_script($responses))
 				{
+					$this->EE->load->add_package_path(PATH_THIRD . 'cartthrob');
+					$this->EE->load->model('discount_model');
+
 					$this->EE->cartthrob->process_discounts()->process_inventory();
 					
 					$this->cart->clear()
