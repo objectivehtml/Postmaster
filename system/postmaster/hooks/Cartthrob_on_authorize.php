@@ -42,7 +42,7 @@ class Cartthrob_on_authorize_postmaster_hook extends Base_hook {
 		);
 
 		$obj = parent::send($parse_vars);
-
+	
 		if($obj->response->status)
 		{
 			if ($this->EE->extensions->active_hook('postmaster_cartthrob_processing') === TRUE)
