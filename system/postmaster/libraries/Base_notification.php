@@ -80,7 +80,7 @@ abstract class Base_notification extends Postmaster_base_api {
 	 * @param	array	An array of custom vars to parse
 	 * @param	mixed 	An array of member data. If FALSE, default is used
 	 * @param	mixed 	If 'Undefined', NULL is returned, otherwise the
-	 					the passed value is returned
+	 *					the passed value is returned
 	 * @return	object
 	 */
 	 	
@@ -104,8 +104,9 @@ abstract class Base_notification extends Postmaster_base_api {
 		{
 			$settings = json_decode($settings);
 		}
-		
+
 		$parsed_array = $this->parse($notification, $vars, $member_data, $entry_data);
+		
 		$parsed_array = $this->post_parse($parsed_array);	
 			
 		$notification['settings'] = (object) $settings;		
