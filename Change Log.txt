@@ -5,9 +5,34 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2014, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
- * @version		1.4.6
- * @build		20140311
+ * @version		1.4.7
+ * @build		20140508
  */
+
+#### 1.4.7
+##### 05/08/2014
+
+- (Feature) Added new is_subscribed methods Mailchimp and CampaignMonitor
+- (Feature) Added the is_subscribed method to the campaign utility
+- (Feature) Added new tag to fetch items from the exp_postmaster_mailbox table. Useful for fetching when the last time a parcel was sent.
+- (Feature) Added ct_on_processing hook
+- (Feature) Added ability to detect channel form submissions from the "{parcel:channel_form}" variable.
+- (Feature) Added the ability to use the CURRENT_USER constant in place of the the {email} variable to 
+subscribe the current logged in email.
+- (Feature) Added ability to fetch a member's activation url
+- (Bug Fix) Fixed an issue with the preview parser not working when MSM is installed
+- (Bug Fix) Updated Base Form and Email Form utility to validate and require email fields.
+- (Bug Fix) Fixed issues that occurred if an entry is submitted with Mailchimp setup but no list_id's were defined.
+- (Bug Fixes) Fixed a number of parsing issues with the legacy Channel Data
+- (Bug Fix) Fixed issues with the settings object not getting passed to notifications correctly
+- (Bug Fix) Fixed an issue with MailChimp not returning the subscribers to a specified list properly.
+- (Bug Fix) Fixed an issue that would uninstall extensions if a hook was deleted but another Postmaster hook was sharing the same internal hook.
+- (Bug Fix) Fixed an issue with Postmaster not uninstalling correctly
+- (Bug Fix) Fixed an issue with the Postmaster date parsing. http://devot-ee.com/add-ons/support/postmaster/viewthread/10522
+- (Bug Fix) Fixed issue with CT not triggering multiple hooks if the same hook was installed
+- (Bug Fix) Fixed an issue with a discount_model missing for CT on Authorize
+- (Bug Fix) Fixed an issue with notifications messages not parsing. All notifications that aren't parsing correctly must be re-saved from the CP for this change to take affect.
+
 
 #### 1.4.6
 ##### 03/11/2014
