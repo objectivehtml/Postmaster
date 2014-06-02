@@ -14,9 +14,14 @@
  * @build		20120610
  */
 
+if(!class_exists('Newsletter_Subscription_Response'))
+{
+	require_once PATH_THIRD . 'postmaster/delegates/Campaign.php';
+}
+
 class Mailchimp_postmaster_service extends Base_service {
 
-	public $name = 'MailChimp';
+	public $name = 'Mailchimp';
 	public $url  = '';
 
 	public $default_settings = array(
@@ -56,12 +61,22 @@ MailChimp helps you design email newsletters, share them on social networks, int
 		));
 
 		$subscribers = $this->_get($url);
-		
+
 		return $subscribers->success;
 	}
 	
+	public function get_subscribers($params = array())
+	{
+		return $this->subscribers($params);
+	}
+
 	public function subscribers($params = array())
 	{
+		if(!isset($params['prefix']))
+		{
+			$params['prefix'] = false;
+		}
+
 		$url = $this->api_url($params['api_key'], 'listMembers', array(
 			'id'	 => $params['id'],
 			'apikey' => $params['api_key']
@@ -70,18 +85,18 @@ MailChimp helps you design email newsletters, share them on social networks, int
 		$subscribers = $this->_get($url);
 
 		$return = array();
-		
+
 		if(is_object($subscribers) && is_array($subscribers->data))
 		{
 			foreach($subscribers->data as $index => $subscriber)
 			{
 				$subscriber->timestamp = strtotime($subscriber->timestamp);
 				
-				$row[$params['prefix'].':index'] = $index;
-				$row[$params['prefix'].':count'] = $index+1;
-				$row[$params['prefix'].':total'] = $subscribers->total;
-				$row[$params['prefix'].':email'] = $subscriber->email;			
-				$row[$params['prefix'].':data']  =  $this->EE->channel_data->utility->add_prefix($params['prefix'], array((array) $subscriber));
+				$row[$params['prefix'] ? $params['prefix'].':index' : 'index'] = $index;
+				$row[$params['prefix'] ? $params['prefix'].':count' : 'count'] = $index+1;
+				$row[$params['prefix'] ? $params['prefix'].':total' : 'total'] = $subscribers->total;
+				$row[$params['prefix'] ? $params['prefix'].':email' : 'email'] = $subscriber->email;			
+				$row[$params['prefix'] ? $params['prefix'].':data' : 'data']  =  $this->EE->channel_data->utility->add_prefix($params['prefix'], array((array) $subscriber));
 				
 				$return[$index] = $row;	
 			}
@@ -158,23 +173,28 @@ MailChimp helps you design email newsletters, share them on social networks, int
 		<script type=\"text/javascript\">
 			$(document).ready(function() {
 
-				var url = '".$url."';
+				var url = '$url';
+				
+				$('.service-panel').each(function() {
+					var t = $(this);
 
-				$('#mailchimp_api_key').blur(function() {
-					$('.mailchimp-refresh').click();
+					if(t.css('display') != 'none') {
+						t.find('#mailchimp_api_key').blur(function() {
+							t.find('.mailchimp-refresh').click();
+						});
+
+						t.find('.mailchimp-refresh').click(function(e) {
+
+							var apiKey = t.find('#mailchimp_api_key').val();
+
+							$.get(url+'&api_key='+apiKey+'&ajax=1', function(data) {
+								t.find('#mailchimp-lists tbody').html(data);
+							});
+
+							e.preventDefault();
+						});
+					}
 				});
-
-				$('.mailchimp-refresh').click(function() {
-
-					var apiKey = $('#mailchimp_api_key').val();
-
-					$.get(url+'&api_key='+apiKey+'&ajax=1', function(data) {
-						$('#mailchimp-lists tbody').html(data);
-					});
-
-					return false;
-				});
-
 			});
 		</script>
 
@@ -252,8 +272,15 @@ MailChimp helps you design email newsletters, share them on social networks, int
 
 	public function subscribe($data)
 	{
+		$default_settings = array(
+			'email_type' => 'html',
+			'post' => array()
+		);
+
+		$data = array_merge($default_settings, $data);
+
 		$url = $this->api_url($data['api_key'], 'listSubscribe');
-		
+
 		$params = array(
 			'apikey'            => $data['api_key'],
 			'id'                => $data['id'],
@@ -265,17 +292,48 @@ MailChimp helps you design email newsletters, share them on social networks, int
 			'send_welcome'      => (bool) $this->param($data['post'], 'send_welcome', FALSE),	
 		);
 		
-		if(isset($data['first_name']) && $data['first_name'])
+		if(isset($data['first_name']) && !empty($data['first_name']))
 		{
 			$params['fname'] = $data['first_name'];
 		}
 		
-		if(isset($data['last_name']) && $data['last_name'])
+		if(isset($data['last_name']) && !empty($data['last_name']))
 		{
 			$params['lname'] = $data['last_name'];
 		}
+
+		$groupings = array();
+
+		if(isset($data['post']['group_id']) && isset($data['post']['groups']))
+		{
+			$groupings = array(
+				array(
+					'groups' => $data['post']['groups']
+				)
+			);
+
+			if(isset($data['post']['group_id']))
+			{
+				$groupings[0]['id'] = $data['post']['group_id'];
+			}
+
+			if(isset($data['post']['group_name']))
+			{
+				$groupings[0]['name'] = $data['post']['group_name'];
+			}
+		}
 		
-		$unset = array('double_optin', 'update_existing', 'replace_interests', 'send_welcome');
+		$unset = array(
+			'double_optin',
+			'update_existing',
+			'replace_interests',
+			'send_welcome', 
+			'service', 
+			'api_key', 
+			'list',
+			'group_id',
+			'groups'
+		);
 		
 		foreach($unset as $var)
 		{
@@ -283,7 +341,12 @@ MailChimp helps you design email newsletters, share them on social networks, int
 		}
 		
 		$params['merge_vars'] = $data['post'];
-	
+
+		if(!empty($groupings))
+		{
+			$params['merge_vars']['GROUPINGS'] = $groupings;
+		}
+
 		$response = $this->post($url, $params);
 		
 		$return = new Newsletter_Subscription_Response(array(
@@ -291,7 +354,7 @@ MailChimp helps you design email newsletters, share them on social networks, int
 			'data'    => $response,
 			'errors'  => $response === TRUE ? array() : array(array('error' => $response->error, 'code' => $response->code))
 		));
-		
+
 		return $return;
 	}
 		
@@ -324,7 +387,81 @@ MailChimp helps you design email newsletters, share them on social networks, int
 		return $return;
 	}
 	
+	public function create_group($api_key, $list_id, $name, $groups, $type = 'checkboxes')
+	{
+		$url = $this->api_url($api_key, 'listInterestGroupingAdd');
+
+		$params = array(
+			'id' => $list_id,
+			'name' => $name,
+			'type' => $type,
+			'groups' => $groups,
+		);
+		
+		return $this->post($url, $params);
+	}
+
+	public function add_grouping($api_key, $list_id, $name, $group_id = false)
+	{
+		$url = $this->api_url($api_key, 'listInterestGroupAdd');
+
+		$params = array(
+			'id' => $list_id,
+			'group_name' => $name,
+			'group_id' => $group_id,
+		);
+		
+		return $this->post($url, $params);
+	}
+
+	public function get_campaign_params($list_id, $parsed_object, $parcel)
+	{
+		$settings = $parcel->settings->{$this->name};
+
+		$plain_message = strip_tags($parsed_object->message);
+		$html_message  = $parsed_object->message;
+
+		if(isset($parsed_object->html_message) && !empty($parsed_object->html_message))
+		{
+			$html_message = $parsed_object->html_message;
+		}
+
+		if(isset($parsed_object->plain_message) && !empty($parsed_object->plain_message))
+		{
+			$plain_message = $parsed_object->plain_message;
+		}
+
+		$params = array(
+			'type'    => 'regular',
+			'options' => array(
+				'list_id'    => $list_id,
+				'subject'    => $parsed_object->subject,
+				'from_email' => $parsed_object->from_email,
+				'from_name'  => $parsed_object->from_name,
+				'to_name'    => $parsed_object->to_name,
+				'title'		 => $parcel->entry->title,
+			),
+			'content' => array(
+				'html' => $html_message,
+				'text' => $plain_message
+			)
+		);
+
+		return $params;
+	}
+
 	public function create_campaign($list_id, $parsed_object, $parcel)
+	{
+		$settings = $parcel->settings->{$this->name};
+
+		$params = $this->get_campaign_params($list_id, $parsed_object, $parcel);
+
+		$url = $this->api_url($settings->api_key, 'campaignCreate');
+
+		return json_decode($this->curl->simple_post($url, $params));
+	}
+
+	public function create_list()
 	{
 		$settings = $parcel->settings->{$this->name};
 
@@ -357,7 +494,7 @@ MailChimp helps you design email newsletters, share them on social networks, int
 			)
 		);
 
-		$url = $this->api_url($settings->api_key, 'campaignCreate');
+		$url = $this->api_url($settings->api_key, 'listCreate');
 
 		return json_decode($this->curl->simple_post($url, $params));
 	}

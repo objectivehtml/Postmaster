@@ -10,6 +10,8 @@
  * @build		20130619
  */
 
+ee()->load->helper('url_helper');
+
 /**
  * Site URL
  *

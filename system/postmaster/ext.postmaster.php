@@ -50,13 +50,13 @@ class Postmaster_ext {
 		$return    = $this->EE->postmaster_hook->return_data($responses);
 		
 		$this->EE->extensions->end_script = $this->EE->postmaster_hook->end_script($responses);
-			
+		
 		if($return != 'Undefined')
 		{
 			return $return;
 		}
 		
-		return NULL;
+		return;
 	}
 	
 	public function trigger_hook()
@@ -79,7 +79,7 @@ class Postmaster_ext {
 			return $return;
 		}
 		
-		return NULL;
+		return;
 	}
 		
 	public function route_hook()
@@ -105,7 +105,7 @@ class Postmaster_ext {
 	}
 	
 	public function entry_submission_end($entry_id, $meta, $data)
-	{	
+	{			
 		$this->EE->load->library('postmaster_lib');		
 		
 		$this->EE->postmaster_lib->validate_channel_entry($entry_id, $meta, $data);

@@ -11,6 +11,11 @@
  * @build		20120609
  */
 
+if(!class_exists('Postmaster_base_delegate'))
+{
+	require_once PATH_THIRD . 'postmaster/libraries/Postmaster_base_delegate.php';
+}
+
 class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 	
 	public $name        = 'Email Campaign Manager';
@@ -154,7 +159,10 @@ class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 		
 		foreach($this->EE->TMPL->tagparams as $index => $value)
 		{
-			$data['post'][$index] = $this->param($index);
+			if(!isset($data[$index]))
+			{
+				$data['post'][$index] = $this->param($index);
+			}
 		}
 		
 		if($subscribe)
@@ -208,23 +216,38 @@ class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 					
 					$api_key = $this->post($prefix.'id', TRUE);
 					
-					$data          = array(
-						'return'        => $this->post('return', TRUE),
-						'api_key'       => $api_key,
-						'email'         => $this->post('email', FALSE),
-						'id'	 	    => $this->post($prefix.'list', TRUE),
-						'email_type'    => $this->post('email_type', FALSE, 'html'),
-						'first_name'    => $this->post('first_name', FALSE, $this->post('fname', FALSE)),
-						'last_name'     => $this->post('last_name', FALSE, $this->post('lname', FALSE)),
+					$data = array(
+						'return' => $this->post('return', TRUE),
+						'api_key' => $api_key,
+						'email' => $this->post('email', FALSE),
+						'id' => $this->post($prefix.'list', TRUE),
+						'email_type' => $this->post('email_type', FALSE, 'html'),
+						'first_name' => $this->post('first_name', FALSE, $this->post('fname', FALSE)),
+						'last_name' => $this->post('last_name', FALSE, $this->post('lname', FALSE)),
 					);
-					
+
 					$reserved = array('XID', 'site_url', 'required', 'secure_return', 'ajax_response', 'base_form_submit', 'return', 'rule', 'email');
 					
 					$data['post'] = array();
+
+					if($group_id = $this->param('group_id'))
+					{
+						$data['post']['group_id'] = $group_id;
+					}
 					
+					if($group_name = $this->param('group_name'))
+					{
+						$data['post']['group_name'] = $group_name;
+					}
+					
+					if($groups = $this->param('groups'))
+					{
+						$data['post']['groups'] = $groups;
+					}
+
 					foreach($_POST as $index => $value)
 					{
-						if(!preg_match("/('.$prefix.'_)/u", $index) && !in_array($index, $reserved))
+						if(!preg_match("/^".$prefix."/", $index) && !in_array($index, $reserved))
 						{
 							$data['post'][$index] = $this->post($index, FALSE, FALSE, TRUE);
 						}
@@ -263,11 +286,13 @@ class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 			}
 			
 			$hidden_fields = array(
-				$prefix.'form'       => TRUE,
-				$prefix.'service'    => $this->param('service', FALSE, FALSE, TRUE),
-				$prefix.'id'         => $this->param('key', $this->param('api_key', FALSE, FALSE, TRUE)),
-				$prefix.'list'       => $this->param('list', FALSE, FALSE, TRUE),
-				$prefix.'email_type' => $this->param('email_type', '')
+				$prefix.'form' => TRUE,
+				$prefix.'service' => $this->param('service', FALSE, FALSE, TRUE),
+				$prefix.'id' => $this->param('key', $this->param('api_key', FALSE, FALSE, TRUE)),
+				$prefix.'list' => $this->param('list', FALSE, FALSE, TRUE),
+				$prefix.'email_type' => $this->param('email_type', ''),
+				$prefix.'group_id' => $this->param('group_id'),
+				$prefix.'groups' => $this->param('groups'),
 			);
 			
 			return $this->EE->base_form->open($hidden_fields);			
