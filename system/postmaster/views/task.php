@@ -132,10 +132,10 @@
 	
 </form>
 
+<?php if(version_compare(APP_VER, '2.8.0', '<')): ?>
 <script type="text/javascript">
-
 	Postmaster.editorSettings = <?php echo $template->editor_settings?>;
 	Postmaster.settings       = <?php echo json_encode($template->settings)?>;
 	Postmaster.parser		  = '<?php echo $template->parser_url?>';
-
 </script>
+<?php endif; ?>

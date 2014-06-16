@@ -73,17 +73,34 @@ class Postmaster_mcp {
 				))->result_array();
 			}
 			
-			$this->EE->cp->add_to_head('
-			<script type="text/javascript">
-				var Postmaster = {
-					channels: '.json_encode($channels).',
-					categories: '.json_encode($categories).',
-					statuses: '.json_encode($statuses).',
-					groups: '.json_encode($member_groups).',
-					fields: '.json_encode($fields).',
-					entries: '.json_encode($entries).'
-				}
-			</script>');
+			if(version_compare(APP_VER, '2.8.0', '>='))
+			{
+				$this->EE->cp->add_to_foot('
+				<script type="text/javascript">
+					var Postmaster = {
+						channels: '.json_encode($channels).',
+						categories: '.json_encode($categories).',
+						statuses: '.json_encode($statuses).',
+						groups: '.json_encode($member_groups).',
+						fields: '.json_encode($fields).',
+						entries: '.json_encode($entries).'
+					}
+				</script>');
+			}
+			else
+			{
+				$this->EE->cp->add_to_head('
+				<script type="text/javascript">
+					var Postmaster = {
+						channels: '.json_encode($channels).',
+						categories: '.json_encode($categories).',
+						statuses: '.json_encode($statuses).',
+						groups: '.json_encode($member_groups).',
+						fields: '.json_encode($fields).',
+						entries: '.json_encode($entries).'
+					}
+				</script>');
+			}
 		}
 	}
 	
@@ -220,7 +237,18 @@ class Postmaster_mcp {
 			'&larr; Back to Home'  => $this->cp_url('index'),
 			'Text Editor Settings' => $this->cp_url('editor_settings'),
 		));
-				
+			
+		if(version_compare(APP_VER, '2.8.0', '>='))
+		{
+			$this->EE->cp->add_to_foot(
+				'<script type="text/javascript">
+					Postmaster.editorSettings = '.$vars['template']->editor_settings.';
+					Postmaster.settings       = '.json_encode($vars['template']->settings).'
+					Postmaster.parser		  = "'.$vars['template']->parser_url.'";
+				</script>'
+			);
+		}
+			
 		return $this->EE->load->view('notification', $vars, TRUE);
 	}
 	
@@ -270,6 +298,17 @@ class Postmaster_mcp {
 			'Text Editor Settings' => $this->cp_url('editor_settings'),
 		));
 		
+		if(version_compare(APP_VER, '2.8.0', '>='))
+		{
+			$this->EE->cp->add_to_foot(
+				'<script type="text/javascript">
+					Postmaster.editorSettings = '.$vars['template']->editor_settings.';
+					Postmaster.settings       = '.json_encode($vars['template']->settings).'
+					Postmaster.parser		  = "'.$vars['template']->parser_url.'";
+				</script>'
+			);
+		}
+
 		return $this->EE->load->view('hook', $vars, TRUE);
 	}
 	
@@ -318,6 +357,17 @@ class Postmaster_mcp {
 			'Text Editor Settings' => $this->cp_url('editor_settings'),
 		));
 		
+		if(version_compare(APP_VER, '2.8.0', '>='))
+		{
+			$this->EE->cp->add_to_foot(
+				'<script type="text/javascript">
+					Postmaster.editorSettings = '.$vars['template']->editor_settings.';
+					Postmaster.settings       = '.json_encode($vars['template']->settings).'
+					Postmaster.parser		  = "'.$vars['template']->parser_url.'";
+				</script>'
+			);
+		}
+
 		return $this->EE->load->view('task', $vars, TRUE);
 	}
 	

@@ -207,7 +207,7 @@ class Mandrill_postmaster_service extends Base_service {
 			$post['bcc_address'] = $parsed_object->bcc;
 		}
 
-		$this->curl->ssl();
+		// $this->curl->ssl();
 
 		$response = $this->curl->simple_post($this->url, $post);
 		
