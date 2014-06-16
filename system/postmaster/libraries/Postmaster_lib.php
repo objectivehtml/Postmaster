@@ -166,7 +166,7 @@ class Postmaster_lib {
 		$parsed_object = $this->convert_array($parsed_object);
 		$send_date     = $parsed_object->post_date_specific;
 
-		$send_date     = !empty($send_date) ? strtotime($send_date) : time();
+		$send_date     = !empty($send_date) ? $this->strtotime($send_date) : time();
 		
 		if(!empty($parsed_object->post_date_relative))
 		{
