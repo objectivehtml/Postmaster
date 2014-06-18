@@ -270,6 +270,23 @@ MailChimp helps you design email newsletters, share them on social networks, int
 		return str_replace('<dc>', substr($api_key, strpos($api_key, '-')+1), $url);
 	}
 
+	public function get_member_info($key, $list_id, $email)
+	{
+		$url = $this->api_url($key, 'listMemberInfo');
+
+		$response = $this->post($url, array(
+			'id' => $list_id,
+			'email_address' => $email
+		));
+		
+		if(!$response->success)
+		{
+			return;
+		}
+
+		return $response->data[0];
+	}
+
 	public function subscribe($data)
 	{
 		$default_settings = array(
@@ -286,12 +303,12 @@ MailChimp helps you design email newsletters, share them on social networks, int
 			'id'                => $data['id'],
 			'email_address'     => $data['email'],
 			'email_type'		=> $data['email_type'],
-			'double_optin'      => (bool) $this->param($data['post'], 'double_optin', TRUE),
-			'update_existing'   => (bool) $this->param($data['post'], 'update_existing', FALSE),
-			'replace_interests' => (bool) $this->param($data['post'], 'replace_interests', TRUE),
-			'send_welcome'      => (bool) $this->param($data['post'], 'send_welcome', FALSE),	
+			'double_optin'      => filter_var($this->param($data['post'], 'double_optin', TRUE), FILTER_VALIDATE_BOOLEAN),
+			'update_existing'   => filter_var($this->param($data['post'], 'update_existing', FALSE), FILTER_VALIDATE_BOOLEAN),
+			'replace_interests' => filter_var($this->param($data['post'], 'replace_interests', TRUE), FILTER_VALIDATE_BOOLEAN),
+			'send_welcome'      => filter_var($this->param($data['post'], 'send_welcome', FALSE), FILTER_VALIDATE_BOOLEAN),	
 		);
-		
+
 		if(isset($data['first_name']) && !empty($data['first_name']))
 		{
 			$params['fname'] = $data['first_name'];
@@ -304,22 +321,25 @@ MailChimp helps you design email newsletters, share them on social networks, int
 
 		$groupings = array();
 
+		if($info = $this->get_member_info($data['api_key'], $data['id'], $data['email']))
+		{
+			$groupings = $info->merges->GROUPINGS;
+		}
+
 		if(isset($data['post']['group_id']) && isset($data['post']['groups']))
 		{
-			$groupings = array(
-				array(
-					'groups' => $data['post']['groups']
-				)
-			);
+			$i = count($groupings);
+
+			$groupings[$i] = array('groups' => $data['post']['groups']);
 
 			if(isset($data['post']['group_id']))
 			{
-				$groupings[0]['id'] = $data['post']['group_id'];
+				$groupings[$i]['id'] = $data['post']['group_id'];
 			}
 
 			if(isset($data['post']['group_name']))
 			{
-				$groupings[0]['name'] = $data['post']['group_name'];
+				$groupings[$i]['name'] = $data['post']['group_name'];
 			}
 		}
 		

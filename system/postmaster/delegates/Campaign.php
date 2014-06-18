@@ -244,6 +244,26 @@ class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 					{
 						$data['post']['groups'] = $groups;
 					}
+					
+					if($double_optin = $this->param('double_optin'))
+					{
+						$data['post']['double_optin'] = $double_optin;
+					}
+
+					if($update_existing = $this->param('update_existing'))
+					{
+						$data['post']['update_existing'] = $update_existing;
+					}
+					
+					if($replace_interests = $this->param('replace_interests'))
+					{
+						$data['post']['replace_interests'] = $replace_interests;
+					}
+
+					if($send_welcome = $this->param('send_welcome'))
+					{
+						$data['post']['send_welcome'] = $send_welcome;
+					}
 
 					foreach($_POST as $index => $value)
 					{
