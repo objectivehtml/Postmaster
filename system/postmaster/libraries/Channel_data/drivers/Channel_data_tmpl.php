@@ -36,6 +36,7 @@ class Channel_data_tmpl extends Channel_data_lib {
 			$orig_settings = $this->EE->api_channel_fields->settings;
 		}
 		
+		$this->EE->load->library('template', NULL, 'TMPL');
 		$this->EE->load->library('typography');
 		$this->EE->load->library('api');
 		$this->EE->api->instantiate('channel_fields');
