@@ -75,15 +75,19 @@ MailChimp helps you design email newsletters, share them on social networks, int
 					{
 						$valid_email = false;
 						$emails = explode(', ', $group->groups);
+						$groups = explode('|', $params['groups']);
 
 						if(in_array($group->id, $group_ids))
 						{
 							$valid_group = true;
 						}
 
-						if(in_array($params['email'], $emails))
+						foreach($groups as $group_email)
 						{
-							$valid_email = true;
+							if(in_array($group_email, $emails))
+							{
+								$valid_email = true;
+							}
 						}
 					}
 				}
