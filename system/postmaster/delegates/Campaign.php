@@ -67,7 +67,9 @@ class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 		$data = array(
 			'api_key' => $this->param('key', $this->param('api_key')),
 			'id'      => $this->param('list', FALSE, FALSE, TRUE),
-			'email'	  => $this->param('email', FALSE, FALSE, TRUE)
+			'email'	  => $this->param('email', FALSE, FALSE, TRUE),
+			'group_id'  => $this->param('group_id'),
+			'groups'    => $this->param('groups')
 		);
 
 		$subscribed = $this->service->is_subscribed($data);
@@ -89,7 +91,7 @@ class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 	{
 		$this->load_service();
 		
-		$data          = array(
+		$data = array(
 			'api_key'   => $this->param('key', $this->param('api_key')),
 			'id'        => $this->param('list', FALSE, FALSE, TRUE),
 			'status'    => $this->param('subscribed'),
@@ -99,6 +101,8 @@ class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 			'order_by'  => $this->param('order_by', $this->param('orderby', 'email')),
 			'sort'      => $this->param('sort', 'asc'),
 			'prefix'    => $this->param('prefix', 'subscriber'),
+			'group_id'  => $this->param('group_id'),
+			'groups'    => $this->param('groups')
 		);
 				
 		$subscribers = $this->service->subscribers($data);

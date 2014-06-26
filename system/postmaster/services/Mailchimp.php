@@ -62,6 +62,41 @@ MailChimp helps you design email newsletters, share them on social networks, int
 
 		$subscribers = $this->_get($url);
 
+		if(isset($params['group_id']) && $subscribers->success)
+		{
+			$valid_group = false;
+			$group_ids = explode('|', $params['group_id']);
+
+			foreach($subscribers->data as $data)
+			{
+				if(isset($data->merges->GROUPINGS) )
+				{
+					foreach($data->merges->GROUPINGS as $group)
+					{
+						$valid_email = false;
+						$emails = explode(', ', $group->groups);
+
+						if(in_array($group->id, $group_ids))
+						{
+							$valid_group = true;
+						}
+
+						if(in_array($params['email'], $emails))
+						{
+							$valid_email = true;
+						}
+					}
+				}
+
+				if($valid_email && $valid_group)
+				{
+					return $subscribers->success;
+				}
+
+				return false;
+			}
+		}
+
 		return $subscribers->success;
 	}
 	
