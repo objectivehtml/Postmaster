@@ -295,6 +295,15 @@ if(!class_exists('Base_delegate'))
 					$param = ($param == 'true' || $param == 'yes') ? TRUE : FALSE;
 				}			
 			}
+
+			// Parse non-cachable variables
+			foreach ( $this->EE->session->userdata as $var => $val)
+			{
+				if(is_string($val))
+				{
+					$param = str_replace(LD . 'logged_in_' . $var . RD, $val, $param);
+				}
+			}
 			
 			return $param;			
 		}
