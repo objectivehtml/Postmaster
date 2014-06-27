@@ -188,6 +188,22 @@ MailChimp helps you design email newsletters, share them on social networks, int
 			'parcel'     => $parcel
 		));
 	}
+
+	public function update_member($params)
+	{
+		$url = $this->api_url($params['api_key'], 'listUpdateMember', array(
+			'id'	 => $params['id'],
+			'apikey' => $params['api_key']
+		));
+		
+		$response = $this->post($url, array(
+			'email_address' => $params['email'],
+			'email_type' => $params['email_type'],
+			'merge_vars' => $params['merge_vars']
+		));
+
+		return $response;
+	}
 	
 	public function display_settings($settings, $parcel)
 	{

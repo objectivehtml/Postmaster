@@ -63,7 +63,7 @@ class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 	public function is_subscribed()
 	{
 		$this->load_service();
-		
+
 		$data = array(
 			'api_key' => $this->param('key', $this->param('api_key')),
 			'id'      => $this->param('list', FALSE, FALSE, TRUE),
@@ -81,7 +81,7 @@ class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 				return $this->EE->TMPL->tagdata;
 			}
 
-			return NULL;
+			return $this->EE->TMPL->no_results();
 		}
 		
 		return $subscribed;
@@ -138,6 +138,11 @@ class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 	public function subscribe_form()
 	{
 		return $this->form(TRUE, 'newsletter_subscribe_');
+	}
+	
+	public function update_member_form()
+	{
+		return $this->member_form(TRUE, 'newsletter_update_member_');
 	}
 	
 	private function action($subscribe)
@@ -322,7 +327,119 @@ class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 			return $this->EE->base_form->open($hidden_fields);			
 		}
 	}
+
+	private function member_form($subscribe, $prefix)
+	{
+		$this->load_service();
+
+		if($this->validate($this->service, 'update_member'))
+		{
+			$email = $this->param('email', FALSE, FALSE, TRUE);
+			$service = $this->lib->load_service($this->param('service', FALSE, FALSE, TRUE));
+			$key = $this->param('api_key', FALSE, FALSE, TRUE);
+			$list = $this->param('list', FALSE, FALSE, TRUE);
+
+			$member_info = $service->get_member_info($key, $list, $email);	
+
+			$vars = array(
+				'email_address' => $member_info->email,
+				'email_type' => $member_info->email_type,
+				'merge_vars' => array(
+					(array) $member_info->merges
+				)
+			);
+
+			foreach($vars['merge_vars'][0]['GROUPINGS'] as $index => $group)
+			{
+				$groups = array();
+
+				if(!empty($vars['merge_vars'][0]['GROUPINGS'][$index]->groups))
+				{
+					$groups = explode(', ', $vars['merge_vars'][0]['GROUPINGS'][$index]->groups);
+				}
+
+				$vars['merge_vars'][0]['GROUPINGS'][$index] = (array) $group;
+				$vars['merge_vars'][0]['GROUPINGS'][$index]['GROUPING:INDEX'] = $index;
+				$vars['merge_vars'][0]['GROUPINGS'][$index]['groups'] = array();
+
+				foreach($groups as $group)
+				{
+					$vars['merge_vars'][0]['GROUPINGS'][$index]['groups'][] = array(
+						'group' => $group
+					);
+				}
+
+			}
+
+			$this->EE->TMPL->tagdata = $this->parse(array($vars));
+			
+			$this->EE->load->library('base_form');
+		
+			$this->EE->base_form->clear();
+			$this->EE->base_form->tagdata = $this->EE->TMPL->tagdata;
 	
+			$this->EE->base_form->set_rule('email', 'required|email');
+			
+			if((bool) $this->post($prefix.'form'))
+			{				
+				if(count($this->EE->base_form->field_errors) == 0)
+				{
+					$api_key = $this->post($prefix.'id', TRUE);
+					
+					$data = array(
+						'return' => $this->post('return', TRUE),
+						'api_key' => $api_key,
+						'id' => $this->post($prefix.'list', TRUE),
+						'email' => $this->post('email_address', FALSE),
+						'email_type' => $this->post('email_type', FALSE, 'html'),
+						'merge_vars' => $this->post('merge_vars', FALSE)
+					);
+
+					foreach($data['merge_vars']['GROUPINGS'] as $index => $grouping)
+					{
+						if(isset($data['merge_vars']['GROUPINGS'][$index]['groups']))
+						{
+							$data['merge_vars']['GROUPINGS'][$index]['groups'] = implode(', ', $data['merge_vars']['GROUPINGS'][$index]['groups']);
+						}
+						else
+						{
+							$data['merge_vars']['GROUPINGS'][$index]['groups'] = '';
+						}
+					}
+
+					$response = $service->update_member($data);
+				}
+
+				if($this->post('ajax_response', TRUE) == 'y')
+				{
+					$this->json($response);
+				}
+				
+				if(!$response)
+				{
+					foreach($response->errors as $error)
+					{
+						$this->EE->base_form->set_error($error['error']);
+					}
+				}
+				else
+				{
+					$return = $this->post('return', TRUE);
+					
+					$this->EE->functions->redirect($return);
+				}				
+			}
+
+			$hidden_fields = array(
+				$prefix.'form' => TRUE,
+				$prefix.'service' => $this->param('service', FALSE, FALSE, TRUE),
+				$prefix.'id' => $this->param('key', $this->param('api_key', FALSE, FALSE, TRUE)),
+				$prefix.'list' => $this->param('list', FALSE, FALSE, TRUE)
+			);
+			
+			return $this->EE->base_form->open($hidden_fields);			
+		}
+	}
 }
 
 class Newsletter_Subscription_Response {
