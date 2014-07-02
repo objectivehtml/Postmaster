@@ -81,6 +81,16 @@ class Campaign_postmaster_delegate extends Postmaster_base_delegate {
 				return $this->EE->TMPL->tagdata;
 			}
 
+			if($no_results_prefix = $this->param('no_results_prefix'))
+			{
+				if(preg_match('/\\'.LD.'if '.$no_results_prefix.'no_results\\'.RD.'.*\\'.LD.'\\/if\\'.RD.'/us', $this->EE->TMPL->tagdata, $matches))
+				{
+					$this->EE->TMPL->no_results = $this->EE->TMPL->parse_variables_row($matches[0], array(
+						$no_results_prefix.'no_results' => 1
+					));
+				}
+			}
+
 			return $this->EE->TMPL->no_results();
 		}
 		
