@@ -56,7 +56,7 @@ class Cartthrob_on_authorize_postmaster_hook extends Base_hook {
 		return $obj;
 	}
 	
-	public function post_process()
+	public function post_process($vars = array())
 	{
 		$responses = $this->responses;
 

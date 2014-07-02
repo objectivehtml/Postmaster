@@ -13,7 +13,7 @@ class Cartthrob_on_processing_postmaster_hook extends Cartthrob_on_authorize_pos
 
 	protected $order;
 	 
-	public function post_process()
+	public function post_process($vars = array())
 	{
 		$responses = $this->responses;
 
