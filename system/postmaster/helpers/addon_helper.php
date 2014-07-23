@@ -6,8 +6,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Objective HTML
  * @link 		http://www.objectivehtml.com/
- * @version		1.0.1
- * @build		20130619
+ * @version		1.0.2
+ * @build		20140723
  */
 
 ee()->load->helper('url_helper');
@@ -91,8 +91,8 @@ if(!function_exists('page_url'))
 		{
 			$get = '?'.http_build_query($_GET);
 		}
-		
-		return rtrim($base_url . $port, '/') . $uri . $get;
+
+		return rtrim($base_url, '/') . $uri . $get;
 	}
 }
 
