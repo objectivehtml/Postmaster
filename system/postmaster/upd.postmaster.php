@@ -142,6 +142,11 @@ class Postmaster_upd {
 				'type'       => 'int',
 				'constraint' => 1,
 				'default'    => 0
+			),
+			'match_explicitly' => array(
+				'type'       => 'int',
+				'constraint' => 1,
+				'default'    => 1
 			)
 		),
 		'postmaster_hooks' 	=> array(

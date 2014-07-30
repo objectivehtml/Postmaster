@@ -1015,6 +1015,7 @@ class Postmaster_mcp {
 			'extra_conditionals' => $this->post('extra_conditionals'),
 			'enabled' 			 => $this->post('enabled') == '1' ? 1 : 0,
 			'settings'           => json_encode($this->post('setting')),
+			'match_explicitly'    => $this->post('match_explicitly') == 'true' ? true : false,
 			'send_once'          => (int) $this->post('send_once')
 		);
 
@@ -1028,9 +1029,9 @@ class Postmaster_mcp {
 		require_once APPPATH.'libraries/Template.php';
 
 		$this->EE->TMPL = new EE_Template();
-		
+
 		$queue = $this->EE->postmaster_model->get_email_queue();
-		
+
 		foreach($queue->result() as $row)
 		{
 			$this->EE->postmaster_lib->send_from_queue($row);

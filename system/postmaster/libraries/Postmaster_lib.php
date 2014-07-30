@@ -603,7 +603,7 @@ class Postmaster_lib {
 		
 						if($this->validate_trigger($parcel->trigger))
 						{
-							if($this->validate_categories($entry_data['category'], $parcel->categories))
+							if($this->validate_categories($entry_data['category'], $parcel->categories, $parcel->match_explicitly == '1' ? true : false))
 							{		
 								if($this->validate_member($meta['author_id'], $parcel->member_groups))
 								{		
@@ -686,9 +686,14 @@ class Postmaster_lib {
 	 * @return	bool
 	 */
 	 
-	public function validate_categories($subject, $valid_categories, $type = 'parcel')
+	public function validate_categories($subject, $valid_categories, $match_explicitly = true, $type = 'parcel')
 	{
 		$valid = 0;
+
+		if(is_string($match_explicitly))
+		{
+			$match_explicitly = $match_explicitly == '1' ? true : false;
+		}
 
 		foreach($valid_categories as $category)
 		{
@@ -698,7 +703,7 @@ class Postmaster_lib {
 			}
 		}
 		
-		if(count($valid_categories) == $valid)
+		if($match_explicitly && count($valid_categories) == $valid || !$match_explicitly && $valid > 0)
 		{
 			$valid = TRUE;			
 			//$this->log_action('The parcel has a valid category.');			
