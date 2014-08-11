@@ -140,7 +140,7 @@
 
 				<div style="margin-top:15px">
 					<p><label><input type="checkbox" name="match_explicitly" value="true" <?php if($template->match_explicitly): ?>checked="checked"<?php endif; ?> /> Match categories explicity</label></p>
-					<p><a href="#match_explicitly" class="help">What is the different between explicity matched categories?</a></p>
+					<p><a href="#match_explicitly" class="help">What is the difference between explicity matched categories?</a></p>
 
 
 					<div id="match_explicitly" class="help-text">
