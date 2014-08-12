@@ -695,6 +695,11 @@ class Postmaster_lib {
 			$match_explicitly = $match_explicitly == '1' ? true : false;
 		}
 
+		if(!count($valid_categories))
+		{
+			return TRUE;
+		}
+
 		foreach($valid_categories as $category)
 		{
 			if(count($subject) > 0 && in_array($category->cat_id, $subject))
@@ -702,7 +707,7 @@ class Postmaster_lib {
 				$valid++;
 			}
 		}
-		
+
 		if($match_explicitly && count($valid_categories) == $valid || !$match_explicitly && $valid > 0)
 		{
 			$valid = TRUE;			
@@ -808,6 +813,11 @@ class Postmaster_lib {
 		$valid  = FALSE;
 		$member = $this->EE->channel_data->get_member($subject)->row();
 		
+		if(!count($valid_members))
+		{
+			return true;
+		}
+
 		foreach($valid_members as $valid_member)
 		{
 			if($valid_member->group_id == $member->group_id)
@@ -842,6 +852,11 @@ class Postmaster_lib {
 	public function validate_status($subject, $statuses, $type = 'parcel')
 	{
 		$valid = FALSE;
+
+		if(!count($statuses))
+		{
+			return TRUE;
+		}
 
 		foreach($statuses as $status)
 		{
