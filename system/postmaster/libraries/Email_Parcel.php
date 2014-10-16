@@ -126,7 +126,7 @@ class Email_Parcel {
 		{
 			if(is_object($service))
 			{
-				$settings[$service->name] = $service->default_settings();
+				$settings[$service->get_name()] = $service->default_settings();
 			}
 		}
 
