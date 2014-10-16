@@ -7,13 +7,20 @@ require_once 'Base_notification.php';
 abstract class Postmaster_base_lib extends Base_class {
 	
 	/**
+	 * Base API Directory
+	 * 
+	 * @var string
+	 */
+	 
+	protected $base_dir;
+	
+	/**
 	 * Base File Path
 	 * 
 	 * @var string
 	 */
 	 
 	protected $base_path;
-	
 	
 	/**
 	 * Class Suffix
@@ -56,6 +63,8 @@ abstract class Postmaster_base_lib extends Base_class {
 		parent::__construct($data);
 		
 		$this->EE =& get_instance();
+
+		$this->base_path = PATH_THIRD . 'postmaster/' . $this->base_dir . '/';
 	}
 	
 	
@@ -99,7 +108,6 @@ abstract class Postmaster_base_lib extends Base_class {
 		return $this->get_object(ucfirst(rtrim($this->default_object, '.php')));
 	}
 	
-	
 	/**
 	 * Get the available objects from the directory
 	 *
@@ -119,8 +127,8 @@ abstract class Postmaster_base_lib extends Base_class {
 		{
 			$objects[] = $default_object;
 		}
-		
-		$directory = directory_map($this->base_path);
+
+		$directory = directory_map($this->base_path, 1);
 
 		if(is_array($directory))
 		{
@@ -138,6 +146,32 @@ abstract class Postmaster_base_lib extends Base_class {
 				}
 			}
 		}
+
+		$original_path = $this->base_path;
+
+		foreach(directory_map(PATH_THIRD, 1) as $file)
+		{
+			if($file != 'postmaster')
+			{	
+				$this->base_path = PATH_THIRD . $file . '/postmaster' . '/' . $this->base_dir . '/';
+
+				if(is_dir($this->base_path))
+				{
+					foreach(directory_map($this->base_path, 1) as $file)
+					{
+						if($object = $this->load($file, $params, true))
+						{
+							if(is_object($object))
+							{
+								$objects[] = $object;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		$this->base_path = $original_path;
 		
 		return $objects;
 	}	
@@ -178,7 +212,7 @@ abstract class Postmaster_base_lib extends Base_class {
 	 * @return	mixed
 	 */
 	
-	public function load($file, $params = array())
+	public function load($file, $params = array(), $debug = false)
 	{
 		if(!empty($file))
 		{	

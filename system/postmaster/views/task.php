@@ -63,7 +63,9 @@
 			<select name="task" class="onchange" data-group=".hook-panel" data-default="postmaster_base_hook">
 				<option value="">--</option>
 			<?php foreach($template->tasks() as $task): ?>
-				<option value="<?php echo $task->get_name()?>" <?php if($task->get_name() == $template->task): ?>selected="selected"<? endif; ?>><?php echo $task->get_title()?></option>
+				<option value="<?php echo $task->get_name()?>" <?php if($task->get_name() == $template->task): ?>selected="selected"<?php endif; ?>>
+					<?php echo $task->get_title()?>
+				</option>
 			<?php endforeach; ?>
 			</select>
 				

@@ -276,7 +276,7 @@ class Postmaster_mcp {
 			'ib_path'  => $this->EE->theme_loader->theme_url().'postmaster/javascript/InterfaceBuilder.js',
 			'template' => new Template_Hook($saved_data)
 		);
-		
+
 		$title = 'New Hook';
 		
 		if($this->EE->input->get('id'))
@@ -335,7 +335,7 @@ class Postmaster_mcp {
 			'ib_path'  => $this->EE->theme_loader->theme_url().'postmaster/javascript/InterfaceBuilder.js',
 			'template' => new Template_Task($saved_data)
 		);
-		
+
 		$title = 'New Task';
 		
 		if($this->EE->input->get('id'))
@@ -855,7 +855,7 @@ class Postmaster_mcp {
 			'enabled' 			 => $this->post('enabled') == '1' ? 1 : 0,
 			'settings'           => json_encode($this->post('setting', TRUE))
 		);
-		
+
 		if($this->EE->input->post('id'))
 		{
 			$this->EE->postmaster_model->$method($this->EE->input->post('id'), $parcel);
