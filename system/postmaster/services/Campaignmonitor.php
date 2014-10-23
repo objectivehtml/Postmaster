@@ -136,6 +136,19 @@ class CampaignMonitor_postmaster_service extends Base_service {
 			}
 		}
 
+		foreach($data['post'] as $index => $value)
+		{
+			if(preg_match('/^custom_field\:/', $index))
+			{
+				$key = preg_replace('/^custom_field\:/', '', str_replace('__', ' ', $index));
+
+				$post['CustomFields'][] = (object) array(
+					'Key'   => $key,
+					'Value' => $value
+				);
+			}
+		}
+
 		$post['Resubscribe'] = TRUE;
 
 		$url = $this->api_url('subscribers', $data['id']);
