@@ -920,6 +920,31 @@ class Postmaster_lib {
 	
 		
 	/**
+	 * Get the current hook that is in progress
+	 *
+	 * @access	public
+	 * @return	string
+	 */
+	
+	public function get_hook_in_progress()
+	{
+		$hook = $this->EE->extensions->in_progress;
+
+		if(empty($hook))
+		{
+			$hook = $this->EE->session->cache('postmaster', 'in_progress');
+		}
+
+		if(!$hook)
+		{
+			$hook = '';
+		}
+
+		return $hook;
+	}
+
+	
+	/**
 	 * Log Action
 	 *
 	 * @access	public

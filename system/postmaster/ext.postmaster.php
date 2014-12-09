@@ -30,6 +30,11 @@ class Postmaster_ext {
 	   	$this->EE =& get_instance();
 
         $this->settings = array();
+
+        if(isset($this->EE->extensions->in_progress) && !empty($this->EE->extensions->in_progress))
+        {
+			$this->EE->session->set_cache('postmaster', 'in_progress', $this->EE->extensions->in_progress);
+	    }
     }
 
 	public function settings()
@@ -44,13 +49,13 @@ class Postmaster_ext {
 			'base_path' => PATH_THIRD.'postmaster/hooks/'
 		));
 
-		$hook      = $this->EE->extensions->in_progress;		
+		$hook      = $this->EE->postmaster_lib->get_hook_in_progress();
 		$args      = func_get_args();
 		$responses = $this->EE->postmaster_lib->trigger_task_hook($hook, $args);
 		$return    = $this->EE->postmaster_hook->return_data($responses);
 		
 		$this->EE->extensions->end_script = $this->EE->postmaster_hook->end_script($responses);
-		
+			
 		if($return != 'Undefined')
 		{
 			return $return;
@@ -66,9 +71,8 @@ class Postmaster_ext {
 			'base_path' => PATH_THIRD.'postmaster/hooks/'
 		));
 		
-		$hook      = $this->EE->extensions->in_progress;		
+		$hook      = $this->EE->postmaster_lib->get_hook_in_progress();		
 		$args      = func_get_args();
-
 		$responses = $this->EE->postmaster_lib->trigger_hook($hook, $args);
 		$return    = $this->EE->postmaster_hook->return_data($responses);
 

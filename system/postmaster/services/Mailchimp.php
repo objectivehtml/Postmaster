@@ -378,7 +378,10 @@ MailChimp helps you design email newsletters, share them on social networks, int
 
 		if($info = $this->get_member_info($data['api_key'], $data['id'], $data['email']))
 		{
-			$groupings = $info->merges->GROUPINGS;
+			if(isset($info->merges->GROUPINGS))
+			{
+				$groupings = $info->merges->GROUPINGS;
+			}
 		}
 
 		if(isset($data['post']['group_id']) && isset($data['post']['groups']))
@@ -416,6 +419,16 @@ MailChimp helps you design email newsletters, share them on social networks, int
 		}
 		
 		$params['merge_vars'] = $data['post'];
+
+		if(isset($params['fname']))
+		{
+			$params['merge_vars']['fname'] = $params['fname'];
+		}
+
+		if(isset($params['lname']))
+		{
+			$params['merge_vars']['lname'] = $params['lname'];
+		}
 
 		if(!empty($groupings))
 		{
