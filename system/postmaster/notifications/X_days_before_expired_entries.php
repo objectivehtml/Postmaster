@@ -102,13 +102,20 @@ class X_days_before_expired_entries_postmaster_notification extends Base_notific
 		$stasuses = array();
 		
 		$threshold = strtotime($settings->threshold, $this->EE->localize->now);
-		
+
 		$diff = $this->EE->localize->now - $threshold;
-		
-		$where = array(
-			'expiration_date >'  => $this->EE->localize->now,
-			'expiration_date <=' => $this->EE->localize->now + $diff
-		);
+
+		$where = array('expiration_date >'  => $this->EE->localize->now);
+
+		if($diff >= 0)
+		{
+			$where['expiration_date <='] = $this->EE->localize->now + $diff;
+		}
+		else
+		{
+			$where['expiration_date <='] = $this->EE->localize->now - $diff;
+		}
+
 		
 		if(!empty($settings->status))
 		{
@@ -119,7 +126,7 @@ class X_days_before_expired_entries_postmaster_notification extends Base_notific
 		{
 			$where['channel_titles.channel_id'] = $this->trim_array($channels, 'or ');
 		}
-		
+
 		$entries = $this->EE->channel_data->get_entries(array(
 			'select' => 'postmaster_expired_entries_emails.entry_id IS NOT NULL as \'has_sent\'',
 			'where'  => $where,
@@ -128,7 +135,7 @@ class X_days_before_expired_entries_postmaster_notification extends Base_notific
 			),
 			'left join'  => array('postmaster_expired_entries_emails' => 'channel_titles.entry_id = postmaster_expired_entries_emails.entry_id')
 		));
-		
+
 		foreach($entries->result() as $entry)
 		{	
 			$this->notification = $this->EE->postmaster_lib->append($this->notification, 'entry', $entry);
