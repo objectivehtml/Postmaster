@@ -83,6 +83,7 @@ class ExpressionEngine_postmaster_service extends Base_service {
 			'label' => 'SMTP User'			
 		),
 		'smtp_pass' => array(
+			'type'  => 'password',
 			'id'	=> 'expressionengine_smtp_pass',
 			'label' => 'SMTP Password'			
 		),
