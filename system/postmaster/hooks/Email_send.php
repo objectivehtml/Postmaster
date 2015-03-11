@@ -48,7 +48,7 @@ class Email_send_postmaster_hook extends Base_hook {
 			'reply_to'		=> isset($vars['headers']['Reply-To']) ? $vars['headers']['Reply-To'] : NULL,
 			'cc' 			=> implode(',', $vars['cc_array']),
 			'bcc' 			=> implode(',', $vars['bcc_array']),
-			'subject'       => $vars['subject'],
+			'subject'       => isset($vars['headers']['Subject']) ? $vars['headers']['Subject'] : $vars['subject'],
 			'message'		=> $vars['finalbody'],
 			'finalbody'		=> $vars['finalbody'],
 		);
