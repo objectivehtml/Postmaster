@@ -153,17 +153,20 @@ abstract class Postmaster_base_lib extends Base_class {
 		{
 			if($file != 'postmaster')
 			{	
-				$this->base_path = PATH_THIRD . $file . '/postmaster' . '/' . $this->base_dir . '/';
-
-				if(is_dir($this->base_path))
+				if(is_dir(PATH_THIRD . $file))
 				{
-					foreach(directory_map($this->base_path, 1) as $file)
+					$this->base_path = PATH_THIRD . $file . '/postmaster' . '/' . $this->base_dir . '/';
+
+					if(is_dir($this->base_path))
 					{
-						if($object = $this->load($file, $params, true))
+						foreach(directory_map($this->base_path, 1) as $file)
 						{
-							if(is_object($object))
+							if($object = $this->load($file, $params, true))
 							{
-								$objects[] = $object;
+								if(is_object($object))
+								{
+									$objects[] = $object;
+								}
 							}
 						}
 					}
