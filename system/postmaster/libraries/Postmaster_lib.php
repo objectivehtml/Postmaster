@@ -331,13 +331,13 @@ class Postmaster_lib {
 	private function _route($routes, $args, $type)
 	{
 		$return = array();
-		
+
 		foreach($routes->result_array() as $route)
 		{
-			$path = PATH_THIRD . 'postmaster/' . $route['file'];
+			// $path = PATH_THIRD . 'postmaster/' . $route['file'];
 
-			if(file_exists($path))
-			{	
+			// if(file_exists($path))
+			// {	
 				if($route['type'] == 'hook' || empty($route['type']))
 				{
 					return $this->EE->postmaster_hook->trigger($route['hook'], $args);
@@ -346,52 +346,7 @@ class Postmaster_lib {
 				{
 					return $this->EE->postmaster_task->trigger($route, $args);
 				}
-
-/*
-				if($route['type'] == '')
-				
-
-				$obj = $this->EE->postmaster_routes_model->load($route['class'], $path);
-				$row = $this->EE->postmaster_model->get_hook($route['obj_id'])->row();
-
-				$obj->set_hook($row);
-
-
-				$response = call_user_func_array(array($obj, $route['method']), $args);
-				
-				if(is_null($response))
-				{
-					$response = 'Undefined';
-				}
-				
-				if(!is_object($response))
-				{
-					$response = (object) array(
-						'return_data' => $response,
-						'end_script'  => FALSE
-					);
-				}
-				else
-				{
-					$response = (array) $response;
-					
-					if(!isset($response['return_data']))
-					{
-						$response['return_data'] = 'Undefined';
-					}
-					
-					if(!isset($response['end_script']))
-					{
-						$response['end_script'] = FALSE;
-					}
-					
-					$response = (object) $response;
-				}
-				
-				$return[] = $response;
-		*/
-
-			}
+			// }
 		}
 
 		return $return;

@@ -24,7 +24,7 @@ class Postmaster_mcp {
 	public function __construct()
 	{
 		$this->EE =& get_instance();
-		
+		$this->EE->load->helper('url');
 		$this->EE->load->library('postmaster_lib');
 		$this->EE->load->driver('interface_builder');
 			
@@ -865,7 +865,17 @@ class Postmaster_mcp {
 			$this->EE->postmaster_model->$method($parcel);
 		}
 
-		$this->EE->functions->redirect($this->post('return'));
+		if(version_compare(APP_VER, '2.9.0', '>='))
+		{
+			return $this->EE->functions->redirect(str_replace('&amp;', '&', cp_url('addons_modules/show_module_cp', array(
+				'module' => 'postmaster',
+				'method' => 'index'
+			))));
+		}
+		else
+		{
+			return $this->EE->functions->redirect($this->post('return'));
+		}
 	}
 	
 	public function create_notification_action()
@@ -922,7 +932,17 @@ class Postmaster_mcp {
 			$this->EE->postmaster_model->$method($parcel);
 		}
 		
-		$this->EE->functions->redirect($this->post('return'));
+		if(version_compare(APP_VER, '2.9.0', '>='))
+		{
+			return $this->EE->functions->redirect(str_replace('&amp;', '&', cp_url('addons_modules/show_module_cp', array(
+				'module' => 'postmaster',
+				'method' => 'index'
+			))));
+		}
+		else
+		{
+			return $this->EE->functions->redirect($this->post('return'));
+		}
 	}
 
 	public function create_task_action()
@@ -964,7 +984,17 @@ class Postmaster_mcp {
 			$this->EE->postmaster_model->$method($parcel);
 		}
 		
-		$this->EE->functions->redirect($this->post('return'));
+		if(version_compare(APP_VER, '2.9.0', '>='))
+		{
+			return $this->EE->functions->redirect(str_replace('&amp;', '&', cp_url('addons_modules/show_module_cp', array(
+				'module' => 'postmaster',
+				'method' => 'index'
+			))));
+		}
+		else
+		{
+			return $this->EE->functions->redirect($this->post('return'));
+		}
 	}
 	
 	public function create_parcel_action()
@@ -1018,10 +1048,21 @@ class Postmaster_mcp {
 			'match_explicitly'    => $this->post('match_explicitly') == 'true' ? true : false,
 			'send_once'          => (int) $this->post('send_once')
 		);
+	
+		if(version_compare(APP_VER, '2.9.0', '>='))
+		{
+			return $this->EE->functions->redirect(str_replace('&amp;', '&', cp_url('addons_modules/show_module_cp', array(
+				'module' => 'postmaster',
+				'method' => 'index'
+			))));
+		}
+		else
+		{
+			return $this->EE->functions->redirect($this->post('return'));
+		}
 
 		$this->EE->postmaster_model->$method($parcel, $this->post('id'));
 
-		$this->EE->functions->redirect($this->post('return'));
 	}
 
 	public function send_email()
