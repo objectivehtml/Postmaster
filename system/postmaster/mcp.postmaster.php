@@ -1049,6 +1049,8 @@ class Postmaster_mcp {
 			'send_once'          => (int) $this->post('send_once')
 		);
 	
+		$this->EE->postmaster_model->$method($parcel, $this->post('id'));
+		
 		if(version_compare(APP_VER, '2.9.0', '>='))
 		{
 			return $this->EE->functions->redirect(str_replace('&amp;', '&', cp_url('addons_modules/show_module_cp', array(
@@ -1060,9 +1062,6 @@ class Postmaster_mcp {
 		{
 			return $this->EE->functions->redirect($this->post('return'));
 		}
-
-		$this->EE->postmaster_model->$method($parcel, $this->post('id'));
-
 	}
 
 	public function send_email()
