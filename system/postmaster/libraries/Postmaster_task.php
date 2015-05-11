@@ -6,12 +6,12 @@ require_once 'Postmaster_base_lib.php';
 class Postmaster_task extends Postmaster_base_lib {
 	
 	/**
-	 * Base File Path
+	 * Base API Directory
 	 * 
 	 * @var string
 	 */
 	 
-	protected $base_path = '../tasks';
+	protected $base_dir = 'tasks';
 	
 	
 	/**

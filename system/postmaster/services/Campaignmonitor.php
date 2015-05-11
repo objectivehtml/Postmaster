@@ -129,10 +129,33 @@ class CampaignMonitor_postmaster_service extends Base_service {
 
 			foreach($data['post']['custom_fields'] as $key => $value)
 			{
-				$post['CustomFields'][] = (object) array(
-					'Key'   => $key,
-					'Value' => $value
-				);
+				$values = explode('||', $value);
+
+				foreach($values as $value)
+				{
+					$post['CustomFields'][] = (object) array(
+						'Key'   => $key,
+						'Value' => $value
+					);
+				}
+			}
+		}
+
+		foreach($data['post'] as $index => $value)
+		{
+			if(preg_match('/^custom_field\:/', $index))
+			{
+				$key = preg_replace('/^custom_field\:/', '', str_replace('__', ' ', $index));
+
+				$values = explode('||', $value);
+
+				foreach($values as $value)
+				{
+					$post['CustomFields'][] = (object) array(
+						'Key'   => $key,
+						'Value' => $value
+					);
+				}
 			}
 		}
 

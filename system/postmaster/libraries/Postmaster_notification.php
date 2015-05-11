@@ -6,12 +6,12 @@ require_once 'Postmaster_base_lib.php';
 class Postmaster_notification extends Postmaster_base_lib {
 	
 	/**
-	 * Base File Path
+	 * Base API Directory
 	 * 
 	 * @var string
 	 */
 	 
-	protected $base_path = '../notifications';
+	protected $base_dir = 'notifications';
 	
 	
 	/**

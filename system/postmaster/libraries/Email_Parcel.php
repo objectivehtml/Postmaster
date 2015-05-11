@@ -47,14 +47,15 @@ class Email_Parcel {
 			$trigger,
 			$enabled = TRUE,
 			$site_id,
-			$send_once = FALSE;
+			$send_once = FALSE,
+			$match_explicitly = TRUE;
 
 	public 	$channels, $channel_array;
 
 	public function __construct($parcel = FALSE)
 	{
 		$this->EE =& get_instance();
-		
+
 		$this->site_id         = config_item('site_id');
 		$this->trigger 		   = array();
 		$this->channels        = $this->EE->channel_data->get_channels(array('where' => array(
@@ -125,7 +126,7 @@ class Email_Parcel {
 		{
 			if(is_object($service))
 			{
-				$settings[$service->name] = $service->default_settings();
+				$settings[$service->get_name()] = $service->default_settings();
 			}
 		}
 

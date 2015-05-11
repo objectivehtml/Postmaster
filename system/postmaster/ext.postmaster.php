@@ -30,6 +30,11 @@ class Postmaster_ext {
 	   	$this->EE =& get_instance();
 
         $this->settings = array();
+
+        if(isset($this->EE->extensions->in_progress) && !empty($this->EE->extensions->in_progress))
+        {
+			$this->EE->session->set_cache('postmaster', 'in_progress', $this->EE->extensions->in_progress);
+	    }
     }
 
 	public function settings()
@@ -44,7 +49,7 @@ class Postmaster_ext {
 			'base_path' => PATH_THIRD.'postmaster/hooks/'
 		));
 
-		$hook      = $this->EE->extensions->in_progress;		
+		$hook      = $this->EE->postmaster_lib->get_hook_in_progress();
 		$args      = func_get_args();
 		$responses = $this->EE->postmaster_lib->trigger_task_hook($hook, $args);
 		$return    = $this->EE->postmaster_hook->return_data($responses);
@@ -56,7 +61,7 @@ class Postmaster_ext {
 			return $return;
 		}
 		
-		return NULL;
+		return;
 	}
 	
 	public function trigger_hook()
@@ -66,9 +71,8 @@ class Postmaster_ext {
 			'base_path' => PATH_THIRD.'postmaster/hooks/'
 		));
 		
-		$hook      = $this->EE->extensions->in_progress;		
+		$hook      = $this->EE->postmaster_lib->get_hook_in_progress();		
 		$args      = func_get_args();
-
 		$responses = $this->EE->postmaster_lib->trigger_hook($hook, $args);
 		$return    = $this->EE->postmaster_hook->return_data($responses);
 
@@ -79,7 +83,7 @@ class Postmaster_ext {
 			return $return;
 		}
 		
-		return NULL;
+		return;
 	}
 		
 	public function route_hook()
@@ -105,7 +109,7 @@ class Postmaster_ext {
 	}
 	
 	public function entry_submission_end($entry_id, $meta, $data)
-	{	
+	{			
 		$this->EE->load->library('postmaster_lib');		
 		
 		$this->EE->postmaster_lib->validate_channel_entry($entry_id, $meta, $data);

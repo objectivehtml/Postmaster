@@ -63,7 +63,9 @@
 			<select name="task" class="onchange" data-group=".hook-panel" data-default="postmaster_base_hook">
 				<option value="">--</option>
 			<?php foreach($template->tasks() as $task): ?>
-				<option value="<?php echo $task->get_name()?>" <?php if($task->get_name() == $template->task): ?>selected="selected"<? endif; ?>><?php echo $task->get_title()?></option>
+				<option value="<?php echo $task->get_name()?>" <?php if($task->get_name() == $template->task): ?>selected="selected"<?php endif; ?>>
+					<?php echo $task->get_title()?>
+				</option>
 			<?php endforeach; ?>
 			</select>
 				
@@ -85,43 +87,7 @@
 			</div>
 
 		</div>
-		
-		<!--	
-		<div class="margin-top service clear">
-		
-			<h2><a href="#email_service" class="help">Email Service <span>(?)</span></a></h2>
-
-			<div class="help-text" id="email_service">
-				<h2>Email Service</h2>
-				<p>This is the method used to send an email. By default, ExpressionEngine is used to send email. This can be simple and effective for some. But to reliably send emails to thousands of people, you will need to use a third-party service.
-			</div>
-			
-			<select name="service" id="service" class="onchange" data-group=".service-panel">			
-			<?php foreach($template->services() as $service): ?>
-				<option value="<?php echo $service->name ?>" <?php if($template->service == $service->name): ?>selected="selected"<?php endif; ?>><?php echo $service->name ?></option>
-			<?php endforeach; ?>
-			</select>
-
-
-			<div class="service-panels">
-			
-				<?php foreach($template->services() as $service): ?>
-				<div class="service-panel" id="<?php echo $service->name ?>_panel">
-	
-					<h3><?php echo $service->name ?> Settings</h3>
-	
-					<?php echo $service->description ?>
-	
-					<?php echo $service->display_settings($template->settings, $template) ?>
-	
-				</div>
-				<?php endforeach; ?>
 				
-			</div>
-
-		</div>
-		-->
-		
 		<input type="hidden" name="id" value="<?php echo $template->id?>" />
 		<input type="hidden" name="site_id" value="<?php echo $template->site_id?>" />
 		<input type="hidden" name="return" value="<?php echo $template->return?>" />
@@ -132,10 +98,10 @@
 	
 </form>
 
+<?php if(version_compare(APP_VER, '2.8.0', '<')): ?>
 <script type="text/javascript">
-
 	Postmaster.editorSettings = <?php echo $template->editor_settings?>;
 	Postmaster.settings       = <?php echo json_encode($template->settings)?>;
 	Postmaster.parser		  = '<?php echo $template->parser_url?>';
-
 </script>
+<?php endif; ?>

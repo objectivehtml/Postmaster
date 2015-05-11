@@ -28,7 +28,7 @@ class ExpressionEngine_postmaster_service extends Base_service {
 		'smtp_user' 		=> '',
 		'smtp_pass'			=> '',
 		'smtp_port' 		=> '',
-		'smtp_timeout' 		=> '',
+		'smtp_timeout' 		=> '5',
 		'smtp_wordwrap' 	=> '',
 		'wordwrap'			=> TRUE,
 		'wrapchars'			=> 76,
@@ -83,6 +83,7 @@ class ExpressionEngine_postmaster_service extends Base_service {
 			'label' => 'SMTP User'			
 		),
 		'smtp_pass' => array(
+			'type'  => 'password',
 			'id'	=> 'expressionengine_smtp_pass',
 			'label' => 'SMTP Password'			
 		),

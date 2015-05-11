@@ -80,8 +80,7 @@ class Postmaster_upd {
 				'constraint' => 250
 			),
 			'statuses' => array(
-				'type'	=> 'varchar',
-				'constraint' => 100
+				'type'	=> 'text'
 			),
 			'to_name' => array(
 				'type'	=> 'text'
@@ -143,6 +142,11 @@ class Postmaster_upd {
 				'type'       => 'int',
 				'constraint' => 1,
 				'default'    => 0
+			),
+			'match_explicitly' => array(
+				'type'       => 'int',
+				'constraint' => 1,
+				'default'    => 1
 			)
 		),
 		'postmaster_hooks' 	=> array(
@@ -472,8 +476,7 @@ class Postmaster_upd {
 				'type'	=> 'longtext'
 			),
 			'status'  => array(
-				'type'       => 'varchar',
-				'constraint' => 250
+				'type'       => 'text'
 			),
 			'parcel'  => array(
 				'type'       => 'longtext'

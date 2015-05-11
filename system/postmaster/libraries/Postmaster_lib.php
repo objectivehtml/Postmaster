@@ -166,7 +166,7 @@ class Postmaster_lib {
 		$parsed_object = $this->convert_array($parsed_object);
 		$send_date     = $parsed_object->post_date_specific;
 
-		$send_date     = !empty($send_date) ? strtotime($send_date) : time();
+		$send_date     = !empty($send_date) ? $this->strtotime($send_date) : time();
 		
 		if(!empty($parsed_object->post_date_relative))
 		{
@@ -331,13 +331,13 @@ class Postmaster_lib {
 	private function _route($routes, $args, $type)
 	{
 		$return = array();
-		
+
 		foreach($routes->result_array() as $route)
 		{
-			$path = PATH_THIRD . 'postmaster/' . $route['file'];
+			// $path = PATH_THIRD . 'postmaster/' . $route['file'];
 
-			if(file_exists($path))
-			{	
+			// if(file_exists($path))
+			// {	
 				if($route['type'] == 'hook' || empty($route['type']))
 				{
 					return $this->EE->postmaster_hook->trigger($route['hook'], $args);
@@ -346,52 +346,7 @@ class Postmaster_lib {
 				{
 					return $this->EE->postmaster_task->trigger($route, $args);
 				}
-
-/*
-				if($route['type'] == '')
-				
-
-				$obj = $this->EE->postmaster_routes_model->load($route['class'], $path);
-				$row = $this->EE->postmaster_model->get_hook($route['obj_id'])->row();
-
-				$obj->set_hook($row);
-
-
-				$response = call_user_func_array(array($obj, $route['method']), $args);
-				
-				if(is_null($response))
-				{
-					$response = 'Undefined';
-				}
-				
-				if(!is_object($response))
-				{
-					$response = (object) array(
-						'return_data' => $response,
-						'end_script'  => FALSE
-					);
-				}
-				else
-				{
-					$response = (array) $response;
-					
-					if(!isset($response['return_data']))
-					{
-						$response['return_data'] = 'Undefined';
-					}
-					
-					if(!isset($response['end_script']))
-					{
-						$response['end_script'] = FALSE;
-					}
-					
-					$response = (object) $response;
-				}
-				
-				$return[] = $response;
-		*/
-
-			}
+			// }
 		}
 
 		return $return;
@@ -603,7 +558,7 @@ class Postmaster_lib {
 		
 						if($this->validate_trigger($parcel->trigger))
 						{
-							if($this->validate_categories($entry_data['category'], $parcel->categories))
+							if($this->validate_categories($entry_data['category'], $parcel->categories, $parcel->match_explicitly == '1' ? true : false))
 							{		
 								if($this->validate_member($meta['author_id'], $parcel->member_groups))
 								{		
@@ -686,9 +641,19 @@ class Postmaster_lib {
 	 * @return	bool
 	 */
 	 
-	public function validate_categories($subject, $valid_categories, $type = 'parcel')
+	public function validate_categories($subject, $valid_categories, $match_explicitly = true, $type = 'parcel')
 	{
 		$valid = 0;
+
+		if(is_string($match_explicitly))
+		{
+			$match_explicitly = $match_explicitly == '1' ? true : false;
+		}
+
+		if(!count($valid_categories))
+		{
+			return TRUE;
+		}
 
 		foreach($valid_categories as $category)
 		{
@@ -697,8 +662,8 @@ class Postmaster_lib {
 				$valid++;
 			}
 		}
-		
-		if(count($valid_categories) == $valid)
+
+		if($match_explicitly && count($valid_categories) == $valid || !$match_explicitly && $valid > 0)
 		{
 			$valid = TRUE;			
 			//$this->log_action('The parcel has a valid category.');			
@@ -803,6 +768,11 @@ class Postmaster_lib {
 		$valid  = FALSE;
 		$member = $this->EE->channel_data->get_member($subject)->row();
 		
+		if(!count($valid_members))
+		{
+			return true;
+		}
+
 		foreach($valid_members as $valid_member)
 		{
 			if($valid_member->group_id == $member->group_id)
@@ -837,6 +807,11 @@ class Postmaster_lib {
 	public function validate_status($subject, $statuses, $type = 'parcel')
 	{
 		$valid = FALSE;
+
+		if(!count($statuses))
+		{
+			return TRUE;
+		}
 
 		foreach($statuses as $status)
 		{
@@ -899,6 +874,31 @@ class Postmaster_lib {
 	}	
 	
 		
+	/**
+	 * Get the current hook that is in progress
+	 *
+	 * @access	public
+	 * @return	string
+	 */
+	
+	public function get_hook_in_progress()
+	{
+		$hook = $this->EE->extensions->in_progress;
+
+		if(empty($hook))
+		{
+			$hook = $this->EE->session->cache('postmaster', 'in_progress');
+		}
+
+		if(!$hook)
+		{
+			$hook = '';
+		}
+
+		return $hook;
+	}
+
+	
 	/**
 	 * Log Action
 	 *

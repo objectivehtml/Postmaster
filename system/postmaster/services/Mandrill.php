@@ -131,14 +131,18 @@ class Mandrill_postmaster_service extends Base_service {
 		
 		foreach(explode(',', $parsed_object->to_email) as $index => $to_email)
 		{
+			$name = null;
+
 			if(isset($to_names[$index]))
 			{
-				$to[] = (object) array(
-					'email' => $to_email,
-					'name'  => $to_names[$index],
-					'type'  => 'to'
-				);
-			}	
+				$name = $to_names[$index];
+			}
+
+			$to[] = (object) array(
+				'email' => $to_email,
+				'name'  => $name,
+				'type'  => 'to'
+			);
 		}
 
 		if(!empty($parsed_object->cc))
@@ -206,6 +210,8 @@ class Mandrill_postmaster_service extends Base_service {
 		{
 			$post['bcc_address'] = $parsed_object->bcc;
 		}
+
+		$this->curl->ssl(FALSE);
 
 		$response = $this->curl->simple_post($this->url, $post);
 		

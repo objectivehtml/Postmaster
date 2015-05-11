@@ -6,12 +6,12 @@ require_once 'Postmaster_base_lib.php';
 class Postmaster_service extends Postmaster_base_lib {
 	
 	/**
-	 * Base File Path
+	 * Base API Directory
 	 * 
 	 * @var string
 	 */
 	 
-	protected $base_path = '../services';
+	protected $base_dir = 'services';
 	
 	
 	/**
@@ -49,23 +49,7 @@ class Postmaster_service extends Postmaster_base_lib {
 	 
 	protected $class_suffix = '_postmaster_service';
 	
-	
-	/**
-	 * Construct
-	 *
-	 * @access	public
-	 * @param	array 	Dynamically set properties
-	 * @return	void
-	 */
-	
-	public function __construct($data = array())
-	{
-		$this->base_path = PATH_THIRD . 'postmaster/services/';
-		
-		parent::__construct($data);
-	}
-	
-	
+
 	/**
 	 * Get a single service from the directory
 	 *

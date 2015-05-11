@@ -6,14 +6,14 @@ require_once 'Postmaster_base_lib.php';
 class Postmaster_hook extends Postmaster_base_lib {
 	
 	/**
-	 * Base File Path
+	 * Base API Directory
 	 * 
 	 * @var string
 	 */
 	 
-	protected $base_path = '../hooks';
+	protected $base_dir = 'hooks';
 	
-	
+
 	/**
 	 * Hooks
 	 * 

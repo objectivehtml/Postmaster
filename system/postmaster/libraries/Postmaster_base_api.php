@@ -249,7 +249,7 @@ abstract class Postmaster_base_api extends Postmaster_core {
 	 * @param	array	An array of custom variables to parse
 	 * @param	mixed 	An array of member data. If FALSE, default is used
 	 * @param	mixed 	If 'Undefined', NULL is returned, otherwise the
-	 					the passed value is returned
+	 *					the passed value is returned
 	 * @return	
 	 */
 	 	

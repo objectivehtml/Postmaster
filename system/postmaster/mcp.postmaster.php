@@ -24,7 +24,7 @@ class Postmaster_mcp {
 	public function __construct()
 	{
 		$this->EE =& get_instance();
-		
+		$this->EE->load->helper('url');
 		$this->EE->load->library('postmaster_lib');
 		$this->EE->load->driver('interface_builder');
 			
@@ -73,17 +73,34 @@ class Postmaster_mcp {
 				))->result_array();
 			}
 			
-			$this->EE->cp->add_to_head('
-			<script type="text/javascript">
-				var Postmaster = {
-					channels: '.json_encode($channels).',
-					categories: '.json_encode($categories).',
-					statuses: '.json_encode($statuses).',
-					groups: '.json_encode($member_groups).',
-					fields: '.json_encode($fields).',
-					entries: '.json_encode($entries).'
-				}
-			</script>');
+			if(version_compare(APP_VER, '2.8.0', '>='))
+			{
+				$this->EE->cp->add_to_foot('
+				<script type="text/javascript">
+					var Postmaster = {
+						channels: '.json_encode($channels).',
+						categories: '.json_encode($categories).',
+						statuses: '.json_encode($statuses).',
+						groups: '.json_encode($member_groups).',
+						fields: '.json_encode($fields).',
+						entries: '.json_encode($entries).'
+					}
+				</script>');
+			}
+			else
+			{
+				$this->EE->cp->add_to_head('
+				<script type="text/javascript">
+					var Postmaster = {
+						channels: '.json_encode($channels).',
+						categories: '.json_encode($categories).',
+						statuses: '.json_encode($statuses).',
+						groups: '.json_encode($member_groups).',
+						fields: '.json_encode($fields).',
+						entries: '.json_encode($entries).'
+					}
+				</script>');
+			}
 		}
 	}
 	
@@ -220,7 +237,18 @@ class Postmaster_mcp {
 			'&larr; Back to Home'  => $this->cp_url('index'),
 			'Text Editor Settings' => $this->cp_url('editor_settings'),
 		));
-				
+			
+		if(version_compare(APP_VER, '2.8.0', '>='))
+		{
+			$this->EE->cp->add_to_foot(
+				'<script type="text/javascript">
+					Postmaster.editorSettings = '.$vars['template']->editor_settings.';
+					Postmaster.settings       = '.json_encode($vars['template']->settings).'
+					Postmaster.parser		  = "'.$vars['template']->parser_url.'";
+				</script>'
+			);
+		}
+			
 		return $this->EE->load->view('notification', $vars, TRUE);
 	}
 	
@@ -248,7 +276,7 @@ class Postmaster_mcp {
 			'ib_path'  => $this->EE->theme_loader->theme_url().'postmaster/javascript/InterfaceBuilder.js',
 			'template' => new Template_Hook($saved_data)
 		);
-		
+
 		$title = 'New Hook';
 		
 		if($this->EE->input->get('id'))
@@ -270,6 +298,17 @@ class Postmaster_mcp {
 			'Text Editor Settings' => $this->cp_url('editor_settings'),
 		));
 		
+		if(version_compare(APP_VER, '2.8.0', '>='))
+		{
+			$this->EE->cp->add_to_foot(
+				'<script type="text/javascript">
+					Postmaster.editorSettings = '.$vars['template']->editor_settings.';
+					Postmaster.settings       = '.json_encode($vars['template']->settings).'
+					Postmaster.parser		  = "'.$vars['template']->parser_url.'";
+				</script>'
+			);
+		}
+
 		return $this->EE->load->view('hook', $vars, TRUE);
 	}
 	
@@ -296,7 +335,7 @@ class Postmaster_mcp {
 			'ib_path'  => $this->EE->theme_loader->theme_url().'postmaster/javascript/InterfaceBuilder.js',
 			'template' => new Template_Task($saved_data)
 		);
-		
+
 		$title = 'New Task';
 		
 		if($this->EE->input->get('id'))
@@ -318,6 +357,17 @@ class Postmaster_mcp {
 			'Text Editor Settings' => $this->cp_url('editor_settings'),
 		));
 		
+		if(version_compare(APP_VER, '2.8.0', '>='))
+		{
+			$this->EE->cp->add_to_foot(
+				'<script type="text/javascript">
+					Postmaster.editorSettings = '.$vars['template']->editor_settings.';
+					Postmaster.settings       = '.json_encode($vars['template']->settings).'
+					Postmaster.parser		  = "'.$vars['template']->parser_url.'";
+				</script>'
+			);
+		}
+
 		return $this->EE->load->view('task', $vars, TRUE);
 	}
 	
@@ -664,6 +714,17 @@ class Postmaster_mcp {
 			'Text Editor Settings' => $this->cp_url('editor_settings'),
 		));
 
+		if(version_compare(APP_VER, '2.8.0', '>='))
+		{
+			$this->EE->cp->add_to_foot(
+				'<script type="text/javascript">
+					Postmaster.editorSettings = '.$vars['template']->editor_settings.';
+					Postmaster.settings       = '.json_encode($vars['template']->settings).'
+					Postmaster.parser		  = "'.$vars['template']->parser_url.'";
+				</script>'
+			);
+		}
+		
 		return $this->EE->load->view('template', $vars, TRUE);
 	}
 
@@ -722,6 +783,17 @@ class Postmaster_mcp {
 			'&larr; Back to Home' => $this->cp_url('index'),
 			'Text Editor Settings' => $this->cp_url('editor_settings'),
 		));
+
+		if(version_compare(APP_VER, '2.8.0', '>='))
+		{
+			$this->EE->cp->add_to_foot(
+				'<script type="text/javascript">
+					Postmaster.editorSettings = '.$vars['template']->editor_settings.';
+					Postmaster.settings       = '.json_encode($vars['template']->settings).'
+					Postmaster.parser		  = "'.$vars['template']->parser_url.'";
+				</script>'
+			);
+		}
 
 		return $this->EE->load->view('template', $vars, TRUE);
 	}
@@ -783,7 +855,7 @@ class Postmaster_mcp {
 			'enabled' 			 => $this->post('enabled') == '1' ? 1 : 0,
 			'settings'           => json_encode($this->post('setting', TRUE))
 		);
-		
+
 		if($this->EE->input->post('id'))
 		{
 			$this->EE->postmaster_model->$method($this->EE->input->post('id'), $parcel);
@@ -793,7 +865,17 @@ class Postmaster_mcp {
 			$this->EE->postmaster_model->$method($parcel);
 		}
 
-		$this->EE->functions->redirect($this->post('return'));
+		if(version_compare(APP_VER, '2.9.0', '>='))
+		{
+			return $this->EE->functions->redirect(str_replace('&amp;', '&', cp_url('addons_modules/show_module_cp', array(
+				'module' => 'postmaster',
+				'method' => 'index'
+			))));
+		}
+		else
+		{
+			return $this->EE->functions->redirect($this->post('return'));
+		}
 	}
 	
 	public function create_notification_action()
@@ -850,7 +932,17 @@ class Postmaster_mcp {
 			$this->EE->postmaster_model->$method($parcel);
 		}
 		
-		$this->EE->functions->redirect($this->post('return'));
+		if(version_compare(APP_VER, '2.9.0', '>='))
+		{
+			return $this->EE->functions->redirect(str_replace('&amp;', '&', cp_url('addons_modules/show_module_cp', array(
+				'module' => 'postmaster',
+				'method' => 'index'
+			))));
+		}
+		else
+		{
+			return $this->EE->functions->redirect($this->post('return'));
+		}
 	}
 
 	public function create_task_action()
@@ -892,7 +984,17 @@ class Postmaster_mcp {
 			$this->EE->postmaster_model->$method($parcel);
 		}
 		
-		$this->EE->functions->redirect($this->post('return'));
+		if(version_compare(APP_VER, '2.9.0', '>='))
+		{
+			return $this->EE->functions->redirect(str_replace('&amp;', '&', cp_url('addons_modules/show_module_cp', array(
+				'module' => 'postmaster',
+				'method' => 'index'
+			))));
+		}
+		else
+		{
+			return $this->EE->functions->redirect($this->post('return'));
+		}
 	}
 	
 	public function create_parcel_action()
@@ -943,12 +1045,23 @@ class Postmaster_mcp {
 			'extra_conditionals' => $this->post('extra_conditionals'),
 			'enabled' 			 => $this->post('enabled') == '1' ? 1 : 0,
 			'settings'           => json_encode($this->post('setting')),
+			'match_explicitly'    => $this->post('match_explicitly') == 'true' ? true : false,
 			'send_once'          => (int) $this->post('send_once')
 		);
-
+	
 		$this->EE->postmaster_model->$method($parcel, $this->post('id'));
-
-		$this->EE->functions->redirect($this->post('return'));
+		
+		if(version_compare(APP_VER, '2.9.0', '>='))
+		{
+			return $this->EE->functions->redirect(str_replace('&amp;', '&', cp_url('addons_modules/show_module_cp', array(
+				'module' => 'postmaster',
+				'method' => 'index'
+			))));
+		}
+		else
+		{
+			return $this->EE->functions->redirect($this->post('return'));
+		}
 	}
 
 	public function send_email()
@@ -956,9 +1069,9 @@ class Postmaster_mcp {
 		require_once APPPATH.'libraries/Template.php';
 
 		$this->EE->TMPL = new EE_Template();
-		
+
 		$queue = $this->EE->postmaster_model->get_email_queue();
-		
+
 		foreach($queue->result() as $row)
 		{
 			$this->EE->postmaster_lib->send_from_queue($row);

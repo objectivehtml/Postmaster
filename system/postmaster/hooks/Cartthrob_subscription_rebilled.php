@@ -23,7 +23,7 @@ class Cartthrob_subscription_rebilled_postmaster_hook extends Base_hook {
 		return parent::send($subscription, $member);
 	}
 	
-	public function post_process()
+	public function post_process($vars = array())
 	{
 		$responses = $this->responses;
 		

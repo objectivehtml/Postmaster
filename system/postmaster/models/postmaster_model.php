@@ -281,6 +281,7 @@ class Postmaster_model extends CI_Model {
 		$this->load->library('postmaster_task', array(
 			'base_path' => PATH_THIRD.'postmaster/tasks/'
 		));
+		
 		$this->load->model('postmaster_routes_model');
 
 		$obj = $this->postmaster_task->load($task['task']);
@@ -592,7 +593,7 @@ class Postmaster_model extends CI_Model {
 		{
 			$start = time();
 		}
-		
+
 		$this->db->where('send_date <=', date('Y-m-d H:i:s', $this->postmaster_lib->strtotime($start)));
 
 		if($end)

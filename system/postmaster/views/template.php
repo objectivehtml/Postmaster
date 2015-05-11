@@ -138,6 +138,21 @@
 				<?php endif; ?>
 				</div>
 
+				<div style="margin-top:15px">
+					<p><label><input type="checkbox" name="match_explicitly" value="true" <?php if($template->match_explicitly): ?>checked="checked"<?php endif; ?> /> Match categories explicity</label></p>
+					<p><a href="#match_explicitly" class="help">What is the difference between explicity matched categories?</a></p>
+
+
+					<div id="match_explicitly" class="help-text">
+						
+						<h2>Match Categories Explicity</h2>
+
+						<p>By default, Postmaster will validate any entry with categories to match the categories in the parcel explicitly. If categories aren't explicity matched, an entry will be valid if just one category is matching one of the categories in the parcel.</p>
+						
+					</div>
+
+				</div>
+
 			</li>
 			<li class="statuses container">
 
@@ -396,10 +411,10 @@
 	
 </form>
 
+<?php if(version_compare(APP_VER, '2.8.0', '<')): ?>
 <script type="text/javascript">
-
 	Postmaster.editorSettings = <?php echo $template->editor_settings?>;
 	Postmaster.settings       = <?php echo json_encode($template->settings)?>;
 	Postmaster.parser		  = '<?php echo $template->parser_url?>';
-
 </script>
+<?php endif; ?>

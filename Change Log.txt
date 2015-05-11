@@ -5,9 +5,39 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2014, Objective HTML
  * @link 		http://www.objectivehtml.com/postmaster
- * @version		1.4.7
- * @build		20140508
+ * @version		1.5.0
+ * @build		20140812
  */
+
+#### 1.5.0
+##### 08/12/2014
+
+- (Feature) Added new Mailchimp Segment service and Mailchimp Member Subscribe Tasks
+- (Feature) Added a new Task that will allow channel entries to generate "subscriber" groups in MC. So the author of the entry can then have other subscribers in a group within MC.
+- (Feature) Added new update_member_form tag to update the Mailchimp list member profile
+- (Feature) Added a new no_results_prefix to the is_subscribed tag
+- (Feature) Added new Zoo Visitor Mailchimp Sync
+- (Feature) Added new feature to not match categories explicitly when validating an entry's category.
+- (Feature) Added new Zoo Visitor CP Register End hook
+- (Feature) Added new Zoo Visitor CP Update End hook
+- (Feature) Changed the way member groups, categories, and statuses are validated. Now if no member group, category, or status is specified in the parcel, the respective conditional will always be validated as TRUE instead of FALSE. This makes it so you don't have to specify a member group anymore, but rather only validate on that conditional if something has been specified.
+- (Bug Fix) Fixed an issue with specific dates not working if a timestamp was passed
+- (Bug Fix) Fixed some deprecation errors for 2.8+, removed the add_to_head() method references
+- (Bug Fix) Fixed a bug with the double_optin function with the MC subscribe feature
+- (Bug Fix) Fixed a bug with the update_existing function with the MC subscribe feature
+- (Bug Fix) Fixed a minor issue with certain MC features not working 100%
+- (Bug Fix) Fixed an issue that would cause errors when updating
+- (Bug Fix) Fixed some issue that would cause the preview to not work in 2.8.x
+- (Bug Fix) Updated the Channel Data template parser to fix some parsing issues in 2.8+
+- (Bug Fix) Added ability for is_subscribed feature to test for subscribers within a specific group/segment in Mailchimp
+- (Bug Fix) Fixed an issue that would cause windows servers to throw an SSL error when trying to use Mandrill.
+- (Bug Fix) Made global logged_in_x variables parse with the Base_delegate class
+- (Bug Fix) Fixed an issue with the item options not parsing correctly in the CT Authorize hook
+- (Bug Fix) Fixed an issue with the status columns not being consistent data types. Changed form VARCHAR (100) to TEXT.
+- (Bug Fix) Fixed an issue with the strict method declarations causing PHP errors
+- (Bug Fix) Fixed an issue with the SMTP timeout variable not getting a default value, which could prevent emails from getting sent using SMTP if no value was set.
+- (Bug Fix) Fixed an issue with port being output twice in form action url's
+- (Bug Fix) Fixed an issue with sending to multiple emails with the Mandrill email service
 
 #### 1.4.7
 ##### 05/08/2014
