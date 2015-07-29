@@ -1,0 +1,595 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+/**
+ * MailChimp
+ *
+ * Allows you to email create/send campaigns using MailChimp
+ *
+ * @package		Postmaster
+ * @subpackage	Services
+ * @author		Justin Kimbrell
+ * @copyright	Copyright (c) 2012, Objective HTML
+ * @link 		http://www.objectivehtml.com/postmaster
+ * @version		1.1.0
+ * @build		20120610
+ */
+
+if(!class_exists('Newsletter_Subscription_Response'))
+{
+	require_once PATH_THIRD . 'postmaster/delegates/Campaign.php';
+}
+
+class Mailchimp_v3_postmaster_service extends Base_service {
+
+	public $name = 'Mailchimp_v3';
+	public $url  = '';
+
+	public $default_settings = array(
+		'api_key' => ''
+	);
+	
+	public $fields = array(
+		'api_key' => array(
+			'label' => 'API Key',
+			'id'	=> 'mailchimp_api_key'
+		)
+	);
+
+	public $description = '
+	<p>Easy Email Newsletters
+MailChimp helps you design email newsletters, share them on social networks, integrate with services you already use, and track your results. It\'s like your own personal publishing platform.</p>
+
+	<h4>Links</h4>
+
+	<ul>
+		<li><a href="http://mailchimp.com/features/">Feature</a></li>
+		<li><a href="http://mailchimp.com/pricing/">Pricing</a></li>
+		<li><a href="http://kb.mailchimp.com/">Support</a></li>
+		<li><a href="https://login.mailchimp.com/">Login</a></li>
+	</ul>';
+
+	public function __construct()
+	{
+		parent::__construct();
+	}
+
+	public function is_subscribed($params = array())
+	{
+		$url = $this->api_url($params['api_key'], 'lists/'.$params['id'].'/members/'.md5($params['email']));
+
+		$subscriber = $this->_get($url, $params['api_key']);
+
+		if(!$subscriber)
+		{
+			return false;
+		}
+
+		if(isset($params['group_id']))
+		{
+			$group_ids = explode('|', $params['group_id']);
+
+			foreach($subscriber->interests as $group => $is_subscribed)
+			{
+				if(in_array($group, $group_ids) && $is_subscribed)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+
+		return true;
+	}
+	
+	public function get_subscribers($params = array())
+	{
+		return $this->subscribers($params);
+	}
+
+	public function subscribers($params = array())
+	{
+		if(!isset($params['prefix']))
+		{
+			$params['prefix'] = false;
+		}
+
+		$url = $this->api_url($params['api_key'], 'lists/'.$params['id'].'/members');
+
+		$response = $this->_get($url, $params['api_key']);
+
+		$return = array();
+
+		if(is_object($response) && is_array($response->members))
+		{
+			foreach($response->members as $index => $subscriber)
+			{
+				$subscriber->timestamp = strtotime($subscriber->timestamp_signup);
+				
+				$row[$params['prefix'] ? $params['prefix'].':index' : 'index'] = $index;
+				$row[$params['prefix'] ? $params['prefix'].':count' : 'count'] = $index+1;
+				$row[$params['prefix'] ? $params['prefix'].':total' : 'total'] = $response->total_items;
+				$row[$params['prefix'] ? $params['prefix'].':email' : 'email'] = $subscriber->email_address;			
+				$row[$params['prefix'] ? $params['prefix'].':data' : 'data']  =  $this->EE->channel_data->utility->add_prefix($params['prefix'], array((array) $subscriber));
+				
+				$return[$index] = $row;	
+			}
+		}
+
+		return $return;
+	}
+
+	public function send($parsed_object, $parcel)
+	{
+		$response = FALSE;
+		$settings = $this->get_settings();
+
+		if(isset($settings->list_id))
+		{
+			foreach($settings->list_id as $list_id)
+			{
+				$response = $this->create_campaign($list_id, $parsed_object, $parcel);	
+				
+				if(empty($response))
+				{
+					show_error('Something has gone wrong. Your email campaign has not been created.');
+				}
+
+				if(isset($response->error) && isset($response->code))
+				{
+					show_error('Error Code: '.$response->code.' - "'.$response->error.'"');
+				}
+
+				$response = $this->send_campaign($settings->api_key, $response);
+			}
+		}
+
+		return new Postmaster_Service_Response(array(
+			'status'     => $response ? POSTMASTER_SUCCESS : POSTMASTER_FAILED,
+			'parcel_id'  => $parcel->id,
+			'channel_id' => isset($parcel->channel_id) ? $parcel->channel_id : FALSE,
+			'author_id'  => isset($parcel->entry->author_id) ? $parcel->entry->author_id : FALSE,
+			'entry_id'   => isset($parcel->entry->entry_id) ? $parcel->entry->entry_id : FALSE,
+			'gmt_date'   => $this->now,
+			'service'    => $parcel->service,
+			'to_name'    => $parsed_object->to_name,
+			'to_email'   => $parsed_object->to_email,
+			'from_name'  => $parsed_object->from_name,
+			'from_email' => $parsed_object->from_email,
+			'cc'         => $parsed_object->cc,
+			'bcc'        => $parsed_object->bcc,
+			'subject'    => $parsed_object->subject,
+			'message'    => $parsed_object->message,
+			'parcel'     => $parcel
+		));
+	}
+
+	public function update_member($params)
+	{
+		$url = $this->api_url($params['api_key'], 'listUpdateMember', array(
+			'id'	 => $params['id'],
+			'apikey' => $params['api_key']
+		));
+		
+		$response = $this->post($url, $params['api_key'], array(
+			'email_address' => $params['email'],
+			'email_type' => $params['email_type'],
+			'merge_vars' => $params['merge_vars']
+		));
+
+		return $response;
+	}
+	
+	public function display_settings($settings, $parcel)
+	{
+		$html = $this->build_table($settings);
+
+		$html .= '
+		<h3>Mailing Lists</h3>
+		<p>Select all of the following lists in which you want to use to send your campaign. <a href="#" class="mailchimp-refresh">Refresh the List</a></p>';
+
+		$html .= $this->display_mailing_lists($settings, $parcel);
+
+		return $html;
+	}
+
+	public function display_mailing_lists($settings, $parcel)
+	{
+		$settings = $this->get_settings($settings);
+
+		$url = $this->call_url('get_lists');
+
+		$html = "
+		<script type=\"text/javascript\">
+			$(document).ready(function() {
+
+				var url = '$url';
+				
+				$('.service-panel').each(function() {
+					var t = $(this);
+
+					if(t.css('display') != 'none') {
+						t.find('#mailchimp_api_key').blur(function() {
+							t.find('.mailchimp-refresh').click();
+						});
+
+						t.find('.mailchimp-refresh').click(function(e) {
+
+							var apiKey = t.find('#mailchimp_api_key').val();
+
+							$.get(url+'&api_key='+apiKey+'&ajax=1', function(data) {
+								t.find('#mailchimp-lists tbody').html(data);
+							});
+
+							e.preventDefault();
+						});
+					}
+				});
+			});
+		</script>
+
+		<table class=\"mainTable\" id=\"mailchimp-lists\" cellspacing=\"0\" cellpadding=\"0\">
+			<thead>
+				<tr>
+					<th></th>
+					<th>Name</th>
+					<th>Date Created</th>
+					<th>Subscriber Count</th>
+					<th>New Subscriber</th>
+					<th>Campaign Count</th>
+				</tr>
+			</thead>
+			<tbody>";
+
+			$lists = $this->get_lists($settings->api_key);
+
+			$html .= $this->list_rows($lists, $settings);
+
+		$html .= '
+			</tbody>
+		</table>';
+
+		return $html;
+	}
+
+	public function list_rows($lists, $settings)
+	{
+		$html = NULL;
+		
+		if($lists->total_items > 0)
+		{
+			foreach($lists->lists as $list)
+			{
+				$checked = in_array($list->id, isset($settings->list_id) ? $settings->list_id : array()) ? 'checked="checked"' : NULL;
+
+				$html .= '
+				<tr>
+					<td><input type="checkbox" name="setting['.$this->name.'][list_id][]" value="'.$list->id.'" '.$checked.' /></td>
+					<td>'.$list->name.'</td>
+					<td>'.date('F j Y', strtotime($list->date_created)).'</td>
+					<td>'.$list->stats->member_count.'</td>
+					<td>'.$list->stats->member_count_since_send.'</td>
+					<td>'.$list->stats->campaign_count.'</td>
+				</tr>';
+			}
+		}
+		else
+		{
+			$empty_message = 'You have no lists associated with your MailChimp account. If you are sure you have created lists, make sure your API key is correct and <a href="#" class="mailchimp-refresh">Refresh the List</a>.';
+
+			$api_message = 'You have not entered a MailChimp API. Be sure to enter your API key and <a href="#" class="mailchimp-refresh">Refresh the List</a>.';
+
+			$message = !empty($settings->api_key) ? $empty_message : $api_message;
+
+			$html .= '
+			<tr>
+				<td></td>
+				<td colspan="6"><p>'.$message.'</p></td>
+			</tr>';
+		}		
+
+		return $html;
+	}
+
+	public function api_url($api_key, $method, $params = array())
+	{
+		$params['apikey'] = $api_key;
+
+		$url = 'https://<dc>.api.mailchimp.com/3.0/'.$method; //.(count($params) > 0 ? '?' . http_build_query($params) : null);
+		
+		return str_replace('<dc>', substr($api_key, strpos($api_key, '-')+1), $url);
+	}
+
+	public function get_member_info($key, $list_id, $email)
+	{
+		if(strstr($email, '@'))
+		{
+			$email = md5($email);
+		}
+
+		$url = $this->api_url($key, 'lists/'.$list_id.'/members/'.$email);
+
+		return $this->_get($url, $key);
+	}
+
+	public function subscribe($data)
+	{
+		$default_settings = array(
+			'email_type' => 'html',
+			'post' => array()
+		);
+
+		$unique_id = $this->param($data['post'], 'unique_email_id', md5($data['email']));
+
+		$data = array_merge($default_settings, $data);
+
+		$update_existing = filter_var($this->param($data['post'], 'update_existing', FALSE), FILTER_VALIDATE_BOOLEAN);
+
+		$params = array(
+			'email_address' => $data['email'],
+			'email_type' => $this->param($data['post'], 'email_type', 'html'),
+			'status' => $this->param($data['post'], 'status', 'subscribed'),
+			// 'double_optin'      => filter_var($this->param($data['post'], 'double_optin', TRUE), FILTER_VALIDATE_BOOLEAN),
+			// 'update_existing'   => filter_var($this->param($data['post'], 'update_existing', FALSE), FILTER_VALIDATE_BOOLEAN),
+			// 'replace_interests' => filter_var($this->param($data['post'], 'replace_interests', TRUE), FILTER_VALIDATE_BOOLEAN),
+			// 'send_welcome'      => filter_var($this->param($data['post'], 'send_welcome', FALSE), FILTER_VALIDATE_BOOLEAN),	
+		);
+
+		$url = $this->api_url($data['api_key'], 'lists/'.$data['id'].'/members');
+
+		if($update_existing)
+		{
+			$url .= '/' . $unique_id;
+		}
+
+		$interests = explode('|', $this->param($data['post'], 'interests', null));
+
+		$unset = array(
+			'update_existing',
+			'interests',
+			'service', 
+			'api_key', 
+			'list',
+			'group_id',
+			'groups'
+		);
+		
+		foreach($unset as $var)
+		{
+			unset($data['post'][$var]);
+		}
+		
+		if(isset($data['first_name']))
+		{
+			$params['merge_fields']['FNAME'] = $data['first_name'];
+		}
+
+		if(isset($data['last_name']))
+		{
+			$params['merge_fields']['LNAME'] = $data['last_name'];
+		}
+
+		foreach($data['post'] as $var => $value)
+		{
+			$params['merge_fields'][strtoupper($var)] = $value;
+		}
+
+		$groupings = array();
+
+		if($info = $this->get_member_info($data['api_key'], $data['id'], $unique_id))
+		{
+			foreach($info->interests as $interest => $is_subscribed)
+			{
+				$groupings[$interest] = $is_subscribed;
+			}
+		}
+
+		foreach($interests as $interest)
+		{
+			if(array_key_exists($interest, $groupings))
+			{
+				$groupings[$interest] = true;
+			}
+		}
+
+		if(count($groupings))
+		{
+			$params['interests'] = $groupings;
+		}
+
+		if($update_existing)
+		{
+			$response = $this->patch($url, $data['api_key'], $params);
+		}
+		else
+		{
+			$response = $this->post($url, $data['api_key'], $params);
+		}
+
+		//$this->curl->debug();
+
+		$return = new Newsletter_Subscription_Response(array(
+			'success' => !is_null($response),
+			'data'    => $response,
+			'errors'  => !is_null($response) ? array() : array(array('error' => $this->curl->error_string, 'code' => $this->curl->error_code))
+		));
+
+		return $return;
+	}
+		
+	public function param($data, $name, $default = FALSE)
+	{
+		return isset($data[$name]) ? $data[$name] : $default;
+	}
+	
+	public function unsubscribe($data)
+	{
+		$params = array(
+			'email_address' => $data['email'],
+			'status' => 'unsubscribed'
+		);
+		
+		$unique_id = $this->param($data['post'], 'unique_email_id', md5($data['email']));
+
+		$url = $this->api_url($data['api_key'], 'lists/'.$data['id'].'/members/'.$unique_id);
+
+		if(filter_var($this->param($data['post'], 'delete_member', FALSE), FILTER_VALIDATE_BOOLEAN))
+		{
+			$response = $this->delete($url, $data['api_key'], $params);
+		}
+		else
+		{
+			$response = $this->patch($url, $data['api_key'], $params);
+		}
+
+		$this->curl->debug();
+
+		$return = new Newsletter_Subscription_Response(array(
+			'success' => !is_null($response),
+			'data'    => $response,
+			'errors'  => !is_null($response) ? array() : array(array('error' => $this->curl->error_string, 'code' => $this->curl->error_code))
+		));
+		
+		return $return;
+	}
+
+	public function get_campaign_params($list_id, $parsed_object, $parcel)
+	{
+		$settings = $parcel->settings->{$this->name};
+
+		$plain_message = strip_tags($parsed_object->message);
+		$html_message  = $parsed_object->message;
+
+		if(isset($parsed_object->html_message) && !empty($parsed_object->html_message))
+		{
+			$html_message = $parsed_object->html_message;
+		}
+
+		if(isset($parsed_object->plain_message) && !empty($parsed_object->plain_message))
+		{
+			$plain_message = $parsed_object->plain_message;
+		}
+
+		$params = array(
+			'type'    => 'regular',
+			'options' => array(
+				'list_id'    => $list_id,
+				'subject'    => $parsed_object->subject,
+				'from_email' => $parsed_object->from_email,
+				'from_name'  => $parsed_object->from_name,
+				'to_name'    => $parsed_object->to_name,
+				'title'		 => $parcel->entry->title,
+			),
+			'content' => array(
+				'html' => $html_message,
+				'text' => $plain_message
+			)
+		);
+
+		return $params;
+	}
+
+	public function create_campaign($list_id, $parsed_object, $parcel)
+	{
+		$settings = $parcel->settings->{$this->name};
+
+		$params = $this->get_campaign_params($list_id, $parsed_object, $parcel);
+
+		$url = $this->api_url($settings->api_key, 'campaignCreate');
+
+		var_dump($url);exit();
+
+		return json_decode($this->curl->simple_post($url, $params));
+	}
+
+	public function send_campaign($api_key, $cid)
+	{
+		$url = $this->api_url($api_key, 'campaignSendNow');
+		
+		return json_decode($this->curl->simple_post($url, array('cid' => $cid))); 
+	}
+
+	public function get_lists($api_key, $ajax = FALSE)
+	{
+		$url = $this->api_url($api_key, 'lists');
+
+		$lists = $this->_get($url, $api_key);
+
+		if($lists == NULL)
+		{
+			$lists = (object) array(
+				'total_items' => 0,
+				'lists'  => array()
+			);
+		}
+
+		if(!(bool) $ajax)
+		{
+			return $lists;
+		}
+
+		exit($this->list_rows($lists, (object) array(
+			'list_id' => array(),
+			'api_key' => $api_key
+		)));
+	}
+
+	private function _get($url, $apikey)
+	{
+		$this->curl->create($url);
+		$this->curl->options(array(
+			'USERPWD' => 'username:'.$apikey
+		));
+
+		return json_decode($this->curl->execute());
+	}
+	
+	private function patch($url, $apikey, $data = array())
+	{
+		$data_string = json_encode($data);
+
+		$this->curl->create($url);
+		$this->curl->option('USERPWD', 'username:'.$apikey);
+		$this->curl->option('HTTPHEADER', array(
+			'Content-Type: application/json',
+			'Content-Length: '.strlen($data_string)
+		));
+
+		$this->curl->http_method('patch');
+
+		$this->curl->option(CURLOPT_POSTFIELDS, $data_string);
+
+		return json_decode($this->curl->execute());
+	}
+
+	private function post($url, $apikey, $data = array())
+	{
+		$data_string = json_encode($data);
+
+		$this->curl->create($url);
+		$this->curl->option('USERPWD', 'username:'.$apikey);
+		$this->curl->option('HTTPHEADER', array(
+			'Content-Type: application/json',
+			'Content-Length: '.strlen($data_string)
+		));
+
+		$this->curl->http_method('post');
+
+		$this->curl->option(CURLOPT_POST, TRUE);
+		$this->curl->option(CURLOPT_POSTFIELDS, $data_string);
+
+		return json_decode($this->curl->execute());
+	}
+
+	private function delete($url, $apikey, $data = array())
+	{
+		$data_string = json_encode($data);
+
+		$this->curl->create($url);
+		$this->curl->option('USERPWD', 'username:'.$apikey);
+		$this->curl->http_method('delete');
+
+		return json_decode($this->curl->execute());
+	}
+}
