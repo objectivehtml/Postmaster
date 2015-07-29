@@ -97,8 +97,8 @@
 				<input type="text" name="from_email" id="from_email" value="<?php echo form_prep($template->from_email) ?>" />
 			</li>
 			<li class="reply-to">
-				<label for="reply_to">Reply To</label>
-				<input type="text" name="reply_to" id="reply_to" value="<?php echo form_prep($template->reply_to) ?>" />
+				<label for="from">Reply To (E-mail)</label>
+				<input type="text" name="reply_to" id="reply_tp" value="<?php echo form_prep($template->reply_to) ?>" />
 			</li>
 			<li class="cc">
 				<label for="cc">CC</label>
