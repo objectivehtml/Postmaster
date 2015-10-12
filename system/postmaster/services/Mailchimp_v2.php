@@ -317,10 +317,21 @@ MailChimp helps you design email newsletters, share them on social networks, int
 		return str_replace('<dc>', substr($api_key, strpos($api_key, '-')+1), $url);
 	}
 
+	public function get_members_lists($key, $email)
+	{
+		$url = $this->api_url($key, 'helper/lists-for-email');
+
+		$response = $this->_get($url, array(
+			'apikey' => $key,
+			'email[email]' => $email
+		));
+
+		return $response;
+	}
+
 	public function get_member_info($key, $list_id, $email)
 	{
 		$url = $this->api_url($key, 'lists/member-info');
-
 
 		$response = $this->post($url, array(
 			'id' => $list_id,
@@ -550,23 +561,28 @@ MailChimp helps you design email newsletters, share them on social networks, int
 		)));
 	}
 
-	private function _get($url)
+	private function _get($url, $params = array())
 	{
-		return json_decode($this->curl->simple_get($url));
+		return json_decode($this->curl->simple_get($url, $params));
 	}
 	
-	private function post($url, $data)
+	private function post($url, $data = array())
 	{
 		return json_decode($this->curl->simple_post($url, $data));
 	}
 
 	private function _getStruct($email)
 	{
+		if(is_array($email))
+		{
+			return (object) $email;
+		}
+
 		if(is_object($email))
 		{
 			return $email;
 		}
-		
+
 		$struct = 'euid';
 
 		if(strstr($email, '@'))
