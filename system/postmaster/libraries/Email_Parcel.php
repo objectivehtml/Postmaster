@@ -24,6 +24,7 @@ class Email_Parcel {
 			$from_email,
 			$cc,
 			$bcc,
+			$reply_to,
 			$channel_id,
 			$categories,
 			$status,
