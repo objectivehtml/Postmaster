@@ -166,7 +166,7 @@ class Postmaster_lib {
 		$parsed_object = $this->convert_array($parsed_object);
 		$send_date     = $parsed_object->post_date_specific;
 
-		$send_date     = !empty($send_date) ? $this->strtotime($send_date) : time();
+		$send_date     = !empty($send_date) ? $this->strtotime($send_date) : $this->now();
 		
 		if(!empty($parsed_object->post_date_relative))
 		{
@@ -258,7 +258,7 @@ class Postmaster_lib {
 		{
 			$edit_date = $parse_vars[$prefix.$delimeter.'edit_date'];
 
-			$parse_vars[$prefix.$delimeter.'edit_date'] = mktime(substr($edit_date, 8, 2), substr($edit_date, 10, 2),  substr($edit_date, 12, 2), substr($edit_date, 4, 2), substr($edit_date, 6, 2), substr($edit_date, 0, 4));//mktime();
+			$parse_vars[$prefix.$delimeter.'edit_date'] = mktime(substr($edit_date, 8, 2), substr($edit_date, 10, 2),  substr($edit_date, 12, 2), substr($edit_date, 4, 2), substr($edit_date, 6, 2), substr($edit_date, 0, 4));
 			$entry_vars[$prefix.$delimeter.'edit_date'] = $parse_vars[$prefix.$delimeter.'edit_date'];
 		}
 		else
@@ -372,10 +372,10 @@ class Postmaster_lib {
 		$service->set_settings($parcel->settings);
 		
 		$date = $this->get_send_date($parsed_object);
-		
+
 		if($this->validate_emails($parsed_object->to_email))
 		{
-			if($ignore_date || $date <= time())
+			if($ignore_date || $date <= $this->now())
 			{
 				$service->pre_process();
 
@@ -899,6 +899,24 @@ class Postmaster_lib {
 	}
 
 	
+	/**
+	 * Get the current time with member locale
+	 *
+	 * @access	public
+	 * @return	string
+	 */
+	public function now($timestamp = NULL)
+	{
+		if(method_exists($this->EE->localize, 'set_localized_time'))
+		{
+			return $this->EE->localize->set_server_time($timestamp);
+		}
+		else
+		{
+			return $this->EE->localize->format_date('', $timestamp);
+		}
+	}
+
 	/**
 	 * Log Action
 	 *

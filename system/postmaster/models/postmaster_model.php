@@ -108,11 +108,13 @@ class Postmaster_model extends CI_Model {
 		{
 			$date = $this->postmaster_lib->get_send_date($parsed_object);
 		}
+
+		$gmt_offset = time() - $this->postmaster_lib->now(time());
 		
 		$data = array_merge($data, array(
 			'gmt_date'      => time(),
-			'gmt_send_date' => $this->postmaster_lib->strtotime($date),
-			'date'     	    => date('Y-m-d H:i:s', time()),
+			'gmt_send_date' => $this->postmaster_lib->strtotime($date) + $gmt_offset,
+			'date'     	    => date('Y-m-d H:i:s', $this->postmaster_lib->now()),
 			'send_date'     => date('Y-m-d H:i:s', $this->postmaster_lib->strtotime($date)),
 			'service'       => $parcel->service,
 			'to_name'       => $parsed_object->to_name,
@@ -125,8 +127,6 @@ class Postmaster_model extends CI_Model {
 			'message'       => $parsed_object->message,
 			'send_every'    => $parsed_object->send_every
 		));
-		
-		//var_dump($data);exit();
 
 		$this->db->insert('postmaster_queue', $data);
 	}
@@ -591,7 +591,7 @@ class Postmaster_model extends CI_Model {
 	{
 		if($start == 'now')
 		{
-			$start = time();
+			$start = $this->postmaster_lib->now();
 		}
 
 		$this->db->where('send_date <=', date('Y-m-d H:i:s', $this->postmaster_lib->strtotime($start)));
