@@ -388,7 +388,7 @@ MailChimp helps you design email newsletters, share them on social networks, int
 		{
 			$i = count($groupings);
 
-			$groupings[$i] = array('groups' => $data['post']['groups']);
+			$groupings[$i] = array('groups' => implode(",", $data['post']['groups']));
 
 			if(isset($data['post']['group_id']))
 			{
